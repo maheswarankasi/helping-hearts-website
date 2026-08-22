@@ -11,7 +11,7 @@ export default function HomePage() {
         <Features />
       */}
       <section className="py-20 text-center">
-        <h1 className="text-4xl font-bold text-brand-blue">Helping Hearts NGO</h1>
+        <h1 className="font-sans text-4xl font-bold text-brand-blue">Helping Hearts NGO</h1>
         <p className="mt-4 text-gray-600">Public Home Page is ready!</p>
       </section>
     </>
