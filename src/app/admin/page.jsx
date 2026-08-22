@@ -20,10 +20,10 @@ export default function AdminDashboard() {
         
         {/* Quick Actions */}
         <div className="flex gap-3">
-          <Link href="/admin/shelters/new" className="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium transition shadow-sm flex items-center gap-2">
+          <Link href="/admin/shelters/new" className="bg-white border border-gray-200 text-gray-700 hover:bg-blue-900 hover:text-white px-4 py-2 rounded-lg font-medium transition shadow-sm flex items-center gap-2">
             <i className="fa-solid fa-plus text-sm"></i> Add Shelter
           </Link>
-          <Link href="/admin/events/new" className="bg-brand-blue text-white hover:bg-blue-900 px-4 py-2 rounded-lg font-medium transition shadow-sm flex items-center gap-2">
+          <Link href="/admin/events/new" className="bg-white text-gray-700 hover:bg-blue-900 hover:text-white px-4 py-2 rounded-lg font-medium transition shadow-sm flex items-center gap-2">
             <i className="fa-solid fa-plus text-sm"></i> Add Event
           </Link>
         </div>

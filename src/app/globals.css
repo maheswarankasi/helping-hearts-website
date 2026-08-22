@@ -1,8 +1,4 @@
 @import "tailwindcss";
-@theme {
-  --font-outfit: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  --font-dm-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
-}
 
 .font-dm-sans {
   font-family: "DM Sans", sans-serif;

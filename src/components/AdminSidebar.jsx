@@ -1,5 +1,6 @@
 "use client"; 
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -16,8 +17,10 @@ export default function AdminSidebar({ closeSidebar }) {
 
   return (
     <aside className="w-64 bg-gray-900 text-white flex flex-col shadow-2xl h-full font-dm">
-      <div className="p-6 border-b border-gray-800 flex justify-between items-center">
-        <h2 className="text-2xl font-bold tracking-wider text-center w-full">NGO ADMIN</h2>
+      <div className="p-6 border-b border-gray-800 flex justify-between md:justify-center items-center">
+        {/* <h2 className="text-2xl font-bold tracking-wider text-center w-full">NGO ADMIN</h2> */}
+        {/* <img src="./helping-hearts.jpeg" alt="helping hearts logo" /> */}
+        <Image src='/helping-hearts.jpeg' alt='helping hearts logo' width={100} height={100} className='rounded-md' />
         {/* Mobile Close Button */}
         <button className="md:hidden text-gray-400 hover:text-white text-2xl" onClick={closeSidebar}>
           <i className="fa-solid fa-xmark"></i>
@@ -35,7 +38,7 @@ export default function AdminSidebar({ closeSidebar }) {
               key={item.name} 
               href={item.href}
               onClick={closeSidebar} // Mobile-la click pannathum menu close aagum
-              className={`block px-4 py-3 rounded-lg transition-all duration-200 flex items-center ${
+              className={`px-4 py-3 rounded-lg transition-all duration-200 flex items-center ${
                 isActive 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'text-gray-400 hover:bg-gray-800 hover:text-white'
