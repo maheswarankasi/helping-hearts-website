@@ -13,11 +13,20 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
+// True only when .env.local actually carries the Firebase credentials.
+export const isFirebaseConfigured = Boolean(
+  firebaseConfig.apiKey && firebaseConfig.projectId
+);
+
 // Next.js SSR issue varama irukka indha check mukkiyam
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 const db = getFirestore(app);
-const auth = getAuth(app);
 const storage = getStorage(app);
+
+// getAuth() throws `auth/invalid-api-key` at module evaluation when the env
+// vars are missing, which would break every page that imports this file.
+// Keep it null until the project is configured.
+const auth = isFirebaseConfigured ? getAuth(app) : null;
 
 export { app, db, auth, storage };

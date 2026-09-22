@@ -1,12 +1,84 @@
 @import "tailwindcss";
 
-.font-dm-sans {
-  font-family: "DM Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
+/* Brand tokens (design 3) — Tailwind v4 reads these to generate utilities
+   like bg-brand-blue, text-brand-red, font-heading, font-body. */
+@theme {
+  --color-brand-blue: #0a3085;
+  --color-brand-red: #cc111a;
+  --color-brand-cream: #fcfbf9;
+  --color-brand-softblue: #eff3ff;
+
+  --font-heading: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
 }
-.font-outfit {
-  font-family: "Outfit", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Admin panel uses DM Sans */
+.font-dm {
+  font-family: var(--font-body);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.hero-overlay {
+  background: linear-gradient(
+    to right,
+    rgba(10, 48, 133, 0.95),
+    rgba(10, 48, 133, 0.65)
+  );
+}
+
+/* Ring glow pulse on the primary CTAs */
+@keyframes ring-pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(204, 17, 26, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(204, 17, 26, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(204, 17, 26, 0);
+  }
+}
+
+.btn-pulse-red {
+  animation: ring-pulse-red 2s infinite;
+}
+
+@keyframes ring-pulse-white {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.btn-pulse-white {
+  animation: ring-pulse-white 2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .btn-pulse-red,
+  .btn-pulse-white {
+    animation: none;
+  }
 }

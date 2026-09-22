@@ -1,30 +1,26 @@
-import Link from 'next/link';
-// import Hero from '@/components/Hero';
-// import Features from '@/components/Features';
+import Hero from '@/components/Hero';
+import ImpactCards from '@/components/ImpactCards';
+import VideoSection from '@/components/VideoSection';
+import EventsSection from '@/components/EventsSection';
+import SheltersSection from '@/components/SheltersSection';
+import VolunteerCTA from '@/components/VolunteerCTA';
+import { events } from '@/lib/siteContent';
+import { getShelters } from '@/lib/shelters';
 
-export default function HomePage() {
+// Re-read shelters periodically so admin additions show up without a redeploy
+export const revalidate = 300;
+
+export default async function HomePage() {
+  const shelters = await getShelters({ limit: 2 });
+
   return (
     <>
-      {/* 
-        <Hero />
-        <Features />
-      */}
-      <section className="py-20 text-center flex flex-col items-center justify-center min-h-[60vh]">
-        <h1 className="font-sans text-4xl md:text-6xl font-bold text-brand-blue mb-6">
-          Helping Hearts NGO
-        </h1>
-        <p className="text-lg text-gray-600 mb-8 max-w-2xl px-4">
-          Welcome to our public site! Explore the safe havens we operate to provide care, comfort, and a loving environment for those in need.
-        </p>
-        
-        {/* Shelters Page-ku Pora Link */}
-        <Link 
-          href="/shelters" 
-          className="bg-blue-600 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition shadow-md flex items-center gap-2"
-        >
-          View Our Shelters <i className="fa-solid fa-arrow-right"></i>
-        </Link>
-      </section>
+      <Hero />
+      <ImpactCards />
+      <VideoSection />
+      <EventsSection events={events.slice(0, 3)} />
+      <SheltersSection shelters={shelters} />
+      <VolunteerCTA />
     </>
   );
 }
