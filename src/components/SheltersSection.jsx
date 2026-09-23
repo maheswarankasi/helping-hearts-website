@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import EmptyState from './EmptyState';
 
 const toneStyles = {
   blue: {
@@ -40,22 +41,29 @@ export default function SheltersSection({
         </div>
 
         {shelters.length === 0 ? (
-          <p className="text-center text-gray-500 py-10">
-            No shelters published yet. Please check back soon.
-          </p>
+          <EmptyState
+            icon="fa-solid fa-house-chimney-user"
+            title="No shelters published yet"
+            message="Shelters added from the admin panel will appear here with their photos."
+          />
         ) : (
           <div className="space-y-12">
             {shelters.map((shelter, index) => {
-              const tone = toneStyles[shelter.tone] ?? (index % 2 === 0 ? toneStyles.blue : toneStyles.red);
-              const detailHref = shelter.mapUrl || '/shelters';
-              const isExternal = Boolean(shelter.mapUrl);
+              const tone =
+                toneStyles[shelter.tone] ??
+                (index % 2 === 0 ? toneStyles.blue : toneStyles.red);
+              const detailHref = `/shelters/${shelter.id}`;
 
               return (
                 <div
                   key={shelter.id}
                   className="group relative flex flex-col md:flex-row items-center gap-8 bg-white p-4 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100"
                 >
-                  <div className="w-full md:w-1/2 h-72 md:h-[350px] overflow-hidden rounded-[2rem] relative">
+                  <Link
+                    href={detailHref}
+                    aria-label={`View ${shelter.name}`}
+                    className="w-full md:w-1/2 h-72 md:h-[350px] overflow-hidden rounded-[2rem] relative block"
+                  >
                     {shelter.image ? (
                       <img
                         src={shelter.image}
@@ -71,15 +79,11 @@ export default function SheltersSection({
                     <div
                       className={`absolute inset-0 bg-gradient-to-t ${tone.overlay} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8`}
                     >
-                      <Link
-                        href={detailHref}
-                        {...(isExternal
-                          ? { target: '_blank', rel: 'noopener noreferrer' }
-                          : {})}
+                      <span
                         className={`bg-white ${tone.galleryText} font-bold px-6 py-2 rounded-full w-max flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500`}
                       >
                         View Gallery <i className="fa-solid fa-images"></i>
-                      </Link>
+                      </span>
                     </div>
 
                     {shelter.tag && (
@@ -89,50 +93,70 @@ export default function SheltersSection({
                         {shelter.tag}
                       </div>
                     )}
-                  </div>
+
+                    {shelter.images.length > 1 && (
+                      <div className="absolute bottom-4 right-4 bg-gray-900/70 backdrop-blur text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-2 group-hover:opacity-0 transition-opacity">
+                        <i className="fa-solid fa-images"></i>{' '}
+                        {shelter.images.length} Photos
+                      </div>
+                    )}
+                  </Link>
 
                   <div className="w-full md:w-1/2 p-4 md:p-8 relative">
-                    {shelter.location && (
+                    {shelter.address && (
                       <div
                         className={`inline-flex items-center gap-2 ${tone.locationText} font-semibold text-sm mb-4`}
                       >
                         <i
-                          className={`fa-solid fa-location-dot ${tone.locationBg} w-8 h-8 rounded-full flex items-center justify-center`}
+                          className={`fa-solid fa-location-dot ${tone.locationBg} w-8 h-8 rounded-full flex items-center justify-center shrink-0`}
                         ></i>
-                        {shelter.location}
+                        <span className="line-clamp-2 text-left">
+                          {shelter.address}
+                        </span>
                       </div>
                     )}
 
                     <h3 className="font-heading text-3xl font-extrabold text-gray-900 mb-4">
-                      {shelter.name}
+                      <Link
+                        href={detailHref}
+                        className="hover:text-brand-blue transition-colors"
+                      >
+                        {shelter.name}
+                      </Link>
                     </h3>
-                    <p className="text-gray-600 mb-8 leading-relaxed">
+                    <p className="text-gray-600 mb-8 leading-relaxed line-clamp-4">
                       {shelter.description}
                     </p>
 
-                    <div className="flex items-center justify-between border-t border-gray-200 pt-6">
-                      <div className="flex items-center gap-4">
-                        <div className={`${tone.capacityIcon} text-3xl`}>
-                          <i
-                            className={shelter.capacityIcon || 'fa-solid fa-users-rays'}
-                          ></i>
+                    <div className="flex items-center justify-between border-t border-gray-200 pt-6 gap-4">
+                      {/* Capacity block only renders when the admin filled it in */}
+                      {shelter.capacity ? (
+                        <div className="flex items-center gap-4">
+                          <div className={`${tone.capacityIcon} text-3xl`}>
+                            <i className={shelter.capacityIcon}></i>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
+                              Capacity
+                            </p>
+                            <p className="font-heading text-xl font-bold text-gray-900">
+                              {shelter.capacity}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
-                            Capacity
-                          </p>
-                          <p className="font-heading text-xl font-bold text-gray-900">
-                            {shelter.capacityLabel || 'Contact us'}
-                          </p>
-                        </div>
-                      </div>
+                      ) : (
+                        <Link
+                          href={detailHref}
+                          className={`font-heading font-bold ${tone.galleryText} hover:opacity-70 transition-opacity inline-flex items-center gap-2`}
+                        >
+                          View Details
+                        </Link>
+                      )}
+
                       <Link
                         href={detailHref}
-                        {...(isExternal
-                          ? { target: '_blank', rel: 'noopener noreferrer' }
-                          : {})}
                         aria-label={`More about ${shelter.name}`}
-                        className={`w-12 h-12 rounded-full ${tone.arrow} text-white flex items-center justify-center transition-colors hover:scale-110 shadow-lg`}
+                        className={`w-12 h-12 rounded-full ${tone.arrow} text-white flex items-center justify-center transition-colors hover:scale-110 shadow-lg shrink-0`}
                       >
                         <i className="fa-solid fa-arrow-right"></i>
                       </Link>
@@ -144,7 +168,7 @@ export default function SheltersSection({
           </div>
         )}
 
-        {showViewAll && (
+        {showViewAll && shelters.length > 0 && (
           <div className="mt-16 text-center">
             <Link
               href="/shelters"

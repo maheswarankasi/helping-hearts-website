@@ -4,21 +4,24 @@ import VideoSection from '@/components/VideoSection';
 import EventsSection from '@/components/EventsSection';
 import SheltersSection from '@/components/SheltersSection';
 import VolunteerCTA from '@/components/VolunteerCTA';
-import { events } from '@/lib/siteContent';
+import { getEvents } from '@/lib/events';
 import { getShelters } from '@/lib/shelters';
 
-// Re-read shelters periodically so admin additions show up without a redeploy
+// Re-read Firestore periodically so admin additions show up without a redeploy
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const shelters = await getShelters({ limit: 2 });
+  const [events, shelters] = await Promise.all([
+    getEvents({ limit: 3 }),
+    getShelters({ limit: 2 }),
+  ]);
 
   return (
     <>
       <Hero />
       <ImpactCards />
       <VideoSection />
-      <EventsSection events={events.slice(0, 3)} />
+      <EventsSection events={events} />
       <SheltersSection shelters={shelters} />
       <VolunteerCTA />
     </>

@@ -24,14 +24,14 @@ export default function VolunteerCTA() {
 
           <div className="relative z-10 w-full md:w-auto flex flex-col gap-4 justify-center">
             <Link
-              href="#"
+              href="/join-us"
               className="inline-flex items-center justify-center gap-3 bg-white text-brand-blue font-heading font-black text-lg px-8 py-4 rounded-full hover:scale-105 transition-transform btn-pulse-white"
             >
               Join Us Now{' '}
               <i className="fa-solid fa-hand-holding-heart text-brand-red"></i>
             </Link>
             <Link
-              href="/#donate"
+              href="/donate"
               className="inline-flex items-center justify-center gap-3 bg-brand-red text-white border-2 border-brand-red font-heading font-black text-lg px-8 py-4 rounded-full hover:bg-transparent transition-all btn-pulse-white"
             >
               Donate Us <i className="fa-solid fa-hand-holding-dollar"></i>

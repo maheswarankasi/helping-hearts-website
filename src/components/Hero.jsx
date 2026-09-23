@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { heroImages } from '@/lib/siteContent';
+import { heroImages, siteInfo } from '@/lib/siteContent';
 
 export default function Hero() {
   return (
@@ -13,9 +13,15 @@ export default function Hero() {
       <div className="container mx-auto px-4 max-w-7xl relative z-10 flex flex-col lg:flex-row items-center gap-16">
         {/* Left text content */}
         <div className="w-full lg:w-1/2 text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest mb-6">
-            <span className="w-2 h-2 rounded-full bg-brand-red"></span>{' '}
-            Spreading Hope
+          <div className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-brand-red"></span>{' '}
+              Spreading Hope
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest">
+              <i className="fa-solid fa-certificate text-brand-red"></i> Reg.
+              No. {siteInfo.registrationNumber}
+            </div>
           </div>
 
           <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] mb-6">
@@ -33,14 +39,14 @@ export default function Hero() {
 
           <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
             <Link
-              href="/#donate"
+              href="/donate"
               className="bg-brand-red text-white px-8 py-4 rounded-full font-bold hover:-translate-y-1 transition-all text-center btn-pulse-white"
             >
               Donate Us{' '}
               <i className="fa-solid fa-hand-holding-heart text-white ml-2"></i>
             </Link>
             <Link
-              href="/#volunteer"
+              href="/join-us"
               className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-brand-blue transition-all text-center flex items-center justify-center gap-2 btn-pulse-white"
             >
               Join Us <i className="fa-solid fa-heart text-brand-red"></i>

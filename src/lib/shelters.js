@@ -1,52 +1,68 @@
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from './firebase';
-import { shelters as fallbackShelters } from './siteContent';
+import { cleanImageList, optionalText, toDate } from './firestoreUtils';
 
+const COLLECTION = 'shelters';
+
+// Cards alternate between the blue and red accent treatments.
 const tones = ['blue', 'red'];
 
-// Normalises an admin-created Firestore shelter into the shape the
-// public shelter cards expect.
-function toShelterCard(doc, index) {
-  const data = doc.data();
+function toShelter(id, data, index = 0) {
+  const images = cleanImageList(data.images);
+  const createdAt = toDate(data.createdAt);
 
   return {
-    id: doc.id,
-    name: data.name ?? 'Our Shelter',
-    tag: data.tag ?? null,
-    location: data.address ?? null,
-    description: data.description ?? '',
-    capacityLabel: data.capacity ? `${data.capacity}` : null,
-    capacityIcon: data.capacityIcon ?? 'fa-solid fa-users-rays',
-    image: data.images?.[0] ?? null,
-    images: data.images ?? [],
-    mapUrl: data.mapUrl ?? null,
+    id,
+    name: optionalText(data.name) ?? 'Our Shelter',
+    tag: optionalText(data.tag),
+    address: optionalText(data.address),
+    description: optionalText(data.description) ?? '',
+    // Null whenever the admin left it blank — the UI hides the block entirely.
+    capacity: optionalText(data.capacity),
+    capacityIcon: optionalText(data.capacityIcon) ?? 'fa-solid fa-users-rays',
+    mapUrl: optionalText(data.mapUrl),
+    images,
+    image: images[0] ?? null,
     tone: tones[index % tones.length],
+    sortKey: createdAt ? createdAt.getTime() : 0,
   };
 }
 
 /**
- * Reads published shelters from Firestore. Falls back to the static content
- * in siteContent.js when Firebase is not configured or the read fails, so the
- * public site always renders something meaningful.
+ * Reads shelters from Firestore, newest first.
+ *
+ * Sorted in memory so documents without a `createdAt` are still returned.
  */
 export async function getShelters({ limit } = {}) {
-  if (!isFirebaseConfigured) {
-    return limit ? fallbackShelters.slice(0, limit) : fallbackShelters;
-  }
+  if (!isFirebaseConfigured) return [];
 
   try {
-    const snapshot = await getDocs(
-      query(collection(db, 'shelters'), orderBy('createdAt', 'desc'))
-    );
-    const list = snapshot.docs.map(toShelterCard);
-
-    if (list.length === 0) {
-      return limit ? fallbackShelters.slice(0, limit) : fallbackShelters;
-    }
+    const snapshot = await getDocs(collection(db, COLLECTION));
+    const list = snapshot.docs
+      .map((snap) => ({ id: snap.id, data: snap.data() }))
+      .sort((a, b) => {
+        const aTime = toDate(a.data.createdAt)?.getTime() ?? 0;
+        const bTime = toDate(b.data.createdAt)?.getTime() ?? 0;
+        return bTime - aTime;
+      })
+      .map(({ id, data }, index) => toShelter(id, data, index));
 
     return limit ? list.slice(0, limit) : list;
   } catch (error) {
     console.error('Failed to load shelters from Firestore:', error);
-    return limit ? fallbackShelters.slice(0, limit) : fallbackShelters;
+    return [];
+  }
+}
+
+/** Returns a single shelter, or null when the id does not exist. */
+export async function getShelterById(id) {
+  if (!isFirebaseConfigured) return null;
+
+  try {
+    const snap = await getDoc(doc(db, COLLECTION, id));
+    return snap.exists() ? toShelter(snap.id, snap.data()) : null;
+  } catch (error) {
+    console.error(`Failed to load shelter ${id} from Firestore:`, error);
+    return null;
   }
 }

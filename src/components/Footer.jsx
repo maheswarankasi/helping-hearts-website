@@ -3,10 +3,12 @@ import { siteInfo } from '@/lib/siteContent';
 
 const quickLinks = [
   { name: 'Home', href: '/' },
-  { name: 'Our Story', href: '#' },
+  { name: 'Our Story', href: '/our-story' },
   { name: 'Events', href: '/events' },
   { name: 'Our Shelters', href: '/shelters' },
-  { name: 'Volunteer', href: '/#volunteer' },
+  { name: 'Join Us', href: '/join-us' },
+  { name: 'Donate Us', href: '/donate' },
+  { name: 'Contact', href: '/contact' },
 ];
 
 export default function Footer() {
@@ -29,26 +31,26 @@ export default function Footer() {
               our safe homes.
             </p>
             <div className="flex space-x-3">
-              {siteInfo.socials
-                .filter((social) => social.name !== 'Twitter')
-                .map((social, index) => (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    aria-label={social.name}
-                    className={`w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center transition ${
-                      index % 2 === 0
-                        ? 'hover:bg-brand-blue'
-                        : 'hover:bg-brand-red'
-                    }`}
-                  >
-                    <i className={social.icon}></i>
-                  </a>
-                ))}
+              {siteInfo.socials.map((social, index) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
+                  className={`w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center transition ${
+                    index % 2 === 0
+                      ? 'hover:bg-brand-blue'
+                      : 'hover:bg-brand-red'
+                  }`}
+                >
+                  <i className={social.icon}></i>
+                </a>
+              ))}
             </div>
           </div>
 
-          <div className="w-full md:w-2/3 flex flex-wrap md:flex-nowrap gap-12 justify-between">
+          <div className="w-full md:w-2/3 flex flex-wrap md:flex-nowrap gap-12 justify-evenly">
             <div>
               <h4 className="font-heading font-bold text-lg mb-6">
                 Quick Links
@@ -87,18 +89,28 @@ export default function Footer() {
                   <i className="fa-solid fa-envelope text-brand-red"></i>
                   <span>{siteInfo.email}</span>
                 </li>
+                <li className="flex items-start gap-3">
+                  <i className="fa-solid fa-clock mt-1 text-brand-red"></i>
+                  <span>{siteInfo.officeHours}</span>
+                </li>
               </ul>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-medium">
-          <p>&copy; {new Date().getFullYear()} Helping Hearts NGO. All Rights Reserved.</p>
-          <div className="mt-4 md:mt-0 flex gap-6">
-            <Link href="#" className="hover:text-white transition">
+        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-medium gap-4 text-center md:text-left">
+          <p>
+            &copy; {new Date().getFullYear()} Helping Hearts NGO. All Rights
+            Reserved.
+            <span className="block md:inline md:ml-2 mt-1 md:mt-0">
+              Reg. No. {siteInfo.registrationNumber}
+            </span>
+          </p>
+          <div className="flex gap-6">
+            <Link href="/privacy-policy" className="hover:text-white transition">
               Privacy Policy
             </Link>
-            <Link href="#" className="hover:text-white transition">
+            <Link href="/terms" className="hover:text-white transition">
               Terms &amp; Conditions
             </Link>
           </div>

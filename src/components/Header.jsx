@@ -49,9 +49,12 @@ export default function Header() {
             <span>
               <i className="fa-solid fa-envelope mr-2"></i> {siteInfo.email}
             </span>
-            <span>
+            <span className="hidden lg:inline">
               <i className="fa-solid fa-location-dot mr-2"></i>{' '}
               {siteInfo.shortAddress}
+            </span>
+            <span className="hidden xl:inline">
+              <i className="fa-solid fa-clock mr-2"></i> {siteInfo.officeHours}
             </span>
           </div>
           <div className="flex space-x-4">
@@ -59,6 +62,8 @@ export default function Header() {
               <a
                 key={social.name}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={social.name}
                 className="hover:text-brand-red transition"
               >
@@ -108,7 +113,7 @@ export default function Header() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
-              href="/#volunteer"
+              href="/join-us"
               className="bg-brand-red text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-red-800 transition-all hover:scale-105 btn-pulse-red flex items-center gap-2"
             >
               Join Us <i className="fa-solid fa-heart"></i>
@@ -144,7 +149,7 @@ export default function Header() {
                 </Link>
               ))}
               <Link
-                href="/#volunteer"
+                href="/join-us"
                 onClick={closeMobileMenu}
                 className="bg-brand-red text-white mx-auto px-6 py-2 rounded-full w-max btn-pulse-red"
               >

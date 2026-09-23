@@ -1,7 +1,7 @@
 import PageHeader from '@/components/PageHeader';
 import EventsSection from '@/components/EventsSection';
 import VolunteerCTA from '@/components/VolunteerCTA';
-import { events } from '@/lib/siteContent';
+import { getEvents } from '@/lib/events';
 
 export const metadata = {
   title: 'Events | Helping Hearts NGO',
@@ -9,7 +9,11 @@ export const metadata = {
     'Celebrations, medical camps, and donation drives — a look at the moments we have shared with our community.',
 };
 
-export default function EventsPage() {
+export const revalidate = 300;
+
+export default async function EventsPage() {
+  const events = await getEvents();
+
   return (
     <>
       <PageHeader
