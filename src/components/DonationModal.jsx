@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from 'react';
-import { addDonor, formatAmount } from '@/lib/donors';
+import Image from 'next/image';
+import { submitDonation } from '@/app/actions';
+import { formatAmount } from '@/lib/firestoreUtils';
 import { donation, donationPurposes, siteInfo } from '@/lib/siteContent';
 
 const EMPTY_FORM = {
@@ -46,6 +48,20 @@ function validate(values) {
   if (!values.purpose) errors.purpose = 'Please choose what your gift is for.';
 
   return errors;
+}
+
+/**
+ * Defined at module scope on purpose — see the note in VolunteerForm.jsx.
+ */
+function FieldError({ message }) {
+  if (!message) return null;
+
+  return (
+    <p className="mt-1.5 text-xs font-medium text-brand-red flex items-center gap-1.5">
+      <i className="fa-solid fa-circle-exclamation"></i>
+      {message}
+    </p>
+  );
 }
 
 export default function DonationModal({ onClose }) {
@@ -96,18 +112,18 @@ export default function DonationModal({ onClose }) {
     if (Object.keys(nextErrors).length > 0) return;
 
     setIsSaving(true);
-    try {
-      await addDonor(values);
-      setSavedAmount(Number(values.amount));
+    const result = await submitDonation(values);
+    setIsSaving(false);
+
+    if (result.ok) {
+      setSavedAmount(result.amount);
       setStep('pay');
-    } catch (error) {
-      console.error('Donor record failed:', error);
-      setSaveError(
-        'Sorry, we could not save your details just now. Please try again, or call our office.'
-      );
-    } finally {
-      setIsSaving(false);
+      return;
     }
+
+    // The server re-validates, so it can reject input the browser let through.
+    if (result.errors) setErrors(result.errors);
+    if (result.message) setSaveError(result.message);
   };
 
   const copyUpiId = useCallback(async () => {
@@ -126,14 +142,6 @@ export default function DonationModal({ onClose }) {
         ? 'border-brand-red focus:ring-red-100'
         : 'border-gray-200 focus:border-brand-blue focus:ring-blue-100'
     }`;
-
-  const FieldError = ({ name }) =>
-    errors[name] ? (
-      <p className="mt-1.5 text-xs font-medium text-brand-red flex items-center gap-1.5">
-        <i className="fa-solid fa-circle-exclamation"></i>
-        {errors[name]}
-      </p>
-    ) : null;
 
   return (
     <div
@@ -190,7 +198,7 @@ export default function DonationModal({ onClose }) {
                       onChange={handleChange('name')}
                       className={fieldClasses('name')}
                     />
-                    <FieldError name="name" />
+                    <FieldError message={errors.name} />
                   </div>
 
                   <div>
@@ -209,7 +217,7 @@ export default function DonationModal({ onClose }) {
                       onChange={handleChange('phone')}
                       className={fieldClasses('phone')}
                     />
-                    <FieldError name="phone" />
+                    <FieldError message={errors.phone} />
                   </div>
                 </div>
 
@@ -229,7 +237,7 @@ export default function DonationModal({ onClose }) {
                     onChange={handleChange('email')}
                     className={fieldClasses('email')}
                   />
-                  <FieldError name="email" />
+                  <FieldError message={errors.email} />
                 </div>
 
                 <div>
@@ -270,7 +278,7 @@ export default function DonationModal({ onClose }) {
                     onChange={handleChange('amount')}
                     className={fieldClasses('amount')}
                   />
-                  <FieldError name="amount" />
+                  <FieldError message={errors.amount} />
                 </div>
 
                 <div>
@@ -294,7 +302,7 @@ export default function DonationModal({ onClose }) {
                       </option>
                     ))}
                   </select>
-                  <FieldError name="purpose" />
+                  <FieldError message={errors.purpose} />
                 </div>
 
                 <div>
@@ -370,9 +378,12 @@ export default function DonationModal({ onClose }) {
 
               {donation.qrImage ? (
                 <div className="bg-white border-4 border-brand-softblue rounded-[2rem] p-6 max-w-xs mx-auto">
-                  <img
+                  <Image
                     src={donation.qrImage}
                     alt={`UPI QR code for donating to ${donation.payeeName}`}
+                    width={320}
+                    height={320}
+                    unoptimized
                     className="w-full h-auto rounded-xl"
                   />
                 </div>

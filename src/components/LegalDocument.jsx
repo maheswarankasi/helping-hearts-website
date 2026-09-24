@@ -110,6 +110,17 @@ export default function LegalDocument({ lastUpdated, intro, sections }) {
                   </a>
                 </li>
                 <li className="flex items-center gap-3">
+                  <i className="fa-brands fa-whatsapp text-green-600"></i>
+                  <a
+                    href={`https://wa.me/91${siteInfo.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-brand-blue transition"
+                  >
+                    {siteInfo.whatsappDisplay}
+                  </a>
+                </li>
+                <li className="flex items-center gap-3">
                   <i className="fa-solid fa-envelope text-brand-red"></i>
                   <a
                     href={`mailto:${siteInfo.email}`}

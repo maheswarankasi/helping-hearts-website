@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from 'react';
+import SmartImage from './SmartImage';
 
 /**
  * Grid of uploaded photos with a simple lightbox. Used on the event and
@@ -56,10 +57,12 @@ export default function PhotoGallery({ images, title = 'Photo Gallery', alt }) {
             aria-label={`Open photo ${index + 1} of ${images.length}`}
             className="group relative h-40 md:h-52 overflow-hidden rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-shadow cursor-zoom-in"
           >
-            <img
+            <SmartImage
               src={src}
               alt={`${alt} photo ${index + 1}`}
-              className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              fill
+              sizes="(max-width: 768px) 50vw, 300px"
+              className="object-cover group-hover:scale-105 transition duration-500"
             />
             <span className="absolute inset-0 bg-brand-blue/0 group-hover:bg-brand-blue/30 transition-colors flex items-center justify-center text-white opacity-0 group-hover:opacity-100">
               <i className="fa-solid fa-magnifying-glass-plus text-2xl"></i>
@@ -111,11 +114,16 @@ export default function PhotoGallery({ images, title = 'Photo Gallery', alt }) {
           )}
 
           <figure className="relative z-[5] w-[90%] max-w-4xl">
-            <img
-              src={images[activeIndex]}
-              alt={`${alt} photo ${activeIndex + 1}`}
-              className="w-full max-h-[80vh] object-contain rounded-[2rem] shadow-2xl bg-white"
-            />
+            <div className="relative w-full h-[80vh]">
+              <SmartImage
+                src={images[activeIndex]}
+                alt={`${alt} photo ${activeIndex + 1}`}
+                fill
+                priority
+                sizes="90vw"
+                className="object-contain rounded-[2rem] drop-shadow-2xl"
+              />
+            </div>
             <figcaption className="text-center text-white/80 text-sm mt-4 font-medium">
               {activeIndex + 1} / {images.length}
             </figcaption>

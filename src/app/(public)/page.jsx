@@ -1,5 +1,7 @@
 import Hero from '@/components/Hero';
 import ImpactCards from '@/components/ImpactCards';
+import ImpactStats from '@/components/ImpactStats';
+import MottoSection from '@/components/MottoSection';
 import VideoSection from '@/components/VideoSection';
 import EventsSection from '@/components/EventsSection';
 import SheltersSection from '@/components/SheltersSection';
@@ -20,6 +22,8 @@ export default async function HomePage() {
     <>
       <Hero />
       <ImpactCards />
+      <MottoSection />
+      <ImpactStats />
       <VideoSection />
       <EventsSection events={events} />
       <SheltersSection shelters={shelters} />

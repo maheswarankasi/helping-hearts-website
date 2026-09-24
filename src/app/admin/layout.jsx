@@ -5,8 +5,5 @@ export const metadata = {
 };
 
 export default function AdminLayout({ children }) {
-  return (
-    // Inga 'font-sans' ku badhila 'font-dm' nu maathi irukkom
-    <AdminDashboardLayout>{children}</AdminDashboardLayout>
-  );
+  return <AdminDashboardLayout>{children}</AdminDashboardLayout>;
 }

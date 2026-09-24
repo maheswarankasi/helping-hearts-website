@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { siteInfo } from '@/lib/siteContent';
+import Image from 'next/image';
+import { FOUNDED_YEAR, siteInfo } from '@/lib/siteContent';
 
 const quickLinks = [
   { name: 'Home', href: '/' },
@@ -20,17 +21,31 @@ export default function Footer() {
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 border-b border-gray-800 pb-12 mb-10">
           <div className="w-full md:w-1/3">
-            <img
+            <Image
               src={siteInfo.logo}
               alt={siteInfo.name}
-              className="h-16 mb-6 bg-white p-2 rounded-xl object-contain"
+              width={176}
+              height={64}
+              className="h-16 w-auto mb-6 bg-white p-2 rounded-xl object-contain"
             />
+            <p className="font-heading text-brand-red font-bold mb-3">
+              {siteInfo.tagline}
+            </p>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
-              Dedicated to serving the elderly, orphans, and physically
-              challenged individuals with care, dignity, and compassion through
-              our safe homes.
+              Serving since {FOUNDED_YEAR}. We rescue homeless people from the
+              streets, care for them in our shelters, and take healthcare to
+              families who cannot reach it.
             </p>
             <div className="flex space-x-3">
+              <a
+                href={`https://wa.me/91${siteInfo.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center transition hover:bg-green-600"
+              >
+                <i className="fa-brands fa-whatsapp"></i>
+              </a>
               {siteInfo.socials.map((social, index) => (
                 <a
                   key={social.name}
@@ -83,11 +98,33 @@ export default function Footer() {
                 </li>
                 <li className="flex items-center gap-3">
                   <i className="fa-solid fa-phone text-brand-red"></i>
-                  <span>{siteInfo.phone}</span>
+                  <a
+                    href={`tel:${siteInfo.phone.replace(/\s/g, '')}`}
+                    className="hover:text-white transition"
+                  >
+                    {siteInfo.phone}
+                  </a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <i className="fa-brands fa-whatsapp text-green-500"></i>
+                  <a
+                    href={`https://wa.me/91${siteInfo.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
+                    {siteInfo.whatsappDisplay}{' '}
+                    <span className="text-gray-500">(WhatsApp)</span>
+                  </a>
                 </li>
                 <li className="flex items-center gap-3">
                   <i className="fa-solid fa-envelope text-brand-red"></i>
-                  <span>{siteInfo.email}</span>
+                  <a
+                    href={`mailto:${siteInfo.email}`}
+                    className="hover:text-white transition break-all"
+                  >
+                    {siteInfo.email}
+                  </a>
                 </li>
                 <li className="flex items-start gap-3">
                   <i className="fa-solid fa-clock mt-1 text-brand-red"></i>

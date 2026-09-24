@@ -1,10 +1,14 @@
 "use client";
 
 import { useCallback, useState } from 'react';
-import DonationModal from './DonationModal';
+import dynamic from 'next/dynamic';
+
+// The modal is only needed once someone decides to donate, so keep it out of
+// the page's initial JavaScript and fetch it on the click.
+const DonationModal = dynamic(() => import('./DonationModal'), { ssr: false });
 
 /**
- * Buttons that open the donation modal. Kept separate from the donate page so
+ * Button that opens the donation modal. Kept separate from the donate page so
  * the page itself can stay a server component.
  */
 export default function DonateCTA({

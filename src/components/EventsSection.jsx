@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import EmptyState from './EmptyState';
+import SmartImage from './SmartImage';
 
 export default function EventsSection({
   events,
@@ -35,10 +36,12 @@ export default function EventsSection({
               >
                 <div className="relative h-60 overflow-hidden">
                   {event.image ? (
-                    <img
+                    <SmartImage
                       src={event.image}
                       alt={event.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+                      className="object-cover group-hover:scale-105 transition duration-500"
                     />
                   ) : (
                     <div className="w-full h-full bg-brand-softblue flex items-center justify-center text-brand-blue text-4xl">

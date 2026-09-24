@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* FontAwesome, self-hosted. Loading this from cdnjs cost ~6.5s of blocked
+   first paint: React discovered the <link> late, and it is render-blocking on
+   a third-party origin. Bundled here it ships inside the stylesheet Next
+   already requests, and the webfonts are served from /public. */
+@import "./fontawesome/all.min.css";
+
 /* Brand tokens (design 3) — Tailwind v4 reads these to generate utilities
    like bg-brand-blue, text-brand-red, font-heading, font-body. */
 @theme {

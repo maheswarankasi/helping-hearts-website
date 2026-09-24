@@ -1,13 +1,21 @@
 import Link from 'next/link';
-import { heroImages, siteInfo } from '@/lib/siteContent';
+import SmartImage from './SmartImage';
+import { FOUNDED_YEAR, heroImages, siteInfo } from '@/lib/siteContent';
 
 export default function Hero() {
   return (
-    <section
-      className="pt-32 pb-20 lg:pt-40 lg:pb-32 relative bg-cover bg-center flex items-center"
-      style={{ backgroundImage: `url('${heroImages.background}')` }}
-    >
-      {/* Smooth gradient overlay */}
+    <section className="pt-32 pb-20 lg:pt-40 lg:pb-32 relative flex items-center">
+      {/* Background image — an optimised <Image> rather than a CSS
+          background, so it can be resized, served as WebP, and preloaded. */}
+      <SmartImage
+        src={heroImages.background}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        quality={60}
+        className="object-cover"
+      />
       <div className="absolute inset-0 hero-overlay"></div>
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10 flex flex-col lg:flex-row items-center gap-16">
@@ -16,7 +24,7 @@ export default function Hero() {
           <div className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-6">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest">
               <span className="w-2 h-2 rounded-full bg-brand-red"></span>{' '}
-              Spreading Hope
+              Spreading Hope Since {FOUNDED_YEAR}
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest">
               <i className="fa-solid fa-certificate text-brand-red"></i> Reg.
@@ -31,10 +39,14 @@ export default function Hero() {
             </span>
           </h1>
 
+          <p className="font-heading text-xl md:text-2xl font-bold text-blue-100 mb-5 italic">
+            &ldquo;{siteInfo.tagline}&rdquo;
+          </p>
+
           <p className="text-lg text-blue-50 mb-10 max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
-            We are a dedicated non-profit providing shelter, nourishment, and
-            boundless care to the elderly, specially-abled, and orphaned
-            children.
+            Since {FOUNDED_YEAR} we have rescued homeless people from the
+            streets, given them shelter and care, and taken healthcare to
+            lakhs of families across Coimbatore.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
@@ -57,18 +69,22 @@ export default function Hero() {
         {/* Right image collage */}
         <div className="w-full lg:w-1/2 relative h-[500px]">
           <div className="absolute right-0 top-0 w-4/5 h-[450px] rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/50 z-10 transform hover:rotate-1 transition duration-500">
-            <img
+            <SmartImage
               src={heroImages.primary}
               alt="Volunteer caring for a senior resident"
-              className="w-full h-full object-cover"
+              fill
+              sizes="(max-width: 1024px) 80vw, 460px"
+              className="object-cover"
             />
           </div>
 
           <div className="absolute left-0 bottom-0 w-3/5 h-64 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/50 z-20 transform -rotate-3 hover:rotate-0 transition duration-500">
-            <img
+            <SmartImage
               src={heroImages.secondary}
               alt="Children at our shelter"
-              className="w-full h-full object-cover"
+              fill
+              sizes="(max-width: 1024px) 60vw, 340px"
+              className="object-cover"
             />
           </div>
 
@@ -77,14 +93,14 @@ export default function Hero() {
             style={{ animationDuration: '3s' }}
           >
             <div className="w-12 h-12 bg-gradient-to-br from-brand-red to-red-600 text-white rounded-full flex items-center justify-center text-xl shadow-inner">
-              <i className="fa-solid fa-house-chimney-user"></i>
+              <i className="fa-solid fa-hand-holding-heart"></i>
             </div>
             <div>
               <p className="font-heading font-black text-2xl text-brand-blue leading-none">
-                20+
+                265
               </p>
               <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">
-                Active Shelters
+                Rescued From Streets
               </p>
             </div>
           </div>

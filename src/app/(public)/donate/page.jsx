@@ -1,40 +1,14 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import DonateCTA from '@/components/DonateCTA';
-import { donationImpact, siteInfo } from '@/lib/siteContent';
+import ImpactStats from '@/components/ImpactStats';
+import { FOUNDED_YEAR, donationAllocations, siteInfo } from '@/lib/siteContent';
 
 export const metadata = {
   title: 'Donate Us | Helping Hearts NGO',
   description:
-    'Support the elderly, specially-abled, and orphaned children in our care. Donate directly by scanning our UPI QR code.',
+    'Help us rescue homeless people from the streets, run our shelters, and take healthcare to families across Coimbatore. Donate directly by scanning our UPI QR code.',
 };
-
-const allocations = [
-  {
-    icon: 'fa-solid fa-utensils',
-    label: 'Food & Nutrition',
-    description:
-      'Three meals a day, milk, and fruit for every resident across our homes.',
-  },
-  {
-    icon: 'fa-solid fa-briefcase-medical',
-    label: 'Medical Care',
-    description:
-      'Routine medicines, doctor visits, physiotherapy, and emergency treatment.',
-  },
-  {
-    icon: 'fa-solid fa-book-open-reader',
-    label: 'Education',
-    description:
-      'School fees, books, uniforms, and tuition for the children in our care.',
-  },
-  {
-    icon: 'fa-solid fa-screwdriver-wrench',
-    label: 'Running Our Homes',
-    description:
-      'Rent, electricity, water, repairs, and the salaries of our care staff.',
-  },
-];
 
 const steps = [
   {
@@ -69,7 +43,7 @@ export default function DonatePage() {
       <PageHeader
         eyebrow="Every Rupee Counts"
         title="Donate Us"
-        description="We are funded almost entirely by individuals. Your gift pays for food, medicine, schooling, and the roof over our residents' heads."
+        description="Love you give might help somebody live. Your gift pays for street rescues, the running of our shelters, and healthcare that reaches families who cannot afford it."
         breadcrumb="Donate Us"
       />
 
@@ -82,12 +56,13 @@ export default function DonatePage() {
             </h2>
             <p className="text-gray-500 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
               Donating takes under a minute. Share a few details, scan our UPI
-              QR code, and your gift goes straight to the home that needs it.
+              QR code, and your gift goes straight into the work â€” no
+              middlemen, no processing fees taken out.
             </p>
             <DonateCTA />
             <p className="text-sm text-gray-500 mt-6">
               <i className="fa-solid fa-shield-halved text-brand-blue mr-2"></i>
-              No payment gateway, no card details — you pay directly from your
+              No payment gateway, no card details â€” you pay directly from your
               own UPI app.
             </p>
           </div>
@@ -104,7 +79,7 @@ export default function DonatePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {allocations.map((item, index) => (
+            {donationAllocations.map((item, index) => (
               <div
                 key={item.label}
                 className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 flex gap-6 group hover:-translate-y-2 transition-transform duration-300"
@@ -132,46 +107,12 @@ export default function DonatePage() {
         </div>
       </section>
 
-      {/* What an amount covers */}
-      <section className="py-16 lg:py-20 bg-white border-y border-gray-100">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="text-center mb-14">
-            <h2 className="font-heading text-4xl md:text-5xl font-black text-gray-900 mb-4">
-              What Your Gift Covers
-            </h2>
-            <div className="w-16 h-2 bg-brand-red mx-auto rounded-full mb-6"></div>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-              Indicative figures based on our average monthly costs. Give any
-              amount you are comfortable with.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {donationImpact.map((tier, index) => (
-              <div
-                key={tier.amount}
-                className="bg-brand-cream p-8 rounded-[2rem] border border-gray-100 text-center hover:-translate-y-3 transition-transform duration-300 group"
-              >
-                <div
-                  className={`w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-5 transition-all duration-300 group-hover:scale-110 group-hover:text-white ${
-                    index % 2 === 0
-                      ? 'bg-brand-softblue text-brand-blue group-hover:bg-brand-blue'
-                      : 'bg-red-50 text-brand-red group-hover:bg-brand-red'
-                  }`}
-                >
-                  <i className={tier.icon}></i>
-                </div>
-                <p className="font-heading font-black text-3xl text-brand-blue mb-3">
-                  {tier.amount}
-                </p>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {tier.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Real, organisation-supplied impact figures */}
+      <ImpactStats
+        title="What Your Gift Has Already Done"
+        subtitle="These are the figures behind the work your donation funds."
+        className="py-16 lg:py-20 bg-white border-y border-gray-100"
+      />
 
       {/* How donating works */}
       <section className="py-16 lg:py-20 bg-brand-cream">
@@ -261,8 +202,9 @@ export default function DonatePage() {
                 </span>
               </h2>
               <p className="text-blue-100 text-lg max-w-xl mx-auto mb-10">
-                No amount is too small. Twenty homes and hundreds of residents
-                are kept going by people who each gave a little.
+                No amount is too small. Since {FOUNDED_YEAR} this work has been
+                kept going by ordinary people who each gave a little, and by
+                volunteers who gave their time.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <DonateCTA

@@ -40,6 +40,12 @@ export function cleanImageList(images) {
   return images.filter((url) => typeof url === 'string' && url.trim() !== '');
 }
 
+/** Formats an amount as Indian rupees, e.g. 1500 -> "₹1,500". */
+export function formatAmount(amount) {
+  if (typeof amount !== 'number' || !Number.isFinite(amount)) return '—';
+  return `₹${amount.toLocaleString('en-IN')}`;
+}
+
 /** Treats empty strings and whitespace as "not provided". */
 export function optionalText(value) {
   if (typeof value !== 'string') return null;

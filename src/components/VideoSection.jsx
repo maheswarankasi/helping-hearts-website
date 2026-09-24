@@ -1,3 +1,4 @@
+import VideoEmbed from './VideoEmbed';
 import { impactVideo } from '@/lib/siteContent';
 
 export default function VideoSection() {
@@ -11,14 +12,11 @@ export default function VideoSection() {
           {impactVideo.subtitle}
         </p>
 
-        <div className="relative w-full overflow-hidden rounded-[2.5rem] shadow-2xl border-8 border-white bg-gray-900 aspect-video group">
-          <iframe
-            className="w-full h-full absolute top-0 left-0"
-            src={impactVideo.embedUrl}
-            title="NGO Impact Video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
+        <div className="relative w-full overflow-hidden rounded-[2.5rem] shadow-2xl border-8 border-white bg-gray-900 aspect-video">
+          <VideoEmbed
+            youtubeId={impactVideo.youtubeId}
+            title="Helping Hearts impact video"
+          />
         </div>
       </div>
     </section>

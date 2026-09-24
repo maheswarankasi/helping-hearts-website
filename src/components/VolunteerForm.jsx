@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { addVolunteer } from '@/lib/volunteers';
+import { submitVolunteer } from '@/app/actions';
 import { volunteerAvailability, volunteerInterests } from '@/lib/siteContent';
 
 const EMPTY_FORM = {
@@ -42,6 +42,25 @@ function validate(values) {
   return errors;
 }
 
+/**
+ * Defined at module scope on purpose. Declaring it inside the component body
+ * creates a brand new component type on every render, which defeats the React
+ * Compiler's memoisation and remounts the node each keystroke.
+ */
+function FieldError({ id, message }) {
+  if (!message) return null;
+
+  return (
+    <p
+      id={id}
+      className="mt-2 text-sm font-medium text-brand-red flex items-center gap-2"
+    >
+      <i className="fa-solid fa-circle-exclamation"></i>
+      {message}
+    </p>
+  );
+}
+
 export default function VolunteerForm() {
   const [values, setValues] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
@@ -74,19 +93,19 @@ export default function VolunteerForm() {
     if (Object.keys(nextErrors).length > 0) return;
 
     setIsSaving(true);
-    try {
-      await addVolunteer(values);
+    const result = await submitVolunteer(values);
+    setIsSaving(false);
+
+    if (result.ok) {
       setValues(EMPTY_FORM);
       setHasSubmitted(false);
       setIsDone(true);
-    } catch (error) {
-      console.error('Volunteer sign-up failed:', error);
-      setSaveError(
-        'Sorry, we could not save your details just now. Please try again, or call our office.'
-      );
-    } finally {
-      setIsSaving(false);
+      return;
     }
+
+    // The server re-validates, so it can reject input the browser let through.
+    if (result.errors) setErrors(result.errors);
+    if (result.message) setSaveError(result.message);
   };
 
   const fieldClasses = (name) =>
@@ -95,17 +114,6 @@ export default function VolunteerForm() {
         ? 'border-brand-red focus:ring-red-100'
         : 'border-gray-200 focus:border-brand-blue focus:ring-blue-100'
     }`;
-
-  const FieldError = ({ name }) =>
-    errors[name] ? (
-      <p
-        id={`${name}-error`}
-        className="mt-2 text-sm font-medium text-brand-red flex items-center gap-2"
-      >
-        <i className="fa-solid fa-circle-exclamation"></i>
-        {errors[name]}
-      </p>
-    ) : null;
 
   if (isDone) {
     return (
@@ -150,7 +158,7 @@ export default function VolunteerForm() {
             aria-describedby={errors.name ? 'name-error' : undefined}
             className={fieldClasses('name')}
           />
-          <FieldError name="name" />
+          <FieldError id="name-error" message={errors.name} />
         </div>
 
         <div>
@@ -169,7 +177,7 @@ export default function VolunteerForm() {
             aria-describedby={errors.email ? 'email-error' : undefined}
             className={fieldClasses('email')}
           />
-          <FieldError name="email" />
+          <FieldError id="email-error" message={errors.email} />
         </div>
 
         <div>
@@ -188,7 +196,7 @@ export default function VolunteerForm() {
             aria-describedby={errors.phone ? 'phone-error' : undefined}
             className={fieldClasses('phone')}
           />
-          <FieldError name="phone" />
+          <FieldError id="phone-error" message={errors.phone} />
         </div>
 
         <div>
@@ -207,7 +215,7 @@ export default function VolunteerForm() {
             aria-describedby={errors.city ? 'city-error' : undefined}
             className={fieldClasses('city')}
           />
-          <FieldError name="city" />
+          <FieldError id="city-error" message={errors.city} />
         </div>
 
         <div>
@@ -232,7 +240,7 @@ export default function VolunteerForm() {
               </option>
             ))}
           </select>
-          <FieldError name="interest" />
+          <FieldError id="interest-error" message={errors.interest} />
         </div>
 
         <div>
@@ -261,7 +269,7 @@ export default function VolunteerForm() {
               </option>
             ))}
           </select>
-          <FieldError name="availability" />
+          <FieldError id="availability-error" message={errors.availability} />
         </div>
       </div>
 

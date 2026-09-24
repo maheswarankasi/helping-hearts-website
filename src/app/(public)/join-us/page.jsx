@@ -1,32 +1,32 @@
 import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import VolunteerForm from '@/components/VolunteerForm';
-import { siteInfo } from '@/lib/siteContent';
+import { FOUNDED_YEAR, siteInfo } from '@/lib/siteContent';
 
 export const metadata = {
   title: 'Join Us | Helping Hearts NGO',
   description:
-    'Volunteer with Helping Hearts in Coimbatore — spend time with our residents, teach our children, or lend your professional skills.',
+    'Volunteer with Helping Hearts in Coimbatore — join street rescue drives, help at our shelters, support health camps, or lend your professional skills.',
 };
 
 const reasons = [
   {
-    icon: 'fa-solid fa-people-group',
-    title: 'Be Present',
+    icon: 'fa-solid fa-users-rays',
+    title: 'Students Started This',
     description:
-      'An afternoon of conversation, a shared meal, or a game of carrom means more to our residents than almost anything else.',
+      `Helping Hearts was begun in ${FOUNDED_YEAR} by engineering students who decided life was more than academics. Young volunteers are still our greatest strength.`,
+  },
+  {
+    icon: 'fa-solid fa-hand-holding-heart',
+    title: 'Be There On the Ground',
+    description:
+      'Join a street rescue drive, help at a health camp, spend an afternoon with our residents. This is hands-on work, not paperwork.',
   },
   {
     icon: 'fa-solid fa-graduation-cap',
-    title: 'Share a Skill',
+    title: 'Share Any Skill',
     description:
-      'Teach, tutor, cut hair, fix wiring, keep our books, run a health camp — whatever you are good at, we can use it.',
-  },
-  {
-    icon: 'fa-solid fa-calendar-check',
-    title: 'Give What You Can',
-    description:
-      'Some volunteers come weekly for years, others help at one event a year. Both matter, and neither is too small.',
+      'Medical, photography, accounts, driving, cooking, social media — we extend our support to any cause, so almost any skill finds a use.',
   },
 ];
 
@@ -63,7 +63,7 @@ export default function JoinUsPage() {
       <PageHeader
         eyebrow="Become a Volunteer"
         title="Join Us"
-        description="Our homes run on the time and goodwill of ordinary people. Whatever you can offer — an hour a month or a skill we badly need — there is a place for you here."
+        description="Our team's greatest strength is the consistent support and untiring efforts of the youth. Whatever you can offer — an hour a month or a skill we badly need — there is a place for you here."
         breadcrumb="Join Us"
       />
 
@@ -216,8 +216,8 @@ export default function JoinUsPage() {
                   Prefer to give instead?
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                  If time is tight, a donation goes just as far. It pays for
-                  food, medicines, and school fees.
+                  If time is tight, a donation goes just as far. It funds
+                  street rescues, our shelters, and our health camps.
                 </p>
                 <Link
                   href="/donate"

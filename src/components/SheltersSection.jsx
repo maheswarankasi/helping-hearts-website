@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import EmptyState from './EmptyState';
+import SmartImage from './SmartImage';
 
 const toneStyles = {
   blue: {
@@ -65,10 +66,12 @@ export default function SheltersSection({
                     className="w-full md:w-1/2 h-72 md:h-[350px] overflow-hidden rounded-[2rem] relative block"
                   >
                     {shelter.image ? (
-                      <img
+                      <SmartImage
                         src={shelter.image}
                         alt={shelter.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 560px"
+                        className="object-cover group-hover:scale-105 transition duration-700"
                       />
                     ) : (
                       <div className="w-full h-full bg-brand-softblue flex items-center justify-center text-brand-blue text-4xl">

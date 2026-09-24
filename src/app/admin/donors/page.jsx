@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { formatAmount, getDonors } from '@/lib/donors';
-import { formatDateParts } from '@/lib/firestoreUtils';
+import { getDonors } from '@/lib/donors';
+import { formatAmount, formatDateParts } from '@/lib/firestoreUtils';
 
 const STATUS_STYLES = {
   awaiting_confirmation: {

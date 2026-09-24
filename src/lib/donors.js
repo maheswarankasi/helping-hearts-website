@@ -60,9 +60,3 @@ export async function getDonors() {
     .map((snap) => toDonor(snap.id, snap.data()))
     .sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
 }
-
-/** Formats an amount as Indian rupees, e.g. 1500 -> "₹1,500". */
-export function formatAmount(amount) {
-  if (amount === null) return '—';
-  return `₹${amount.toLocaleString('en-IN')}`;
-}

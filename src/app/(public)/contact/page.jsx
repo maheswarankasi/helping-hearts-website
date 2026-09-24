@@ -22,6 +22,12 @@ const contactCards = [
     tone: 'red',
   },
   {
+    icon: 'fa-brands fa-whatsapp',
+    label: 'WhatsApp',
+    lines: [siteInfo.whatsappDisplay, 'Message us any time'],
+    tone: 'red',
+  },
+  {
     icon: 'fa-solid fa-envelope',
     label: 'Email Us',
     lines: [siteInfo.email, 'We reply within 2 working days'],
@@ -47,7 +53,7 @@ export default function ContactPage() {
       {/* Contact detail cards */}
       <section className="py-16 lg:py-20 bg-brand-cream">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {contactCards.map((card) => (
               <div
                 key={card.label}
@@ -113,6 +119,20 @@ export default function ContactPage() {
                       <i className="fa-solid fa-phone"></i>
                     </span>
                     <span className="font-bold">{siteInfo.phone}</span>
+                  </a>
+
+                  <a
+                    href={`https://wa.me/91${siteInfo.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-4 mb-4 hover:bg-white hover:text-brand-blue transition-all"
+                  >
+                    <span className="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center shrink-0">
+                      <i className="fa-brands fa-whatsapp"></i>
+                    </span>
+                    <span className="font-bold">
+                      {siteInfo.whatsappDisplay}
+                    </span>
                   </a>
 
                   <a

@@ -16,23 +16,17 @@ const dmSans = localFont({
 });
 
 export const metadata = {
-  title: 'Helping Hearts NGO | Homes of Hope',
+  title: 'Helping Hearts NGO | Love You Give Might Help Somebody Live',
   description:
-    'Helping Hearts is a Coimbatore based non-profit providing shelter, nourishment and boundless care to the elderly, specially-abled and orphaned children.',
+    'Helping Hearts is a Coimbatore non-profit started in 2009 by a group of engineering students. We rescue homeless people from the streets, run shelters and care centres, and take healthcare access to families across Coimbatore District.',
   icons: { icon: '/helping-hearts.jpeg' },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        {/* FontAwesome icons used across the site */}
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        />
-      </head>
-
+      {/* FontAwesome is imported from globals.css rather than linked from a
+          CDN — see the note there. No <head> overrides are needed. */}
       <body
         className={`${outfit.variable} ${dmSans.variable} font-body text-gray-700 bg-brand-cream antialiased overflow-x-hidden relative`}
       >

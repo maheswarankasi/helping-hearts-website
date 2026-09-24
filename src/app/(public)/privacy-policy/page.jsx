@@ -11,7 +11,7 @@ export const metadata = {
 const LAST_UPDATED = '23 September 2026';
 
 const intro = [
-  `Helping Hearts (registration number ${siteInfo.registrationNumber}) is committed to protecting the privacy of everyone who supports our work — donors, volunteers, well-wishers, and the residents of our homes.`,
+  `Helping Hearts (registration number ${siteInfo.registrationNumber}) is committed to protecting the privacy of everyone who supports our work — donors, volunteers, well-wishers, and the people we rescue and shelter.`,
   'This Privacy Policy explains what information we collect through this website and our offline activities, why we collect it, how we look after it, and the choices you have. By using this website you agree to the practices described here.',
 ];
 
@@ -75,8 +75,8 @@ const sections = [
       {
         list: [
           'We seek consent before photographing residents, and we honour a refusal without question or consequence.',
-          'We do not publish the full name, address, school, medical condition, or family circumstances of any child in our care.',
-          'We do not publish images that we believe would compromise a resident’s dignity, safety, or privacy.',
+          'We do not publish the full name, address, medical condition, or family circumstances of anyone in our care.',
+          'We do not publish images that we believe would compromise a resident’s dignity, safety, or privacy — including photographs taken during a street rescue, when a person is least able to consent.',
           'Where a story needs to be told, we may change names and identifying details.',
           'If you or a family member appears in a photograph on this website and you would like it removed, contact us and we will take it down.',
         ],
@@ -84,11 +84,19 @@ const sections = [
     ],
   },
   {
-    heading: 'Children’s Privacy',
+    heading: 'The People We Rescue and Shelter',
     body: [
-      'Many of the people we care for are children. We do not knowingly collect personal information online from anyone under the age of 18. If you are under 18, please involve a parent or guardian before contacting us or making a donation.',
-      'Information about children living in our homes is held offline, shared only with the staff, medical professionals, educators, and statutory authorities who need it, and is never published on this website or given to donors.',
-      'If you believe a child has provided us information online, or that information about a child in our care has been published in error, contact us immediately and we will remove it.',
+      'The people we bring in from the streets are, by definition, at their most vulnerable. Their information is handled separately from everything described above and with considerably more care.',
+      {
+        list: [
+          'Records about residents are held offline, not on this website.',
+          'They are shared only with the staff, medical professionals, and statutory authorities who genuinely need them.',
+          'They are never given to donors, however generous, and never used in fundraising material without the resident’s consent.',
+          'Where a resident is a child or is unable to give informed consent, we do not publish their name, photograph, or circumstances at all.',
+        ],
+      },
+      'We also do not knowingly collect personal information online from anyone under the age of 18. If you are under 18, please involve a parent or guardian before contacting us or making a donation.',
+      'If you believe information about a resident has been published in error, contact us immediately and we will remove it.',
     ],
   },
   {

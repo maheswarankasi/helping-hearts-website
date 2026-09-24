@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import PhotoGallery from '@/components/PhotoGallery';
+import SmartImage from '@/components/SmartImage';
 import VolunteerCTA from '@/components/VolunteerCTA';
 import { getShelterById } from '@/lib/shelters';
 
@@ -31,10 +32,14 @@ export default async function ShelterDetailsPage({ params }) {
       {/* Hero banner uses the first uploaded photo */}
       <section className="relative pt-36 pb-16 lg:pt-44 lg:pb-24 bg-brand-blue overflow-hidden">
         {shelter.image && (
-          <img
+          <SmartImage
             src={shelter.image}
             alt={shelter.name}
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            priority
+            sizes="100vw"
+            quality={60}
+            className="object-cover"
           />
         )}
         <div className="absolute inset-0 hero-overlay"></div>

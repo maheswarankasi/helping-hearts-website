@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { navLinks, siteInfo } from '@/lib/siteContent';
 
@@ -46,14 +47,23 @@ export default function Header() {
             <span>
               <i className="fa-solid fa-phone mr-2"></i> {siteInfo.phone}
             </span>
-            <span>
+            <a
+              href={`https://wa.me/91${siteInfo.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-brand-red transition"
+            >
+              <i className="fa-brands fa-whatsapp mr-2 text-green-600"></i>{' '}
+              {siteInfo.whatsappDisplay}
+            </a>
+            <span className="hidden lg:inline">
               <i className="fa-solid fa-envelope mr-2"></i> {siteInfo.email}
             </span>
-            <span className="hidden lg:inline">
+            <span className="hidden xl:inline">
               <i className="fa-solid fa-location-dot mr-2"></i>{' '}
               {siteInfo.shortAddress}
             </span>
-            <span className="hidden xl:inline">
+            <span className="hidden 2xl:inline">
               <i className="fa-solid fa-clock mr-2"></i> {siteInfo.officeHours}
             </span>
           </div>
@@ -88,10 +98,13 @@ export default function Header() {
           }`}
         >
           <Link href="/" className="flex items-center">
-            <img
+            <Image
               src={siteInfo.logo}
               alt={siteInfo.name}
-              className="h-12 object-contain rounded"
+              width={132}
+              height={48}
+              priority
+              className="h-12 w-auto object-contain rounded"
             />
           </Link>
 

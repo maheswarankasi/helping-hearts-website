@@ -1,6 +1,6 @@
 import PageHeader from '@/components/PageHeader';
 import LegalDocument from '@/components/LegalDocument';
-import { siteInfo } from '@/lib/siteContent';
+import { FOUNDED_YEAR, siteInfo } from '@/lib/siteContent';
 
 export const metadata = {
   title: 'Terms & Conditions | Helping Hearts NGO',
@@ -11,7 +11,7 @@ export const metadata = {
 const LAST_UPDATED = '23 September 2026';
 
 const intro = [
-  `These Terms & Conditions govern your use of this website and any donation, volunteering, or other interaction you have with Helping Hearts (registration number ${siteInfo.registrationNumber}), a non-profit organisation based in Coimbatore, Tamil Nadu, India.`,
+  `These Terms & Conditions govern your use of this website and any donation, volunteering, or other interaction you have with Helping Hearts (registration number ${siteInfo.registrationNumber}), a non-profit organisation based in Coimbatore, Tamil Nadu, India, serving since ${FOUNDED_YEAR}.`,
   'Please read them carefully. By browsing this website, submitting a form, donating, or volunteering, you confirm that you have read, understood, and accepted these terms. If you do not agree with them, please do not use this website.',
 ];
 
@@ -19,8 +19,8 @@ const sections = [
   {
     heading: 'About Us',
     body: [
-      `Helping Hearts is a registered non-profit organisation operating shelters and care programmes for the elderly, specially-abled adults, and orphaned children. Our registered office is at ${siteInfo.address[0]} ${siteInfo.address[1]}.`,
-      `Our registration number is ${siteInfo.registrationNumber}. You can reach us on ${siteInfo.phone} or at ${siteInfo.email} during our office hours, ${siteInfo.officeHours}.`,
+      `Helping Hearts is a registered non-profit organisation founded in ${FOUNDED_YEAR} by a group of college students in Coimbatore. We rescue homeless people from the streets, run shelters and care centres across districts, and operate public healthcare access projects. Our registered office is at ${siteInfo.address[0]} ${siteInfo.address[1]}.`,
+      `Our registration number is ${siteInfo.registrationNumber}. You can reach us on ${siteInfo.phone}, on WhatsApp at ${siteInfo.whatsappDisplay}, or at ${siteInfo.email} during our office hours, ${siteInfo.officeHours}.`,
     ],
   },
   {
