@@ -13,24 +13,32 @@ const contactCards = [
     icon: 'fa-solid fa-location-dot',
     label: 'Visit Us',
     lines: siteInfo.address,
+    href: siteInfo.mapUrl || 'https://maps.app.goo.gl/829XT7dxZnk52BfMA',
+    external: true,
     tone: 'blue',
   },
   {
     icon: 'fa-solid fa-phone',
     label: 'Call Us',
     lines: [siteInfo.phone, siteInfo.officeHours],
+    href: `tel:${siteInfo.phone.replace(/\s+/g, '')}`,
+    external: false,
     tone: 'red',
   },
   {
     icon: 'fa-brands fa-whatsapp',
     label: 'WhatsApp',
     lines: [siteInfo.whatsappDisplay, 'Message us any time'],
+    href: `https://wa.me/91${siteInfo.whatsapp}`,
+    external: true,
     tone: 'red',
   },
   {
     icon: 'fa-solid fa-envelope',
     label: 'Email Us',
     lines: [siteInfo.email, 'We reply within 2 working days'],
+    href: `mailto:${siteInfo.email}`,
+    external: false,
     tone: 'blue',
   },
 ];
@@ -55,9 +63,12 @@ export default function ContactPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {contactCards.map((card) => (
-              <div
+              <a
                 key={card.label}
-                className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-2 transition-transform duration-300 group"
+                href={card.href}
+                target={card.external ? '_blank' : undefined}
+                rel={card.external ? 'noopener noreferrer' : undefined}
+                className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-2 transition-transform duration-300 group block"
               >
                 <div
                   className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-all duration-300 group-hover:scale-110 ${
@@ -66,15 +77,15 @@ export default function ContactPage() {
                 >
                   <i className={card.icon}></i>
                 </div>
-                <h3 className="font-heading text-xl font-bold text-gray-900 mb-3">
+                <h3 className="font-heading text-xl font-bold text-gray-900 mb-3 group-hover:text-brand-blue transition-colors">
                   {card.label}
                 </h3>
                 {card.lines.map((line) => (
-                  <p key={line} className="text-gray-600 leading-relaxed">
+                  <p key={line} className="text-gray-600 leading-relaxed text-sm">
                     {line}
                   </p>
                 ))}
-              </div>
+              </a>
             ))}
           </div>
         </div>

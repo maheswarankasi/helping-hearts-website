@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   reactCompiler: true,
 
   // Hosts the image optimiser is allowed to fetch from. Keep this list tight:

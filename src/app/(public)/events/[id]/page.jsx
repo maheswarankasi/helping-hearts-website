@@ -5,7 +5,8 @@ import SmartImage from '@/components/SmartImage';
 import VolunteerCTA from '@/components/VolunteerCTA';
 import { getEventById } from '@/lib/events';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

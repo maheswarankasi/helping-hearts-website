@@ -9,8 +9,9 @@ import VolunteerCTA from '@/components/VolunteerCTA';
 import { getEvents } from '@/lib/events';
 import { getShelters } from '@/lib/shelters';
 
-// Re-read Firestore periodically so admin additions show up without a redeploy
-export const revalidate = 300;
+// Re-read Firestore on each request so admin additions show up immediately without stale cache
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   const [events, shelters] = await Promise.all([

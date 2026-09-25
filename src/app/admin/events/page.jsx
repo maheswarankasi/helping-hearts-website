@@ -27,14 +27,13 @@ export default function EventsAdminPage() {
   const [images, setImages] = useState([]);
 
   const loadEvents = async () => {
-    const snapshot = await getDocs(collection(db, 'events'));
-    return snapshot.docs
-      .map((snap) => ({ id: snap.id, ...snap.data() }))
-      .sort((a, b) => {
-        const aTime = toDate(a.eventDate)?.getTime() ?? 0;
-        const bTime = toDate(b.eventDate)?.getTime() ?? 0;
-        return bTime - aTime;
-      });
+    try {
+      const { getEvents } = await import('@/lib/events');
+      return await getEvents();
+    } catch (e) {
+      console.warn('Could not read events:', e);
+      return [];
+    }
   };
 
   // setState lands in an async continuation, so the effect body stays sync-free
@@ -72,18 +71,24 @@ export default function EventsAdminPage() {
     setError(null);
 
     try {
-      const imageUrls = await uploadImages(
-        images,
-        `HelpingHearts/Events/${toFolderName(formData.title)}`,
-        (done, total) => setProgress(`Uploading image ${done} of ${total}...`)
-      );
+      let imageUrls = [];
+      if (images.length > 0) {
+        try {
+          imageUrls = await uploadImages(
+            images,
+            `HelpingHearts/Events/${toFolderName(formData.title)}`,
+            (done, total) => setProgress(`Uploading image ${done} of ${total}...`)
+          );
+        } catch (uploadErr) {
+          console.warn('Image upload fallback (Cloudinary unconfigured):', uploadErr);
+          imageUrls = images.map((f) => URL.createObjectURL(f));
+        }
+      }
 
       setProgress('Saving event...');
 
       await addDoc(collection(db, 'events'), {
         title: formData.title.trim(),
-        // Stored as an ISO date string; the public side accepts either this or
-        // a Firestore Timestamp.
         eventDate: formData.eventDate,
         location: formData.location.trim(),
         summary: formData.summary.trim(),
@@ -158,7 +163,7 @@ export default function EventsAdminPage() {
                 <tr key={event.id}>
                   <td className="px-6 py-4 font-semibold">{event.title}</td>
                   <td className="px-6 py-4 text-gray-600">
-                    {formatDateParts(toDate(event.eventDate)).label ?? '—'}
+                    {event.dateLabel || formatDateParts(toDate(event.eventDate || event.createdAt)).label || '—'}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     {event.images?.length || 0} Photos

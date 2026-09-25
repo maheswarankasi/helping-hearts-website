@@ -9,7 +9,8 @@ export const metadata = {
     'Discover the safe havens we operate — each shelter is designed to provide care, comfort, and a loving environment.',
 };
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function PublicSheltersPage() {
   const shelters = await getShelters();

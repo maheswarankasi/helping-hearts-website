@@ -5,7 +5,8 @@ import SmartImage from '@/components/SmartImage';
 import VolunteerCTA from '@/components/VolunteerCTA';
 import { getShelterById } from '@/lib/shelters';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

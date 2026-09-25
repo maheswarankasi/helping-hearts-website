@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore, getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,10 +16,31 @@ export const isFirebaseConfigured = Boolean(
 );
 
 // Guard against re-initialising during Next's hot reload / SSR passes.
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const app = getApps().length
+  ? getApp()
+  : initializeApp(
+      isFirebaseConfigured
+        ? firebaseConfig
+        : {
+            apiKey: 'AIzaSyDemoDummyKeyForAppletEvaluation',
+            authDomain: 'helping-hearts-demo.firebaseapp.com',
+            projectId: 'helping-hearts-demo',
+            storageBucket: 'helping-hearts-demo.appspot.com',
+            messagingSenderId: '123456789012',
+            appId: '1:123456789012:web:abcdef1234567890',
+          }
+    );
 
-// Only Firestore is imported here. `firebase/auth` and `firebase/storage`
-// were pulling ~200 KB into the client bundle while going completely unused —
-// images go to Cloudinary, and the admin panel has no sign-in yet. Add them
-// back (lazily, from the module that needs them) if that changes.
-export const db = getFirestore(app);
+// Initialize Firestore using HTTP long-polling instead of WebSockets.
+// This resolves the browser WebSocket connection failures and timeouts
+// when running behind strict proxies, cloud containers, or iframes.
+let db;
+try {
+  db = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+  });
+} catch {
+  db = getFirestore(app);
+}
+
+export { db };

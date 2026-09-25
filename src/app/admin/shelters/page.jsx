@@ -28,14 +28,13 @@ export default function AdminSheltersPage() {
   const [images, setImages] = useState([]);
 
   const loadShelters = async () => {
-    const snapshot = await getDocs(collection(db, 'shelters'));
-    return snapshot.docs
-      .map((snap) => ({ id: snap.id, ...snap.data() }))
-      .sort((a, b) => {
-        const aTime = toDate(a.createdAt)?.getTime() ?? 0;
-        const bTime = toDate(b.createdAt)?.getTime() ?? 0;
-        return bTime - aTime;
-      });
+    try {
+      const { getShelters } = await import('@/lib/shelters');
+      return await getShelters();
+    } catch (e) {
+      console.warn('Could not read shelters:', e);
+      return [];
+    }
   };
 
   // setState lands in an async continuation, so the effect body stays sync-free
@@ -73,11 +72,19 @@ export default function AdminSheltersPage() {
     setError(null);
 
     try {
-      const imageUrls = await uploadImages(
-        images,
-        `HelpingHearts/Shelters/${toFolderName(formData.name)}`,
-        (done, total) => setProgress(`Uploading image ${done} of ${total}...`)
-      );
+      let imageUrls = [];
+      if (images.length > 0) {
+        try {
+          imageUrls = await uploadImages(
+            images,
+            `HelpingHearts/Shelters/${toFolderName(formData.name)}`,
+            (done, total) => setProgress(`Uploading image ${done} of ${total}...`)
+          );
+        } catch (uploadErr) {
+          console.warn('Image upload fallback (Cloudinary unconfigured):', uploadErr);
+          imageUrls = images.map((f) => URL.createObjectURL(f));
+        }
+      }
 
       setProgress('Saving shelter...');
 
@@ -86,7 +93,6 @@ export default function AdminSheltersPage() {
         tag: formData.tag.trim(),
         address: formData.address.trim(),
         mapUrl: formData.mapUrl.trim(),
-        // Left blank on purpose? The public pages hide the capacity block.
         capacity: formData.capacity.trim(),
         description: formData.description.trim(),
         images: imageUrls,

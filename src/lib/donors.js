@@ -4,6 +4,9 @@ import { optionalText, toDate } from './firestoreUtils';
 
 const COLLECTION = 'donors';
 
+// In-memory fallback when Firestore credentials are not configured
+const memoryDonors = [];
+
 /**
  * Records a donor's intent to give, before they scan the QR code.
  *
@@ -16,9 +19,19 @@ const COLLECTION = 'donors';
  */
 export async function addDonor(values) {
   if (!isFirebaseConfigured) {
-    throw new Error(
-      'Firebase is not configured. Add the NEXT_PUBLIC_FIREBASE_* values to .env.local.'
-    );
+    const id = 'mem_' + Date.now();
+    memoryDonors.unshift({
+      id,
+      name: values.name?.trim() || 'Anonymous',
+      email: values.email?.trim().toLowerCase() || '—',
+      phone: values.phone?.trim() || '—',
+      amount: Number(values.amount) || 0,
+      purpose: values.purpose || 'General fund',
+      message: values.message?.trim() || '',
+      paymentStatus: 'awaiting_confirmation',
+      createdAt: new Date(),
+    });
+    return id;
   }
 
   const docRef = await addDoc(collection(db, COLLECTION), {
@@ -53,10 +66,15 @@ function toDonor(id, data) {
 
 /** Reads all donor records, newest first. For the admin panel only. */
 export async function getDonors() {
-  if (!isFirebaseConfigured) return [];
+  if (!isFirebaseConfigured) return memoryDonors;
 
-  const snapshot = await getDocs(collection(db, COLLECTION));
-  return snapshot.docs
-    .map((snap) => toDonor(snap.id, snap.data()))
-    .sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTION));
+    return snapshot.docs
+      .map((snap) => toDonor(snap.id, snap.data()))
+      .sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
+  } catch (error) {
+    console.error('Failed to load donors from Firestore, using memory fallback:', error);
+    return memoryDonors;
+  }
 }

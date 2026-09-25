@@ -90,11 +90,16 @@ export default function Footer() {
               <ul className="space-y-4 text-sm text-gray-400">
                 <li className="flex items-start gap-3">
                   <i className="fa-solid fa-location-dot mt-1 text-brand-red"></i>
-                  <span>
+                  <a
+                    href={siteInfo.mapUrl || "https://maps.app.goo.gl/829XT7dxZnk52BfMA"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
                     {siteInfo.address[0]}
                     <br />
                     {siteInfo.address[1]}
-                  </span>
+                  </a>
                 </li>
                 <li className="flex items-center gap-3">
                   <i className="fa-solid fa-phone text-brand-red"></i>

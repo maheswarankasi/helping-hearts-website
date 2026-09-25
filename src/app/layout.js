@@ -19,12 +19,19 @@ export const metadata = {
   title: 'Helping Hearts NGO | Love You Give Might Help Somebody Live',
   description:
     'Helping Hearts is a Coimbatore non-profit started in 2009 by a group of engineering students. We rescue homeless people from the streets, run shelters and care centres, and take healthcare access to families across Coimbatore District.',
-  icons: { icon: '/helping-hearts.jpeg' },
+  icons: {
+    icon: [{ url: '/helping-hearts.jpeg', type: 'image/jpeg' }],
+    shortcut: '/helping-hearts.jpeg',
+    apple: '/helping-hearts.jpeg',
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/helping-hearts.jpeg" type="image/jpeg" />
+      </head>
       {/* FontAwesome is imported from globals.css rather than linked from a
           CDN — see the note there. No <head> overrides are needed. */}
       <body

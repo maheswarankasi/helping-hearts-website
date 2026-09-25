@@ -1,0 +1,7 @@
+{
+  "name": "Helping Hearts",
+  "description": "Helping Hearts NGO and community shelter support platform with donations, events, and volunteer management.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

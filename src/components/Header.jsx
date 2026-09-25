@@ -44,9 +44,12 @@ export default function Header() {
       <div className="bg-white text-brand-blue text-sm py-2 px-4 hidden md:block">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex space-x-6">
-            <span>
+            <a
+              href={`tel:${siteInfo.phone.replace(/\s+/g, '')}`}
+              className="hover:text-brand-red transition"
+            >
               <i className="fa-solid fa-phone mr-2"></i> {siteInfo.phone}
-            </span>
+            </a>
             <a
               href={`https://wa.me/91${siteInfo.whatsapp}`}
               target="_blank"
@@ -56,13 +59,21 @@ export default function Header() {
               <i className="fa-brands fa-whatsapp mr-2 text-green-600"></i>{' '}
               {siteInfo.whatsappDisplay}
             </a>
-            <span className="hidden lg:inline">
+            <a
+              href={`mailto:${siteInfo.email}`}
+              className="hidden lg:inline hover:text-brand-red transition"
+            >
               <i className="fa-solid fa-envelope mr-2"></i> {siteInfo.email}
-            </span>
-            <span className="hidden xl:inline">
+            </a>
+            <a
+              href={siteInfo.mapUrl || "https://maps.app.goo.gl/829XT7dxZnk52BfMA"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden xl:inline hover:text-brand-red transition"
+            >
               <i className="fa-solid fa-location-dot mr-2"></i>{' '}
               {siteInfo.shortAddress}
-            </span>
+            </a>
             <span className="hidden 2xl:inline">
               <i className="fa-solid fa-clock mr-2"></i> {siteInfo.officeHours}
             </span>
@@ -168,6 +179,28 @@ export default function Header() {
               >
                 Join Us <i className="fa-solid fa-heart"></i>
               </Link>
+              <div className="pt-3 border-t border-gray-100 flex flex-col items-center gap-2 text-xs text-gray-600">
+                <a
+                  href={`tel:${siteInfo.phone.replace(/\s+/g, '')}`}
+                  className="hover:text-brand-blue flex items-center gap-2 font-medium"
+                >
+                  <i className="fa-solid fa-phone text-brand-red"></i> {siteInfo.phone}
+                </a>
+                <a
+                  href={`mailto:${siteInfo.email}`}
+                  className="hover:text-brand-blue flex items-center gap-2 font-medium"
+                >
+                  <i className="fa-solid fa-envelope text-brand-red"></i> {siteInfo.email}
+                </a>
+                <a
+                  href={siteInfo.mapUrl || "https://maps.app.goo.gl/829XT7dxZnk52BfMA"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-brand-blue flex items-center gap-2 font-medium text-center"
+                >
+                  <i className="fa-solid fa-location-dot text-brand-red"></i> {siteInfo.shortAddress} (Open Maps)
+                </a>
+              </div>
             </div>
           </div>
         )}

@@ -4,6 +4,9 @@ import { optionalText, toDate } from './firestoreUtils';
 
 const COLLECTION = 'volunteers';
 
+// In-memory fallback when Firestore credentials are not configured
+const memoryVolunteers = [];
+
 /**
  * Saves a volunteer sign-up.
  *
@@ -13,9 +16,20 @@ const COLLECTION = 'volunteers';
  */
 export async function addVolunteer(values) {
   if (!isFirebaseConfigured) {
-    throw new Error(
-      'Firebase is not configured. Add the NEXT_PUBLIC_FIREBASE_* values to .env.local.'
-    );
+    const id = 'mem_' + Date.now();
+    memoryVolunteers.unshift({
+      id,
+      name: values.name?.trim() || 'Anonymous',
+      email: values.email?.trim().toLowerCase() || '—',
+      phone: values.phone?.trim() || '—',
+      city: values.city?.trim() || '—',
+      interest: values.interest || 'General',
+      availability: values.availability || 'Flexible',
+      message: values.message?.trim() || '',
+      status: 'new',
+      createdAt: new Date(),
+    });
+    return id;
   }
 
   const docRef = await addDoc(collection(db, COLLECTION), {
@@ -50,10 +64,15 @@ function toVolunteer(id, data) {
 
 /** Reads all volunteer sign-ups, newest first. For the admin panel only. */
 export async function getVolunteers() {
-  if (!isFirebaseConfigured) return [];
+  if (!isFirebaseConfigured) return memoryVolunteers;
 
-  const snapshot = await getDocs(collection(db, COLLECTION));
-  return snapshot.docs
-    .map((snap) => toVolunteer(snap.id, snap.data()))
-    .sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTION));
+    return snapshot.docs
+      .map((snap) => toVolunteer(snap.id, snap.data()))
+      .sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
+  } catch (error) {
+    console.error('Failed to load volunteers from Firestore, using memory fallback:', error);
+    return memoryVolunteers;
+  }
 }

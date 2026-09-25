@@ -1,4 +1,4 @@
-﻿// Static content for the public site. Events and shelters are not here —
+// Static content for the public site. Events and shelters are not here —
 // those come from Firestore (see lib/events.js and lib/shelters.js).
 
 /** Founded in 2009; used to keep "Nth year of service" from going stale. */
@@ -17,6 +17,7 @@ export const siteInfo = {
   email: 'helpingheartsservice@gmail.com',
   shortAddress: 'Coimbatore, Tamil Nadu',
   address: ['13D, Indra Nagar 2nd Street, Rathinapuri, Coimbatore,', 'Tamil Nadu 641 027'],
+  mapUrl: 'https://maps.app.goo.gl/829XT7dxZnk52BfMA',
   officeHours: '10 am–6 pm / Monday to Saturday',
   logo: '/helping-hearts.jpeg',
   socials: [

@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 
 // Must stay in sync with `images.remotePatterns` in next.config.mjs.
@@ -6,7 +9,10 @@ const OPTIMISABLE_HOSTS = new Set([
   'images.unsplash.com',
 ]);
 
+const FALLBACK_IMAGE = '/helping-hearts.jpeg';
+
 function canOptimise(src) {
+  if (!src) return false;
   // Anything served from /public is local and always fine.
   if (src.startsWith('/')) return true;
 
@@ -19,14 +25,7 @@ function canOptimise(src) {
 
 /**
  * next/image for hosts the optimiser is configured for, and a plain lazy
- * <img> for everything else.
- *
- * Shelter and event photos come from Firestore, so their host is whatever the
- * admin uploaded through. next/image throws a hard runtime error on an
- * unconfigured host, which would blank the whole page — this keeps a stray
- * URL to a broken image instead of a broken route.
- *
- * Pass either `fill` (parent must be positioned) or `width`/`height`.
+ * <img> for everything else. Includes fallback for 404 / broken remote URLs.
  */
 export default function SmartImage({
   src,
@@ -39,20 +38,29 @@ export default function SmartImage({
   priority = false,
   quality,
 }) {
-  if (!src) return null;
+  const [imgSrc, setImgSrc] = useState(src);
+  const [hasError, setHasError] = useState(false);
 
-  if (!canOptimise(src)) {
+  if (!imgSrc) return null;
+
+  const handleError = () => {
+    if (!hasError && imgSrc !== FALLBACK_IMAGE) {
+      setHasError(true);
+      setImgSrc(FALLBACK_IMAGE);
+    }
+  };
+
+  if (!canOptimise(imgSrc)) {
     return (
-      // Deliberately a raw <img>: this is the fallback for hosts the image
-      // optimiser is not configured for, where next/image would throw.
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={src}
-        alt={alt}
+        src={imgSrc}
+        alt={alt || ''}
         width={fill ? undefined : width}
         height={fill ? undefined : height}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
+        onError={handleError}
         className={fill ? `absolute inset-0 w-full h-full ${className}` : className}
       />
     );
@@ -60,13 +68,15 @@ export default function SmartImage({
 
   return (
     <Image
-      src={src}
-      alt={alt}
+      src={imgSrc}
+      alt={alt || ''}
       {...(fill ? { fill: true } : { width, height })}
       sizes={sizes}
       priority={priority}
       quality={quality}
       className={className}
+      referrerPolicy="no-referrer"
+      onError={handleError}
     />
   );
 }

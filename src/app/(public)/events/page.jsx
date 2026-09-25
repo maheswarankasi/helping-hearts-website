@@ -9,7 +9,8 @@ export const metadata = {
     'Celebrations, medical camps, and donation drives — a look at the moments we have shared with our community.',
 };
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function EventsPage() {
   const events = await getEvents();
