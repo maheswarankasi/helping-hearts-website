@@ -61,11 +61,14 @@ service cloud.firestore {
     match /donors/{donorId} {
       allow create: if true;
       allow read: if true;   // TODO: change to `if request.auth != null`
+      // The admin panel only ever reads donor records, so nothing needs to
+      // modify or remove them.
       allow update, delete: if false;
 
       // Locked-down version, use once /admin has sign-in:
       // allow create: if true;
-      // allow read, update, delete: if request.auth != null;
+      // allow read: if request.auth != null;
+      // allow update, delete: if false;
     }
 
     // Anything else stays locked.

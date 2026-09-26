@@ -109,13 +109,16 @@ export default function Header() {
           }`}
         >
           <Link href="/" className="flex items-center">
+            {/* 81x48 keeps the file's real 1280x760 ratio. Giving a ratio
+                that disagrees with the source makes Next warn that one
+                dimension was modified without the other. */}
             <Image
               src={siteInfo.logo}
               alt={siteInfo.name}
-              width={132}
+              width={81}
               height={48}
               priority
-              className="h-12 w-auto object-contain rounded"
+              className="object-contain rounded"
             />
           </Link>
 

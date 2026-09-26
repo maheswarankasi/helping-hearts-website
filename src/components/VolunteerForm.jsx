@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { submitVolunteer } from '@/app/actions';
 import { volunteerAvailability, volunteerInterests } from '@/lib/siteContent';
+import { PHONE_INPUT_PROPS, normalisePhone, phoneError } from '@/lib/phone';
 
 const EMPTY_FORM = {
   name: '',
@@ -29,11 +30,8 @@ function validate(values) {
     errors.email = 'Please enter a valid email address.';
   }
 
-  if (!values.phone.trim()) {
-    errors.phone = 'Please enter your phone number.';
-  } else if (values.phone.replace(/\D/g, '').length < 10) {
-    errors.phone = 'Please enter a valid phone number (at least 10 digits).';
-  }
+  const phoneProblem = phoneError(values.phone);
+  if (phoneProblem) errors.phone = phoneProblem;
 
   if (!values.city.trim()) errors.city = 'Please enter your city.';
   if (!values.interest) errors.interest = 'Please choose how you would like to help.';
@@ -70,7 +68,9 @@ export default function VolunteerForm() {
   const [saveError, setSaveError] = useState(null);
 
   const handleChange = (name) => (e) => {
-    const { value } = e.target;
+    // The phone field discards non-digits as they are typed.
+    const value =
+      name === 'phone' ? normalisePhone(e.target.value) : e.target.value;
     setValues((prev) => ({ ...prev, [name]: value }));
     setSaveError(null);
 
@@ -183,13 +183,12 @@ export default function VolunteerForm() {
         <div>
           <label htmlFor="phone" className="block text-sm font-bold text-gray-700 mb-2">
             <i className="fa-solid fa-phone text-brand-blue mr-2"></i>
-            Phone Number <span className="text-brand-red">*</span>
+            Mobile Number <span className="text-brand-red">*</span>
           </label>
           <input
             id="phone"
-            type="tel"
             required
-            placeholder="+91 90000 00000"
+            {...PHONE_INPUT_PROPS}
             value={values.phone}
             onChange={handleChange('phone')}
             aria-invalid={Boolean(errors.phone)}

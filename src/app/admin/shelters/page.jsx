@@ -2,10 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { toDate } from '@/lib/firestoreUtils';
 import { uploadImages, toFolderName } from '@/lib/cloudinary';
+import RichTextEditor from '@/components/admin/RichTextEditor';
+import ConfirmDialog from '@/components/admin/ConfirmDialog';
+import ExportButton from '@/components/admin/ExportButton';
+import { EMPTY_DOC, isRichEmpty, toStoredValue } from '@/lib/richText';
 
 const EMPTY_FORM = {
   name: '',
@@ -13,7 +23,7 @@ const EMPTY_FORM = {
   address: '',
   mapUrl: '',
   capacity: '',
-  description: '',
+  description: EMPTY_DOC,
 };
 
 export default function AdminSheltersPage() {
@@ -24,7 +34,15 @@ export default function AdminSheltersPage() {
   const [progress, setProgress] = useState(null);
   const [error, setError] = useState(null);
 
+  // null while creating; the document id while editing.
+  const [editingId, setEditingId] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const [formData, setFormData] = useState(EMPTY_FORM);
+  // Already-uploaded image URLs kept on the record being edited.
+  const [existingImages, setExistingImages] = useState([]);
+  // Newly picked File objects, not yet uploaded.
   const [images, setImages] = useState([]);
 
   const loadShelters = async () => {
@@ -66,49 +84,117 @@ export default function AdminSheltersPage() {
     }
   };
 
+  const openCreate = () => {
+    setEditingId(null);
+    setFormData(EMPTY_FORM);
+    setExistingImages([]);
+    setImages([]);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const openEdit = (shelter) => {
+    setEditingId(shelter.id);
+    setFormData({
+      name: shelter.name ?? '',
+      tag: shelter.tag ?? '',
+      address: shelter.address ?? '',
+      mapUrl: shelter.mapUrl ?? '',
+      capacity: shelter.capacity ?? '',
+      description: shelter.description || EMPTY_DOC,
+    });
+    setExistingImages(shelter.images ?? []);
+    setImages([]);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // The rich text field is not an <input>, so the browser's own `required`
+    // validation never sees it.
+    if (isRichEmpty(formData.description)) {
+      setError('Please enter a description.');
+      return;
+    }
+    if (existingImages.length === 0 && images.length === 0) {
+      setError('Please add at least one photo.');
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
-      let imageUrls = [];
+      let uploaded = [];
       if (images.length > 0) {
         try {
-          imageUrls = await uploadImages(
+          uploaded = await uploadImages(
             images,
             `HelpingHearts/Shelters/${toFolderName(formData.name)}`,
             (done, total) => setProgress(`Uploading image ${done} of ${total}...`)
           );
         } catch (uploadErr) {
           console.warn('Image upload fallback (Cloudinary unconfigured):', uploadErr);
-          imageUrls = images.map((f) => URL.createObjectURL(f));
+          uploaded = images.map((f) => URL.createObjectURL(f));
         }
       }
 
-      setProgress('Saving shelter...');
+      setProgress(editingId ? 'Updating shelter...' : 'Saving shelter...');
 
-      await addDoc(collection(db, 'shelters'), {
+      const payload = {
         name: formData.name.trim(),
         tag: formData.tag.trim(),
         address: formData.address.trim(),
         mapUrl: formData.mapUrl.trim(),
         capacity: formData.capacity.trim(),
-        description: formData.description.trim(),
-        images: imageUrls,
-        createdAt: serverTimestamp(),
-      });
+        // Stored as a ProseMirror JSON document, not HTML.
+        description: toStoredValue(formData.description),
+        images: [...existingImages, ...uploaded],
+      };
+
+      if (editingId) {
+        await updateDoc(doc(db, 'shelters', editingId), {
+          ...payload,
+          updatedAt: serverTimestamp(),
+        });
+      } else {
+        await addDoc(collection(db, 'shelters'), {
+          ...payload,
+          createdAt: serverTimestamp(),
+        });
+      }
 
       setFormData(EMPTY_FORM);
+      setExistingImages([]);
       setImages([]);
+      setEditingId(null);
       setIsModalOpen(false);
       await refresh();
     } catch (err) {
       console.error('Save shelter failed:', err);
-      setError(err.message || 'Failed to add shelter.');
+      setError(err.message || 'Failed to save shelter.');
     } finally {
       setIsSubmitting(false);
       setProgress(null);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!pendingDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteDoc(doc(db, 'shelters', pendingDelete.id));
+      setPendingDelete(null);
+      await refresh();
+    } catch (err) {
+      console.error('Delete shelter failed:', err);
+      setError(err.message || 'Failed to delete shelter.');
+      setPendingDelete(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -119,15 +205,15 @@ export default function AdminSheltersPage() {
     <div>
       <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
         <h2 className="text-2xl font-bold text-gray-800">Manage Shelters</h2>
-        <button
-          onClick={() => {
-            setError(null);
-            setIsModalOpen(true);
-          }}
-          className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
-        >
-          <i className="fa-solid fa-plus mr-2"></i> Add Shelter
-        </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <ExportButton sheet="shelters" rows={shelters} />
+          <button
+            onClick={openCreate}
+            className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
+          >
+            <i className="fa-solid fa-plus mr-2"></i> Add Shelter
+          </button>
+        </div>
       </div>
 
       {error && !isModalOpen && (
@@ -145,7 +231,7 @@ export default function AdminSheltersPage() {
               <th className="px-6 py-4 font-medium">Address</th>
               <th className="px-6 py-4 font-medium">Capacity</th>
               <th className="px-6 py-4 font-medium">Photos</th>
-              <th className="px-6 py-4 font-medium">View</th>
+              <th className="px-6 py-4 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -163,8 +249,10 @@ export default function AdminSheltersPage() {
               </tr>
             ) : (
               shelters.map((shelter) => (
-                <tr key={shelter.id}>
-                  <td className="px-6 py-4 font-semibold">{shelter.name}</td>
+                <tr key={shelter.id} className="hover:bg-gray-50 transition">
+                  <td className="px-6 py-4 font-semibold">
+                    {shelter.name}
+                  </td>
                   <td className="px-6 py-4 text-gray-600 truncate max-w-xs">
                     {shelter.address}
                   </td>
@@ -179,13 +267,33 @@ export default function AdminSheltersPage() {
                     {shelter.images?.length || 0} Photos
                   </td>
                   <td className="px-6 py-4">
-                    <Link
-                      href={`/shelters/${shelter.id}`}
-                      target="_blank"
-                      className="text-blue-600 hover:underline font-medium"
-                    >
-                      Open <i className="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
-                    </Link>
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        href={`/shelters/${shelter.id}`}
+                        target="_blank"
+                        title="Open on the public site"
+                        className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 flex items-center justify-center transition"
+                      >
+                        <i className="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => openEdit(shelter)}
+                        title="Edit shelter"
+                        className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 flex items-center justify-center transition"
+                      >
+                        <i className="fa-solid fa-pen text-sm"></i>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPendingDelete(shelter)}
+                        title="Delete shelter"
+                        className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-300 flex items-center justify-center transition"
+                      >
+                        <i className="fa-solid fa-trash text-sm"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -197,7 +305,9 @@ export default function AdminSheltersPage() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold mb-4">Add New Shelter</h3>
+            <h3 className="text-2xl font-bold mb-4">
+              {editingId ? 'Edit Shelter' : 'Add New Shelter'}
+            </h3>
 
             {error && (
               <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 text-sm">
@@ -207,19 +317,24 @@ export default function AdminSheltersPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                required
-                type="text"
-                placeholder="Shelter Name"
-                className="w-full border p-3 rounded-lg"
-                value={formData.name}
-                onChange={update('name')}
-              />
+              <label className="block">
+                <span className="text-base font-bold text-gray-800 mb-2 block">
+                  Shelter Name
+                </span>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. Anbalayam Shelter"
+                  className="w-full border p-3 rounded-lg"
+                  value={formData.name}
+                  onChange={update('name')}
+                />
+              </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <label className="block">
-                  <span className="text-sm text-gray-600 mb-1 block">
-                    Shelter Type <span className="text-gray-400">(optional)</span>
+                  <span className="text-base font-bold text-gray-800 mb-2 block">
+                    Shelter Type <span className="text-sm font-normal text-gray-400">(optional)</span>
                   </span>
                   <input
                     type="text"
@@ -230,8 +345,8 @@ export default function AdminSheltersPage() {
                   />
                 </label>
                 <label className="block">
-                  <span className="text-sm text-gray-600 mb-1 block">
-                    Capacity <span className="text-gray-400">(optional)</span>
+                  <span className="text-base font-bold text-gray-800 mb-2 block">
+                    Capacity <span className="text-sm font-normal text-gray-400">(optional)</span>
                   </span>
                   <input
                     type="text"
@@ -243,39 +358,105 @@ export default function AdminSheltersPage() {
                 </label>
               </div>
 
-              <input
-                required
-                type="text"
-                placeholder="Address"
-                className="w-full border p-3 rounded-lg"
-                value={formData.address}
-                onChange={update('address')}
-              />
-
-              <input
-                required
-                type="url"
-                placeholder="Google Maps URL"
-                className="w-full border p-3 rounded-lg"
-                value={formData.mapUrl}
-                onChange={update('mapUrl')}
-              />
-
-              <textarea
-                required
-                rows="4"
-                placeholder="Description"
-                className="w-full border p-3 rounded-lg"
-                value={formData.description}
-                onChange={update('description')}
-              />
-
               <label className="block">
-                <span className="text-sm text-gray-600 mb-1 block">
-                  Photos — the first one becomes the card image
+                <span className="text-base font-bold text-gray-800 mb-2 block">
+                  Address
                 </span>
                 <input
                   required
+                  type="text"
+                  placeholder="e.g. 12, Gandhipuram, Coimbatore 641012"
+                  className="w-full border p-3 rounded-lg"
+                  value={formData.address}
+                  onChange={update('address')}
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-base font-bold text-gray-800 mb-2 block">
+                  Google Maps URL
+                </span>
+                <input
+                  required
+                  type="url"
+                  placeholder="https://maps.app.goo.gl/…"
+                  className="w-full border p-3 rounded-lg"
+                  value={formData.mapUrl}
+                  onChange={update('mapUrl')}
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-base font-bold text-gray-800 mb-2 block">
+                  Description{' '}
+                  <span className="text-sm font-normal text-gray-400">
+                    — shown on the shelter details page
+                  </span>
+                </span>
+                <RichTextEditor
+                  minHeight="12rem"
+                  placeholder="Describe the shelter, who it serves, and what facilities it has…"
+                  value={formData.description}
+                  onChange={(doc) =>
+                    setFormData((prev) => ({ ...prev, description: doc }))
+                  }
+                />
+              </label>
+
+              {/* Existing photos, each removable, when editing a record */}
+              {existingImages.length > 0 && (
+                <div>
+                  <span className="text-base font-bold text-gray-800 mb-2 block">
+                    Current photos{' '}
+                    <span className="text-sm font-normal text-gray-400">
+                      — the first one is the card image
+                    </span>
+                  </span>
+                  <div className="flex flex-wrap gap-3">
+                    {existingImages.map((url, index) => (
+                      <div
+                        key={url}
+                        className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 group"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt={`Photo ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          title="Remove this photo"
+                          onClick={() =>
+                            setExistingImages((prev) =>
+                              prev.filter((item) => item !== url)
+                            )
+                          }
+                          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-600"
+                        >
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+                        {index === 0 && (
+                          <span className="absolute bottom-0 inset-x-0 bg-blue-600/90 text-white text-[10px] text-center font-bold py-0.5">
+                            COVER
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <label className="block">
+                <span className="text-base font-bold text-gray-800 mb-2 block">
+                  {existingImages.length > 0 ? 'Add more photos' : 'Photos'}{' '}
+                  <span className="text-sm font-normal text-gray-400">
+                    {existingImages.length > 0
+                      ? '(optional)'
+                      : '— the first one becomes the card image'}
+                  </span>
+                </span>
+                <input
                   type="file"
                   multiple
                   accept="image/*"
@@ -305,12 +486,27 @@ export default function AdminSheltersPage() {
                   disabled={isSubmitting}
                   className="px-5 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-70"
                 >
-                  {isSubmitting ? 'Saving...' : 'Save Shelter'}
+                  {isSubmitting
+                    ? 'Saving...'
+                    : editingId
+                      ? 'Update Shelter'
+                      : 'Save Shelter'}
                 </button>
               </div>
             </form>
           </div>
         </div>
+      )}
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete this shelter?"
+          itemName={pendingDelete.name}
+          message="It will disappear from the public site immediately. Uploaded photos stay in Cloudinary and are not removed."
+          isBusy={isDeleting}
+          onConfirm={handleDelete}
+          onCancel={() => setPendingDelete(null)}
+        />
       )}
     </div>
   );

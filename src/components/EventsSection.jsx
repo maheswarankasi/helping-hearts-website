@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import EmptyState from './EmptyState';
 import SmartImage from './SmartImage';
+import { toPlainText } from '@/lib/richText';
 
 export default function EventsSection({
   events,
@@ -72,8 +73,10 @@ export default function EventsSection({
                   <h3 className="font-heading text-2xl font-bold text-gray-900 mb-3 group-hover:text-brand-blue transition-colors">
                     {event.title}
                   </h3>
+                  {/* Flattened to plain text: the card clamps to three
+                      lines, where a list or heading would break the layout. */}
                   <p className="text-gray-600 mb-6 text-sm line-clamp-3">
-                    {event.summary}
+                    {event.summaryText || toPlainText(event.summary)}
                   </p>
                   <span className="mt-auto inline-flex items-center gap-2 text-brand-blue font-bold group-hover:text-brand-red transition w-max">
                     View Details <i className="fa-solid fa-arrow-right-long"></i>

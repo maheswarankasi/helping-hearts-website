@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import EmptyState from './EmptyState';
 import SmartImage from './SmartImage';
+import { toPlainText } from '@/lib/richText';
 
 const toneStyles = {
   blue: {
@@ -127,8 +128,10 @@ export default function SheltersSection({
                         {shelter.name}
                       </Link>
                     </h3>
+                    {/* Flattened to plain text: this excerpt is clamped to
+                        four lines, where formatting would break the layout. */}
                     <p className="text-gray-600 mb-8 leading-relaxed line-clamp-4">
-                      {shelter.description}
+                      {toPlainText(shelter.description)}
                     </p>
 
                     <div className="flex items-center justify-between border-t border-gray-200 pt-6 gap-4">

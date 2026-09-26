@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { PHONE_INPUT_PROPS, normalisePhone, phoneError } from '@/lib/phone';
 
 const FIELDS = [
   {
@@ -19,10 +20,9 @@ const FIELDS = [
   },
   {
     name: 'phone',
-    label: 'Phone Number',
-    type: 'tel',
-    placeholder: '+91 90000 00000',
+    label: 'Mobile Number',
     icon: 'fa-solid fa-phone',
+    ...PHONE_INPUT_PROPS,
   },
   {
     name: 'subject',
@@ -57,11 +57,8 @@ function validate(values) {
     errors.email = 'Please enter a valid email address.';
   }
 
-  if (!values.phone.trim()) {
-    errors.phone = 'Please enter your phone number.';
-  } else if (values.phone.replace(/\D/g, '').length < 10) {
-    errors.phone = 'Please enter a valid phone number (at least 10 digits).';
-  }
+  const phoneProblem = phoneError(values.phone);
+  if (phoneProblem) errors.phone = phoneProblem;
 
   if (!values.subject.trim()) {
     errors.subject = 'Please enter a subject.';
@@ -83,7 +80,10 @@ export default function ContactForm() {
   const [isSent, setIsSent] = useState(false);
 
   const handleChange = (name) => (e) => {
-    const value = e.target.value;
+    // The phone field silently discards anything that isn't a digit, so the
+    // 10-digit rule is impossible to break by typing.
+    const value =
+      name === 'phone' ? normalisePhone(e.target.value) : e.target.value;
     setValues((prev) => ({ ...prev, [name]: value }));
 
     // Clear a field's error as soon as the user starts fixing it
@@ -125,36 +125,34 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {FIELDS.map((field) => (
-          <div key={field.name}>
+        {FIELDS.map(({ name, label, icon, ...inputProps }) => (
+          <div key={name}>
             <label
-              htmlFor={field.name}
+              htmlFor={name}
               className="block text-sm font-bold text-gray-700 mb-2"
             >
-              <i className={`${field.icon} text-brand-blue mr-2`}></i>
-              {field.label} <span className="text-brand-red">*</span>
+              <i className={`${icon} text-brand-blue mr-2`}></i>
+              {label} <span className="text-brand-red">*</span>
             </label>
             <input
-              id={field.name}
-              name={field.name}
-              type={field.type}
+              id={name}
+              name={name}
               required
-              placeholder={field.placeholder}
-              value={values[field.name]}
-              onChange={handleChange(field.name)}
-              aria-invalid={Boolean(errors[field.name])}
-              aria-describedby={
-                errors[field.name] ? `${field.name}-error` : undefined
-              }
-              className={inputClasses(field.name)}
+              // Carries this field's own type/inputMode/maxLength/pattern.
+              {...inputProps}
+              value={values[name]}
+              onChange={handleChange(name)}
+              aria-invalid={Boolean(errors[name])}
+              aria-describedby={errors[name] ? `${name}-error` : undefined}
+              className={inputClasses(name)}
             />
-            {errors[field.name] && (
+            {errors[name] && (
               <p
-                id={`${field.name}-error`}
+                id={`${name}-error`}
                 className="mt-2 text-sm font-medium text-brand-red flex items-center gap-2"
               >
                 <i className="fa-solid fa-circle-exclamation"></i>
-                {errors[field.name]}
+                {errors[name]}
               </p>
             )}
           </div>

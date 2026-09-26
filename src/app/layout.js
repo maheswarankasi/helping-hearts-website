@@ -26,9 +26,12 @@ export const metadata = {
   },
 };
 
+// `data-scroll-behavior="smooth"` tells Next that the smooth scrolling set in
+// globals.css is deliberate. Without it Next warns, and route transitions
+// animate the scroll instead of jumping straight to the top of the new page.
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         <link rel="icon" href="/helping-hearts.jpeg" type="image/jpeg" />
       </head>

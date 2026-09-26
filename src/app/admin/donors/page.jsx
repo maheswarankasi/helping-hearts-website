@@ -3,15 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getDonors } from '@/lib/donors';
 import { formatAmount, formatDateParts } from '@/lib/firestoreUtils';
-
-const STATUS_STYLES = {
-  awaiting_confirmation: {
-    label: 'Awaiting confirmation',
-    className: 'bg-amber-100 text-amber-700',
-  },
-  confirmed: { label: 'Confirmed', className: 'bg-green-100 text-green-700' },
-  cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-600' },
-};
+import ExportButton from '@/components/admin/ExportButton';
 
 export default function DonorsAdminPage() {
   const [donors, setDonors] = useState([]);
@@ -44,9 +36,6 @@ export default function DonorsAdminPage() {
     };
   }, []);
 
-  const pending = donors.filter(
-    (donor) => donor.paymentStatus === 'awaiting_confirmation'
-  );
   const pledgedTotal = donors.reduce(
     (sum, donor) => sum + (donor.amount ?? 0),
     0
@@ -65,20 +54,18 @@ export default function DonorsAdminPage() {
           <span className="bg-blue-50 text-blue-700 border border-blue-200 px-4 py-2 rounded-lg font-bold text-sm">
             {isLoading ? '—' : donors.length} Records
           </span>
-          <span className="bg-amber-50 text-amber-700 border border-amber-200 px-4 py-2 rounded-lg font-bold text-sm">
-            {isLoading ? '—' : pending.length} To Reconcile
-          </span>
           <span className="bg-green-50 text-green-700 border border-green-200 px-4 py-2 rounded-lg font-bold text-sm">
-            {isLoading ? '—' : formatAmount(pledgedTotal)} Pledged
+            {isLoading ? '—' : formatAmount(pledgedTotal)} Total
           </span>
+          <ExportButton sheet="donors" rows={donors} disabled={isLoading} />
         </div>
       </div>
 
       <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800 text-sm">
-        <i className="fa-solid fa-triangle-exclamation mr-2"></i>
-        These are <strong>pledges, not confirmed payments</strong>. Because
-        donations come in by direct UPI transfer, each record has to be matched
-        against your bank or UPI statement by hand.
+        <i className="fa-solid fa-circle-info mr-2"></i>
+        A record is created when a donor submits the form and is shown the QR
+        code. Because UPI transfers arrive with nothing to notify this site,
+        please confirm each one against your bank or UPI statement.
       </div>
 
       {error && (
@@ -89,15 +76,15 @@ export default function DonorsAdminPage() {
       )}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[900px]">
+        <table className="w-full text-left border-collapse min-w-[840px]">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100 text-sm text-gray-500 uppercase">
               <th className="px-6 py-4 font-medium">Donor</th>
               <th className="px-6 py-4 font-medium">Contact</th>
+              <th className="px-6 py-4 font-medium">PAN</th>
               <th className="px-6 py-4 font-medium">Amount</th>
               <th className="px-6 py-4 font-medium">Towards</th>
-              <th className="px-6 py-4 font-medium">Status</th>
-              <th className="px-6 py-4 font-medium">Received</th>
+              <th className="px-6 py-4 font-medium">Submitted</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-sm">
@@ -114,70 +101,60 @@ export default function DonorsAdminPage() {
                 </td>
               </tr>
             ) : (
-              donors.map((donor) => {
-                const status =
-                  STATUS_STYLES[donor.paymentStatus] ??
-                  STATUS_STYLES.awaiting_confirmation;
-
-                return (
-                  <tr
-                    key={donor.id}
-                    onClick={() =>
-                      setExpandedId((current) =>
-                        current === donor.id ? null : donor.id
-                      )
-                    }
-                    className="hover:bg-gray-50 transition cursor-pointer align-top"
-                  >
-                    <td className="px-6 py-4 font-semibold text-gray-900">
-                      {donor.name}
-                      {donor.message && (
-                        <>
-                          <i
-                            className="fa-solid fa-comment-dots text-gray-400 ml-2"
-                            title="Has a message"
-                          ></i>
-                          {expandedId === donor.id && (
-                            <p className="mt-2 font-normal text-gray-600 whitespace-pre-line max-w-xs">
-                              {donor.message}
-                            </p>
-                          )}
-                        </>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">
-                      <a
-                        href={`mailto:${donor.email}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-blue-600 hover:underline block"
-                      >
-                        {donor.email}
-                      </a>
-                      <a
-                        href={`tel:${donor.phone.replace(/\s/g, '')}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="hover:underline"
-                      >
-                        {donor.phone}
-                      </a>
-                    </td>
-                    <td className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap">
-                      {formatAmount(donor.amount)}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">{donor.purpose}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`${status.className} px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap`}
-                      >
-                        {status.label}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                      {formatDateParts(donor.createdAt).label ?? '—'}
-                    </td>
-                  </tr>
-                );
-              })
+              donors.map((donor) => (
+                <tr
+                  key={donor.id}
+                  onClick={() =>
+                    setExpandedId((current) =>
+                      current === donor.id ? null : donor.id
+                    )
+                  }
+                  className="hover:bg-gray-50 transition cursor-pointer align-top"
+                >
+                  <td className="px-6 py-4 font-semibold text-gray-900">
+                    {donor.name}
+                    {donor.message && (
+                      <>
+                        <i
+                          className="fa-solid fa-comment-dots text-gray-400 ml-2"
+                          title="Has a message"
+                        ></i>
+                        {expandedId === donor.id && (
+                          <p className="mt-2 font-normal text-gray-600 whitespace-pre-line max-w-xs">
+                            {donor.message}
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">
+                    <a
+                      href={`mailto:${donor.email}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-blue-600 hover:underline block"
+                    >
+                      {donor.email}
+                    </a>
+                    <a
+                      href={`tel:${donor.phone.replace(/\s/g, '')}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="hover:underline"
+                    >
+                      {donor.phone}
+                    </a>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600 font-mono text-xs tracking-wider whitespace-nowrap">
+                    {donor.pan}
+                  </td>
+                  <td className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap">
+                    {formatAmount(donor.amount)}
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">{donor.purpose}</td>
+                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                    {formatDateParts(donor.createdAt).label ?? '—'}
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>

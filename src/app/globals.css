@@ -78,6 +78,55 @@ body.modal-open {
   animation: ring-pulse-white 2s infinite;
 }
 
+/* Admin rich-text editor surface. Tailwind's preflight strips list markers
+   and heading sizes, so the editor needs them put back explicitly —
+   otherwise a bulleted list looks identical to a paragraph while typing. */
+.prose-admin {
+  color: var(--color-gray-800);
+}
+.prose-admin p {
+  margin: 0 0 0.75rem;
+}
+.prose-admin p:last-child {
+  margin-bottom: 0;
+}
+.prose-admin ul,
+.prose-admin ol {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+}
+.prose-admin ul {
+  list-style: disc;
+}
+.prose-admin ol {
+  list-style: decimal;
+}
+.prose-admin li {
+  margin-bottom: 0.25rem;
+}
+.prose-admin li > p {
+  margin-bottom: 0;
+}
+.prose-admin li::marker {
+  color: var(--color-brand-red);
+}
+.prose-admin a {
+  color: var(--color-brand-blue);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-admin blockquote {
+  border-left: 3px solid var(--color-brand-red);
+  padding-left: 1rem;
+  font-style: italic;
+  margin: 0 0 0.75rem;
+}
+/* ProseMirror puts this on the editable node itself */
+.prose-admin.ProseMirror-focused {
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

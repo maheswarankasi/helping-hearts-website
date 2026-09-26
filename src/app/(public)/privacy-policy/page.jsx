@@ -29,7 +29,8 @@ const sections = [
           'Technical information collected automatically by our hosting and analytics providers, such as your IP address, browser type, device type, referring page, and the pages you viewed.',
         ],
       },
-      'We do not ask for, and request that you never send us, sensitive information such as caste, religious belief, medical history, or government identity numbers unless it is specifically required by law for a donation receipt or statutory filing.',
+      'Your PAN, collected on the donation form. Indian tax law requires it for us to issue a valid donation receipt, so it is the one government identifier we ask for. It is used for receipts and statutory filings only — never for anything else, and never shared with other donors or third parties.',
+      'We do not ask for, and request that you never send us, any other sensitive information such as caste, religious belief, medical history, Aadhaar, or passport details.',
     ],
   },
   {

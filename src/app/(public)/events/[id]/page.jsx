@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import PhotoGallery from '@/components/PhotoGallery';
 import SmartImage from '@/components/SmartImage';
+import RichText from '@/components/RichText';
+import { isRichEmpty, toPlainText } from '@/lib/richText';
 import VolunteerCTA from '@/components/VolunteerCTA';
 import { getEventById } from '@/lib/events';
 
@@ -16,7 +18,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `${event.title} | Helping Hearts NGO`,
-    description: event.summary.slice(0, 160),
+    description: toPlainText(event.summary).slice(0, 160),
   };
 }
 
@@ -27,6 +29,13 @@ export default async function EventDetailsPage({ params }) {
   if (!event) notFound();
 
   const galleryImages = event.images.slice(1);
+
+  // `isRichEmpty` flattens documents and plain strings alike, so these work
+  // for records saved before these fields became rich text editors.
+  const hasImpact = !isRichEmpty(event.impact);
+  const hasChiefGuest = !isRichEmpty(event.chiefGuest);
+  const hasSponsorNames = !isRichEmpty(event.sponsors);
+  const hasSponsors = hasSponsorNames || event.sponsorLogos.length > 0;
 
   return (
     <>
@@ -85,10 +94,88 @@ export default async function EventDetailsPage({ params }) {
             </h2>
             <div className="w-16 h-2 bg-brand-red rounded-full mb-8"></div>
 
-            <div className="text-gray-600 leading-relaxed text-lg space-y-5 whitespace-pre-line">
-              {event.description || event.summary}
-            </div>
+            <RichText
+              value={event.description || event.summary}
+              className="text-gray-600 leading-relaxed text-lg"
+            />
           </div>
+
+          {/* Impact, chief guest and sponsors in two columns. Each block is
+              omitted entirely when the admin left it blank. */}
+          {(hasImpact || hasChiefGuest || hasSponsors) && (
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+              {hasImpact && (
+                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-10">
+                  <div className="w-14 h-14 rounded-2xl bg-brand-softblue text-brand-blue flex items-center justify-center text-2xl mb-5">
+                    <i className="fa-solid fa-hand-holding-heart"></i>
+                  </div>
+                  <h2 className="font-heading text-2xl font-black text-gray-900 mb-2">
+                    Impact / Beneficiaries
+                  </h2>
+                  <div className="w-12 h-1.5 bg-brand-red rounded-full mb-6"></div>
+                  <RichText
+                    value={event.impact}
+                    className="text-gray-600 leading-relaxed"
+                  />
+                </div>
+              )}
+
+              {hasChiefGuest && (
+                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-10">
+                  <div className="w-14 h-14 rounded-2xl bg-red-50 text-brand-red flex items-center justify-center text-2xl mb-5">
+                    <i className="fa-solid fa-user-tie"></i>
+                  </div>
+                  <h2 className="font-heading text-2xl font-black text-gray-900 mb-2">
+                    Chief Guest
+                  </h2>
+                  <div className="w-12 h-1.5 bg-brand-red rounded-full mb-6"></div>
+                  <RichText
+                    value={event.chiefGuest}
+                    className="text-gray-600 leading-relaxed"
+                  />
+                </div>
+              )}
+
+              {/* Spans both columns: the logo strip needs the width */}
+              {hasSponsors && (
+                <div className="md:col-span-2 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-10">
+                  <div className="w-14 h-14 rounded-2xl bg-brand-softblue text-brand-blue flex items-center justify-center text-2xl mb-5">
+                    <i className="fa-solid fa-handshake-angle"></i>
+                  </div>
+                  <h2 className="font-heading text-2xl font-black text-gray-900 mb-2">
+                    Sponsors &amp; CSR Partners
+                  </h2>
+                  <div className="w-12 h-1.5 bg-brand-red rounded-full mb-6"></div>
+
+                  {hasSponsorNames && (
+                    <RichText
+                      value={event.sponsors}
+                      className="text-gray-600 leading-relaxed"
+                    />
+                  )}
+
+                  {event.sponsorLogos.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-8 mt-8">
+                      {event.sponsorLogos.map((logo, index) => (
+                        <div
+                          key={logo}
+                          className="relative h-16 w-36 grayscale hover:grayscale-0 transition duration-300"
+                        >
+                          <SmartImage
+                            src={logo}
+                            alt={`Sponsor ${index + 1}`}
+                            fill
+                            sizes="144px"
+                            className="object-contain"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {galleryImages.length > 0 && (
             <div className="mt-14 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12">

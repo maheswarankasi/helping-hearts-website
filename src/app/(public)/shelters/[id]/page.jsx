@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import PhotoGallery from '@/components/PhotoGallery';
 import SmartImage from '@/components/SmartImage';
+import RichText from '@/components/RichText';
+import { toPlainText } from '@/lib/richText';
 import VolunteerCTA from '@/components/VolunteerCTA';
 import { getShelterById } from '@/lib/shelters';
 
@@ -16,7 +18,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `${shelter.name} | Helping Hearts NGO`,
-    description: shelter.description.slice(0, 160),
+    description: toPlainText(shelter.description).slice(0, 160),
   };
 }
 
@@ -85,9 +87,11 @@ export default async function ShelterDetailsPage({ params }) {
               </h2>
               <div className="w-16 h-2 bg-brand-red rounded-full mb-8"></div>
 
-              <div className="text-gray-600 leading-relaxed text-lg space-y-5 whitespace-pre-line">
-                {shelter.description || 'Details coming soon.'}
-              </div>
+              <RichText
+                value={shelter.description}
+                className="text-gray-600 leading-relaxed text-lg"
+                fallback={<p className="text-gray-500">Details coming soon.</p>}
+              />
             </div>
 
             <aside className="space-y-6">

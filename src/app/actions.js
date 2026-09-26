@@ -2,6 +2,8 @@
 
 import { addDonor } from '@/lib/donors';
 import { addVolunteer } from '@/lib/volunteers';
+import { normalisePhone, phoneError } from '@/lib/phone';
+import { normalisePan, panError } from '@/lib/pan';
 
 /**
  * Server actions for the two public forms.
@@ -26,9 +28,9 @@ function checkContactFields(values) {
   if (!EMAIL_PATTERN.test(text(values.email))) {
     errors.email = 'Please enter a valid email address.';
   }
-  if (text(values.phone).replace(/\D/g, '').length < 10) {
-    errors.phone = 'Please enter a valid phone number.';
-  }
+
+  const phoneProblem = phoneError(values.phone);
+  if (phoneProblem) errors.phone = phoneProblem;
 
   return errors;
 }
@@ -47,7 +49,8 @@ export async function submitVolunteer(values) {
   if (Object.keys(errors).length > 0) return { ok: false, errors };
 
   try {
-    await addVolunteer(values);
+    // Store the digits only, so every record is formatted the same way.
+    await addVolunteer({ ...values, phone: normalisePhone(values.phone) });
     return { ok: true };
   } catch (error) {
     console.error('Volunteer sign-up failed:', error);
@@ -70,10 +73,17 @@ export async function submitDonation(values) {
     errors.purpose = 'Please choose what your gift is for.';
   }
 
+  const panProblem = panError(values.pan);
+  if (panProblem) errors.pan = panProblem;
+
   if (Object.keys(errors).length > 0) return { ok: false, errors };
 
   try {
-    await addDonor(values);
+    await addDonor({
+      ...values,
+      phone: normalisePhone(values.phone),
+      pan: normalisePan(values.pan),
+    });
     return { ok: true, amount };
   } catch (error) {
     console.error('Donor record failed:', error);

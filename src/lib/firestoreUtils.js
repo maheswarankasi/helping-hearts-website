@@ -46,6 +46,15 @@ export function formatAmount(amount) {
   return `₹${amount.toLocaleString('en-IN')}`;
 }
 
+/**
+ * Passes through a rich text document untouched, or falls back to
+ * `optionalText` for the plain strings saved before the editor existed.
+ */
+export function optionalRichText(value) {
+  if (value && typeof value === 'object' && value.type === 'doc') return value;
+  return optionalText(value);
+}
+
 /** Treats empty strings and whitespace as "not provided". */
 export function optionalText(value) {
   if (typeof value !== 'string') return null;

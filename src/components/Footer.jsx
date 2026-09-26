@@ -21,12 +21,13 @@ export default function Footer() {
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 border-b border-gray-800 pb-12 mb-10">
           <div className="w-full md:w-1/3">
+            {/* 108x64 matches the file's real 1280x760 ratio. */}
             <Image
               src={siteInfo.logo}
               alt={siteInfo.name}
-              width={176}
+              width={108}
               height={64}
-              className="h-16 w-auto mb-6 bg-white p-2 rounded-xl object-contain"
+              className="mb-6 bg-white p-2 rounded-xl object-contain"
             />
             <p className="font-heading text-brand-red font-bold mb-3">
               {siteInfo.tagline}
@@ -65,7 +66,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="w-full md:w-2/3 flex flex-wrap md:flex-nowrap gap-12 justify-evenly">
+          <div className="w-full md:w-2/3 flex flex-wrap md:flex-nowrap gap-12 justify-between">
             <div>
               <h4 className="font-heading font-bold text-lg mb-6">
                 Quick Links

@@ -25,10 +25,10 @@ export async function addDonor(values) {
       name: values.name?.trim() || 'Anonymous',
       email: values.email?.trim().toLowerCase() || '—',
       phone: values.phone?.trim() || '—',
+      pan: values.pan?.trim().toUpperCase() || '—',
       amount: Number(values.amount) || 0,
       purpose: values.purpose || 'General fund',
       message: values.message?.trim() || '',
-      paymentStatus: 'awaiting_confirmation',
       createdAt: new Date(),
     });
     return id;
@@ -38,10 +38,10 @@ export async function addDonor(values) {
     name: values.name.trim(),
     email: values.email.trim().toLowerCase(),
     phone: values.phone.trim(),
+    pan: values.pan.trim().toUpperCase(),
     amount: Number(values.amount),
     purpose: values.purpose,
     message: values.message.trim(),
-    paymentStatus: 'awaiting_confirmation',
     createdAt: serverTimestamp(),
   });
 
@@ -56,10 +56,10 @@ function toDonor(id, data) {
     name: optionalText(data.name) ?? '—',
     email: optionalText(data.email) ?? '—',
     phone: optionalText(data.phone) ?? '—',
+    pan: optionalText(data.pan) ?? '—',
     amount: Number.isFinite(amount) ? amount : null,
     purpose: optionalText(data.purpose) ?? '—',
     message: optionalText(data.message),
-    paymentStatus: optionalText(data.paymentStatus) ?? 'awaiting_confirmation',
     createdAt: toDate(data.createdAt),
   };
 }

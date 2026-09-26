@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getVolunteers } from '@/lib/volunteers';
 import { formatDateParts } from '@/lib/firestoreUtils';
+import ExportButton from '@/components/admin/ExportButton';
 
 export default function VolunteersAdminPage() {
   const [volunteers, setVolunteers] = useState([]);
@@ -44,9 +45,12 @@ export default function VolunteersAdminPage() {
             Sign-ups from the public Join Us page, newest first.
           </p>
         </div>
-        <span className="bg-blue-50 text-blue-700 border border-blue-200 px-4 py-2 rounded-lg font-bold text-sm">
-          {isLoading ? '—' : volunteers.length} Total
-        </span>
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="bg-blue-50 text-blue-700 border border-blue-200 px-4 py-2 rounded-lg font-bold text-sm">
+            {isLoading ? '—' : volunteers.length} Total
+          </span>
+          <ExportButton sheet="volunteers" rows={volunteers} disabled={isLoading} />
+        </div>
       </div>
 
       {error && (

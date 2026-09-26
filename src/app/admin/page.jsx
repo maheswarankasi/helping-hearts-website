@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { collection, getDocs } from 'firebase/firestore';
-import { db, isFirebaseConfigured } from '@/lib/firebase';
+import { isFirebaseConfigured } from '@/lib/firebase';
 import { getVolunteers } from '@/lib/volunteers';
+import { getDonors } from '@/lib/donors';
+import { getEvents } from '@/lib/events';
+import { getShelters } from '@/lib/shelters';
 import { formatDateParts } from '@/lib/firestoreUtils';
+import ExportButton from '@/components/admin/ExportButton';
 
 const CARDS = [
   {
@@ -42,14 +45,11 @@ const CARDS = [
   },
 ];
 
-async function countDocs(name) {
-  const snapshot = await getDocs(collection(db, name));
-  return snapshot.size;
-}
-
 export default function AdminDashboard() {
   const [counts, setCounts] = useState(null);
   const [recent, setRecent] = useState([]);
+  // Full rows, kept so the dashboard can export everything in one workbook.
+  const [allData, setAllData] = useState(null);
   // Derived from a module constant, so it can be the initial state rather
   // than something an effect has to set.
   const [error, setError] = useState(
@@ -65,20 +65,21 @@ export default function AdminDashboard() {
     let isActive = true;
 
     Promise.all([
-      countDocs('shelters'),
-      countDocs('events'),
+      getShelters(),
+      getEvents(),
       getVolunteers(),
-      countDocs('donors'),
+      getDonors(),
     ])
       .then(([shelters, events, volunteers, donors]) => {
         if (!isActive) return;
         setCounts({
-          shelters,
-          events,
+          shelters: shelters.length,
+          events: events.length,
           volunteers: volunteers.length,
-          donors,
+          donors: donors.length,
         });
         setRecent(volunteers.slice(0, 5));
+        setAllData({ events, shelters, volunteers, donors });
       })
       .catch((err) => {
         console.error('Dashboard load failed:', err);
@@ -106,7 +107,13 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
+          {/* One workbook, one sheet per section, plus a summary sheet */}
+          <ExportButton
+            all={allData}
+            label="Export All Data"
+            disabled={!allData}
+          />
           <Link
             href="/admin/shelters"
             className="bg-white border border-gray-200 text-gray-700 hover:bg-blue-900 hover:text-white px-4 py-2 rounded-lg font-medium transition shadow-sm flex items-center gap-2"

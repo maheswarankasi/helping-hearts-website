@@ -1,15 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useState } from 'react';
-import Image from 'next/image';
 import { submitDonation } from '@/app/actions';
+import DonationQr from './DonationQr';
 import { formatAmount } from '@/lib/firestoreUtils';
+import { PHONE_INPUT_PROPS, normalisePhone, phoneError } from '@/lib/phone';
+import { PAN_INPUT_PROPS, normalisePan, panError } from '@/lib/pan';
 import { donation, donationPurposes, siteInfo } from '@/lib/siteContent';
 
 const EMPTY_FORM = {
   name: '',
   email: '',
   phone: '',
+  pan: '',
   amount: '',
   purpose: donationPurposes[0],
   message: '',
@@ -32,11 +35,11 @@ function validate(values) {
     errors.email = 'Please enter a valid email address.';
   }
 
-  if (!values.phone.trim()) {
-    errors.phone = 'Please enter your phone number.';
-  } else if (values.phone.replace(/\D/g, '').length < 10) {
-    errors.phone = 'Please enter a valid phone number (at least 10 digits).';
-  }
+  const phoneProblem = phoneError(values.phone);
+  if (phoneProblem) errors.phone = phoneProblem;
+
+  const panProblem = panError(values.pan);
+  if (panProblem) errors.pan = panProblem;
 
   const amount = Number(values.amount);
   if (!String(values.amount).trim()) {
@@ -89,7 +92,12 @@ export default function DonationModal({ onClose }) {
   }, [onClose]);
 
   const handleChange = (name) => (e) => {
-    const { value } = e.target;
+    // Phone drops non-digits, PAN uppercases and drops punctuation, both as
+    // they are typed — so neither can be entered in an invalid shape.
+    let value = e.target.value;
+    if (name === 'phone') value = normalisePhone(value);
+    if (name === 'pan') value = normalisePan(value);
+
     setValues((prev) => ({ ...prev, [name]: value }));
     setSaveError(null);
 
@@ -206,13 +214,12 @@ export default function DonationModal({ onClose }) {
                       htmlFor="donor-phone"
                       className="block text-sm font-bold text-gray-700 mb-1.5"
                     >
-                      Phone <span className="text-brand-red">*</span>
+                      Mobile <span className="text-brand-red">*</span>
                     </label>
                     <input
                       id="donor-phone"
-                      type="tel"
                       required
-                      placeholder="+91 90000 00000"
+                      {...PHONE_INPUT_PROPS}
                       value={values.phone}
                       onChange={handleChange('phone')}
                       className={fieldClasses('phone')}
@@ -238,6 +245,27 @@ export default function DonationModal({ onClose }) {
                     className={fieldClasses('email')}
                   />
                   <FieldError message={errors.email} />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="donor-pan"
+                    className="block text-sm font-bold text-gray-700 mb-1.5"
+                  >
+                    PAN Number <span className="text-brand-red">*</span>
+                  </label>
+                  <input
+                    id="donor-pan"
+                    required
+                    {...PAN_INPUT_PROPS}
+                    value={values.pan}
+                    onChange={handleChange('pan')}
+                    className={`${fieldClasses('pan')} uppercase tracking-wider`}
+                  />
+                  <FieldError message={errors.pan} />
+                  <p className="mt-1.5 text-xs text-gray-500">
+                    Required so we can issue a valid donation receipt.
+                  </p>
                 </div>
 
                 <div>
@@ -376,26 +404,12 @@ export default function DonationModal({ onClose }) {
                 </p>
               </div>
 
-              {donation.qrImage ? (
-                <div className="bg-white border-4 border-brand-softblue rounded-[2rem] p-6 max-w-xs mx-auto">
-                  <Image
-                    src={donation.qrImage}
-                    alt={`UPI QR code for donating to ${donation.payeeName}`}
-                    width={320}
-                    height={320}
-                    unoptimized
-                    className="w-full h-auto rounded-xl"
-                  />
-                </div>
-              ) : (
-                <div className="bg-brand-cream border-2 border-dashed border-gray-300 rounded-[2rem] p-8 text-center max-w-xs mx-auto">
-                  <i className="fa-solid fa-qrcode text-5xl text-gray-300 mb-4"></i>
-                  <p className="text-sm text-gray-600 font-medium">
-                    Our payment QR code is being set up. Please use the details
-                    below, or call our office to donate.
-                  </p>
-                </div>
-              )}
+              {/* Carries the amount the donor just entered, so their UPI app
+                  opens pre-filled. */}
+              <DonationQr
+                amount={savedAmount}
+                note={`Donation - ${values.name.trim()}`}
+              />
 
               <div className="mt-8 space-y-3">
                 {donation.upiId && (

@@ -58,8 +58,17 @@ export const navLinks = [
  * a QR so that a non-working code is never displayed to a donor.
  */
 export const donation = {
-  qrImage: null, // e.g. '/donation-qr.png'
-  upiId: '', // e.g. 'helpinghearts@okaxis'
+  /**
+   * Set `upiId` to your UPI ID / VPA (the `name@bank` handle) and the donate
+   * modal generates a QR that already contains the amount the donor typed —
+   * their Google Pay / PhonePe / Paytm opens with the figure filled in.
+   *
+   * `qrImage` is only the fallback for when `upiId` is blank. A QR exported
+   * from a payment app is static: it identifies the payee but cannot carry an
+   * amount, so the donor has to type it themselves.
+   */
+  upiId: 'maheskasi007@okicici',
+  qrImage: null, // e.g. '/donation-qr.png'  (fallback only)
   payeeName: 'Helping Hearts',
   bank: {
     accountName: '',
