@@ -13,6 +13,7 @@ export default function AdminSidebar({ closeSidebar }) {
     { name: 'Manage Shelters', href: '/admin/shelters', icon: 'fa-house-chimney-user' },
     { name: 'Volunteers', href: '/admin/volunteers', icon: 'fa-hand-holding-heart' },
     { name: 'Donors', href: '/admin/donors', icon: 'fa-hand-holding-dollar' },
+    { name: 'Messages', href: '/admin/inquires', icon: 'fa-message' },
   ];
 
   return (
