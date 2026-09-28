@@ -1,11 +1,22 @@
 "use client"; 
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAdminAuth } from './admin/AdminAuthGate';
 
 export default function AdminSidebar({ closeSidebar }) {
   const pathname = usePathname();
+  const { user, logout } = useAdminAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  // No reset on success: logging out unmounts this sidebar.
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await logout();
+    setLoggingOut(false);
+  };
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: 'fa-chart-line' },
@@ -56,9 +67,28 @@ export default function AdminSidebar({ closeSidebar }) {
         })}
       </nav>
       
-      <div className="p-4 border-t border-gray-800">
-        <button className="w-full bg-gray-800 text-gray-400 hover:text-white hover:bg-red-600 px-4 py-3 rounded-lg transition flex items-center justify-center gap-2">
-          <i className="fa-solid fa-arrow-right-from-bracket"></i> Logout
+      <div className="p-4 border-t border-gray-800 space-y-3">
+        {/* Which account is signed in — useful once more than one exists */}
+        {user?.email && (
+          <p className="px-1 text-xs text-gray-500 truncate" title={user.email}>
+            Signed in as <span className="text-gray-300">{user.email}</span>
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="w-full bg-gray-800 text-gray-400 hover:text-white hover:bg-red-600 px-4 py-3 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {loggingOut ? (
+            <>
+              <i className="fa-solid fa-spinner fa-spin"></i> Logging out…
+            </>
+          ) : (
+            <>
+              <i className="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </>
+          )}
         </button>
       </div>
     </aside>

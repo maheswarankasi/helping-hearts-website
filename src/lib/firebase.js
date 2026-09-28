@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { initializeFirestore, getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -44,3 +45,10 @@ try {
 }
 
 export { db };
+
+// Email/password sign-in for /admin. The SDK defaults to indexedDB
+// persistence, so a signed-in admin survives a reload and stays signed in
+// until they press Logout.
+const auth = getAuth(app);
+
+export { auth };

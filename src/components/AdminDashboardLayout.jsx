@@ -3,10 +3,16 @@
 import { useState } from 'react';
 import { usePathname } from 'next/navigation'; // <-- Itha puthusa add pannirukkom
 import AdminSidebar from './AdminSidebar';
+import { useAdminAuth } from './admin/AdminAuthGate';
 
 export default function AdminDashboardLayout({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname(); // Current URL-a edukkum
+  const { user } = useAdminAuth();
+
+  // First two letters of the account name, so the badge matches whoever
+  // is actually signed in instead of a hard-coded "AD".
+  const initials = (user?.email?.slice(0, 2) ?? "ad").toUpperCase();
 
   // URL-a vachu Title-a kandupudikkum function
   const getPageTitle = () => {
@@ -58,8 +64,11 @@ export default function AdminDashboardLayout({ children }) {
           </div>
 
           <div className="flex items-center gap-4">
-             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-brand-blue font-bold border border-blue-200">
-                AD
+             <div
+                className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-brand-blue font-bold border border-blue-200"
+                title={user?.email ?? undefined}
+             >
+                {initials}
              </div>
           </div>
         </header>

@@ -1,3 +1,4 @@
+import AdminAuthGate from "@/components/admin/AdminAuthGate";
 import AdminDashboardLayout from "@/components/AdminDashboardLayout";
 export const metadata = {
   title: "Admin Dashboard | Helping Hearts",
@@ -5,5 +6,9 @@ export const metadata = {
 };
 
 export default function AdminLayout({ children }) {
-  return <AdminDashboardLayout>{children}</AdminDashboardLayout>;
+  return (
+    <AdminAuthGate>
+      <AdminDashboardLayout>{children}</AdminDashboardLayout>
+    </AdminAuthGate>
+  );
 }
