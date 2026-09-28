@@ -16,7 +16,7 @@ export default function AdminDashboardLayout({ children }) {
     if (pathname.startsWith('/admin/shelters')) return 'Shelters';
     if (pathname.startsWith('/admin/volunteers')) return 'Volunteers';
     if (pathname.startsWith('/admin/donors')) return 'Donors';
-    if (pathname.startsWith('/admin/inquires')) return 'Messages';
+    if (pathname.startsWith('/admin/inquiries')) return 'Messages';
     return 'Admin Dashboard'; // Default
   };
 

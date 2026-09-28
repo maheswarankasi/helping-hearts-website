@@ -202,13 +202,14 @@ export default function AdminInquiriesPage() {
             </div>
 
             <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
-              <a 
-                href={`https://wa.me/91${selectedMessage.phone.replace(/\D/g,'')}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <a
+                href={`tel:+91${String(selectedMessage.phone ?? '').replace(/\D/g, '').slice(-10)}`}
                 className="px-4 py-2 bg-green-100 text-green-700 font-medium rounded-lg hover:bg-green-200 transition flex items-center gap-2"
               >
-                <i className="fa-brands fa-whatsapp"></i> Reply on WhatsApp
+                <i className="fa-solid fa-phone"></i> Make a Call:{' '}
+                <span className="font-bold">
+                  +91 {String(selectedMessage.phone ?? '').replace(/\D/g, '').slice(-10)}
+                </span>
               </a>
               <button 
                 onClick={() => setSelectedMessage(null)}

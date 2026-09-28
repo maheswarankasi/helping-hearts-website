@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { PHONE_INPUT_PROPS, normalisePhone, phoneError } from "@/lib/phone";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -14,20 +15,34 @@ export default function ContactForm() {
   });
 
   const [status, setStatus] = useState("idle"); // idle, submitting, success, error
+  const [showErrors, setShowErrors] = useState(false);
+
+  // Only surfaced once submit has been attempted, so the field doesn't go red
+  // while it is still being typed.
+  const phoneProblem = showErrors ? phoneError(formData.phone) : null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // `required` alone would accept any non-empty string here.
+    if (phoneError(formData.phone)) {
+      setShowErrors(true);
+      return;
+    }
+
     setStatus("submitting");
 
     try {
       // Firebase-la "inquiries" ngra collection-la save panrom
       await addDoc(collection(db, "inquiries"), {
         ...formData,
+        phone: normalisePhone(formData.phone),
         createdAt: serverTimestamp(),
         read: false, // Admin panel-la unread nu kaata udhavum
       });
 
       setStatus("success");
+      setShowErrors(false);
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
 
       // 5 seconds aprm success message-a hide panna
@@ -39,7 +54,12 @@ export default function ContactForm() {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    // The mobile field discards non-digits as they are typed.
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "phone" ? normalisePhone(value) : value,
+    }));
   };
 
   return (
@@ -62,17 +82,27 @@ export default function ContactForm() {
         </div>
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Phone Number *
+            Mobile Number *
           </label>
           <input
-            type="tel"
             name="phone"
             required
+            {...PHONE_INPUT_PROPS}
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-5 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all outline-none"
-            placeholder="+91 98765 43210"
+            aria-invalid={Boolean(phoneProblem)}
+            className={`w-full px-5 py-3 rounded-xl border bg-gray-50 focus:bg-white focus:ring-2 focus:border-transparent transition-all outline-none ${
+              phoneProblem
+                ? 'border-brand-red focus:ring-red-200'
+                : 'border-gray-200 focus:ring-brand-blue'
+            }`}
           />
+          {phoneProblem && (
+            <p className="mt-2 text-sm font-medium text-brand-red flex items-center gap-2">
+              <i className="fa-solid fa-circle-exclamation"></i>
+              {phoneProblem}
+            </p>
+          )}
         </div>
       </div>
 

@@ -7,6 +7,7 @@ import { getVolunteers } from '@/lib/volunteers';
 import { getDonors } from '@/lib/donors';
 import { getEvents } from '@/lib/events';
 import { getShelters } from '@/lib/shelters';
+import { getInquiries } from '@/lib/inquiries';
 import { formatDateParts } from '@/lib/firestoreUtils';
 import ExportButton from '@/components/admin/ExportButton';
 
@@ -47,7 +48,8 @@ const CARDS = [
 
 export default function AdminDashboard() {
   const [counts, setCounts] = useState(null);
-  const [recent, setRecent] = useState([]);
+  // Newest contact-form messages, shown in the table below the stat cards.
+  const [recentMessages, setRecentMessages] = useState([]);
   // Full rows, kept so the dashboard can export everything in one workbook.
   const [allData, setAllData] = useState(null);
   // Derived from a module constant, so it can be the initial state rather
@@ -69,16 +71,19 @@ export default function AdminDashboard() {
       getEvents(),
       getVolunteers(),
       getDonors(),
+      getInquiries(),
     ])
-      .then(([shelters, events, volunteers, donors]) => {
+      .then(([shelters, events, volunteers, donors, inquiries]) => {
         if (!isActive) return;
         setCounts({
           shelters: shelters.length,
           events: events.length,
           volunteers: volunteers.length,
           donors: donors.length,
+          inquiries: inquiries.length,
+          unreadInquiries: inquiries.filter((item) => !item.read).length,
         });
-        setRecent(volunteers.slice(0, 5));
+        setRecentMessages(inquiries.slice(0, 5));
         setAllData({ events, shelters, volunteers, donors });
       })
       .catch((err) => {
@@ -166,10 +171,17 @@ export default function AdminDashboard() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-          <h3 className="text-lg font-bold text-gray-800">Recent Volunteers</h3>
+        <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 gap-4 flex-wrap">
+          <h3 className="text-lg font-bold text-gray-800 flex items-center gap-3">
+            Recent Messages
+            {counts?.unreadInquiries > 0 && (
+              <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-full">
+                {counts.unreadInquiries} unread
+              </span>
+            )}
+          </h3>
           <Link
-            href="/admin/volunteers"
+            href="/admin/inquiries"
             className="text-sm text-brand-blue font-medium hover:underline"
           >
             View All
@@ -177,34 +189,67 @@ export default function AdminDashboard() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[680px]">
+          <table className="w-full text-left border-collapse min-w-[760px]">
             <thead>
               <tr className="bg-white border-b border-gray-100 text-sm text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 font-medium">Status</th>
                 <th className="px-6 py-4 font-medium">Name</th>
-                <th className="px-6 py-4 font-medium">Phone</th>
-                <th className="px-6 py-4 font-medium">City</th>
-                <th className="px-6 py-4 font-medium">Interest</th>
-                <th className="px-6 py-4 font-medium">Signed Up</th>
+                <th className="px-6 py-4 font-medium">Subject</th>
+                <th className="px-6 py-4 font-medium">Contact</th>
+                <th className="px-6 py-4 font-medium">Received</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
-              {recent.length === 0 ? (
+              {recentMessages.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
-                    {counts ? 'No volunteer sign-ups yet.' : 'Loading...'}
+                    {counts ? 'No messages yet.' : 'Loading...'}
                   </td>
                 </tr>
               ) : (
-                recent.map((volunteer) => (
-                  <tr key={volunteer.id} className="hover:bg-gray-50 transition">
-                    <td className="px-6 py-4 font-medium text-gray-900">
-                      {volunteer.name}
+                recentMessages.map((message) => (
+                  <tr
+                    key={message.id}
+                    className={`hover:bg-gray-50 transition ${
+                      message.read ? '' : 'bg-blue-50/30'
+                    }`}
+                  >
+                    <td className="px-6 py-4">
+                      {message.read ? (
+                        <span className="inline-flex items-center py-1 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                          Read
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>{' '}
+                          New
+                        </span>
+                      )}
                     </td>
-                    <td className="px-6 py-4">{volunteer.phone}</td>
-                    <td className="px-6 py-4">{volunteer.city}</td>
-                    <td className="px-6 py-4">{volunteer.interest}</td>
+                    <td className="px-6 py-4 font-medium text-gray-900">
+                      {message.name}
+                    </td>
+                    <td className="px-6 py-4 max-w-xs truncate">
+                      {message.subject}
+                    </td>
+                    <td className="px-6 py-4">
+                      <a
+                        href={`tel:+91${message.phone.replace(/\D/g, '').slice(-10)}`}
+                        className="hover:text-brand-blue transition block"
+                      >
+                        {message.phone}
+                      </a>
+                      {message.email && (
+                        <a
+                          href={`mailto:${message.email}`}
+                          className="text-xs text-gray-400 hover:text-brand-blue transition"
+                        >
+                          {message.email}
+                        </a>
+                      )}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {formatDateParts(volunteer.createdAt).label ?? '—'}
+                      {formatDateParts(message.createdAt).label ?? '—'}
                     </td>
                   </tr>
                 ))
