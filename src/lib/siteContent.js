@@ -42,6 +42,7 @@ export const siteInfo = {
 export const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'Our Story', href: '/our-story' },
+  { name: 'Our Programs', href: '/programs' },
   { name: 'Events', href: '/events' },
   { name: 'Our Shelters', href: '/shelters' },
   { name: 'Donate', href: '/donate' },
@@ -215,14 +216,155 @@ export const impactVideo = {
 };
 
 /**
- * Demo imagery for the hero collage — swap for real photographs before launch.
+ * Hero collage imagery — real photographs from our 2025–26 programme report.
  *
  * Served from /public rather than hotlinked from Unsplash. The hero background
  * is the page's LCP element, and routing it through the image optimiser to a
  * remote host added several seconds to the first uncached request.
  */
 export const heroImages = {
-  background: '/images/hero-background.jpg',
-  primary: '/images/hero-primary.jpg',
-  secondary: '/images/hero-secondary.jpg',
+  background: '/images/programs/team-and-residents.jpg',
+  primary: '/images/programs/independence-day.jpg',
+  secondary: '/images/programs/outdoor-gathering.png',
+};
+
+/**
+ * Content for the /programs page, drawn from our 2025–26 programme report
+ * ("Shelter details content with programs.pdf" in inputs/). Deliberately free
+ * of shelter names, addresses, or anything else that identifies a specific
+ * centre — that information belongs only in the admin-managed Shelters list
+ * (lib/shelters.js), never in static site content.
+ */
+export const programsOverview = {
+  eyebrow: 'Our Programs',
+  title: 'Two Programmes, One Goal',
+  description:
+    'Helping Hearts remains committed to improving the lives of homeless individuals and supporting the welfare of needy people through dedicated humanitarian initiatives. Guided by compassion and a strong sense of social responsibility, we strive to restore dignity, provide essential assistance, and create opportunities for lasting change.',
+};
+
+/**
+ * Welfare of Homeless People — implemented through four sequential focus
+ * areas, from the moment someone is rescued through to independent living.
+ */
+export const homelessWelfareProgram = {
+  title: 'Welfare of Homeless People',
+  description:
+    'This programme improves the quality of life of homeless individuals by providing comprehensive care, protection, and opportunities for rehabilitation. Through shelter, nutritious food, healthcare, psychosocial support, skill development, and livelihood opportunities, it helps individuals regain stability, dignity, and self-reliance — including people with mental health challenges, persons with disabilities, terminally ill patients, and elderly people.',
+  rescueBreakdown: {
+    total: '265',
+    detail:
+      'Everyone we have rescued from the streets so far, broken down by who they are.',
+    byGender: [
+      { label: 'Male', value: '141' },
+      { label: 'Female', value: '124' },
+    ],
+    byCategory: [
+      { label: 'Elderly', value: '26' },
+      { label: 'Mental Illness', value: '129' },
+      { label: 'Terminally Ill', value: '90' },
+      { label: 'Differently Abled', value: '20' },
+    ],
+  },
+  focusAreas: [
+    {
+      key: 'emergency-care',
+      step: '01',
+      title: 'Emergency Care & Short-Term Care',
+      description:
+        'Essential services for residents in crisis or facing immediate health and safety risks, aimed at protecting lives, meeting urgent needs, and helping individuals recover until long-term support is available.',
+      services: [
+        {
+          title: 'Rescue Services',
+          description:
+            'Homeless individuals in distress are identified and rescued from unsafe locations such as streets, railway stations, or public places, then transported to safe care.',
+        },
+        {
+          title: 'Medical Care',
+          description:
+            'Immediate attention for injuries, illnesses, malnutrition, dehydration, or mental health emergencies — basic check-ups, first aid, medicines, and hospital referrals when necessary.',
+        },
+        {
+          title: 'Support Services',
+          description:
+            'Counselling, emotional support, and help reconnecting with family or accessing government welfare programmes to regain stability.',
+        },
+      ],
+      image: '/images/programs/rescue-transport.png',
+      imageAlt: 'A Helping Hearts vehicle transporting rescued residents to safety',
+    },
+    {
+      key: 'medium-term-rehabilitation',
+      step: '02',
+      title: 'Medium-Term Rehabilitation Pathway',
+      description:
+        'Comprehensive care and support for individuals with mental health conditions, particularly those experiencing homelessness and social vulnerability — including psychiatric follow-up, medication support, counselling, psychosocial interventions, life skills training, occupational activities, and social reintegration support.',
+      image: '/images/programs/counselling-session.png',
+      imageAlt: 'A counselling and interaction session with residents',
+    },
+    {
+      key: 'long-term-care',
+      step: '03',
+      title: 'Long-Term Residential & Dignified Care',
+      description:
+        'Safe, compassionate, and continuous care for individuals requiring long-term support, with comprehensive services including medical care, rehabilitation, nursing assistance, emotional support, daily living assistance, and palliative care — focused on dignity, comfort, and quality of life.',
+      image: '/images/programs/independence-day.jpg',
+      imageAlt: 'Residents celebrating Independence Day together',
+    },
+    {
+      key: 'livelihood-development',
+      step: '04',
+      title: 'Livelihood Development & Social Reintegration',
+      description:
+        'For individuals who have completed recovery and rehabilitation but have no family support or safe place to return to. In association with the Tamil Nadu Skill Development initiative, beneficiaries receive vocational training — including catering, housekeeping, and security services — followed by employment opportunities, promoting financial independence and a smooth transition to community living.',
+      image: '/images/programs/outdoor-gathering.png',
+      imageAlt: 'Residents and volunteers on an outing together',
+    },
+  ],
+};
+
+/**
+ * Welfare of Needy People — public healthcare access initiatives run inside
+ * government hospital premises, for patients and attendants who need them.
+ */
+export const needyWelfareProgram = {
+  title: 'Welfare of Needy People',
+  description:
+    'We support needy and vulnerable individuals by addressing their basic needs inside government hospital premises — safe drinking water, clothing, healthcare assistance, accommodation support for attendants, and access to essential welfare services — helping patients and families navigate difficult circumstances with greater security, care, and dignity.',
+  initiatives: [
+    {
+      title: 'Information Centre & Helpdesk',
+      description:
+        'A centralised hub of accurate, up-to-date information on hospital services, facilities, medical specialties, visiting hours, and registration procedures, delivered in a compassionate and supportive manner.',
+      stat: '2,01,351+ people guided through our stalls',
+      image: '/images/programs/information-helpdesk.jpg',
+      imageAlt: 'The Helping Hearts information helpdesk stall at a government hospital',
+    },
+    {
+      title: 'Thaimai Koodu — Lactation Room',
+      description:
+        'A dedicated, hygienic, and welcoming space for breastfeeding mothers, equipped with proper lighting, ventilation, a feeding pillow, chair, and cradle, ensuring comfort, dignity, and privacy.',
+      stat: '769 mothers supported',
+    },
+    {
+      title: 'Neer Nalam — Drinking Water Facility',
+      description:
+        'An RO-purified drinking water point offering 24/7 access to safe water for patients, visitors, and staff, promoting hygiene and reducing the risk of water-borne disease.',
+      stat: '7,03,852+ litres served, an estimated 3,51,926 people benefited',
+      image: '/images/programs/neer-nalam-water-point.jpg',
+      imageAlt: 'Patients and attendants using the Neer Nalam drinking water point',
+    },
+    {
+      title: 'PatientFirst — OP Registration Support',
+      description:
+        'Specialised manpower support for the out-patient registration process, helping patients obtain their OP chits quickly and reducing waiting times during peak hours.',
+      stat: '1,35,056+ patients supported',
+      image: '/images/programs/op-registration-desk.jpg',
+      imageAlt: 'Volunteers assisting patients at an OP registration desk',
+    },
+    {
+      title: 'Attendant Support Services',
+      description:
+        'Subsidised photocopying for medical and government documentation, and clean clothing support for patients and attendants in need — small conveniences that protect dignity during a hospital stay.',
+    },
+  ],
 };

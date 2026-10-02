@@ -71,7 +71,7 @@ export default function Hero() {
           <div className="absolute right-0 top-0 w-4/5 h-[450px] rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/50 z-10 transform hover:rotate-1 transition duration-500">
             <SmartImage
               src={heroImages.primary}
-              alt="Volunteer caring for a senior resident"
+              alt="Residents celebrating Independence Day together"
               fill
               sizes="(max-width: 1024px) 80vw, 460px"
               className="object-cover"
@@ -81,7 +81,7 @@ export default function Hero() {
           <div className="absolute left-0 bottom-0 w-3/5 h-64 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/50 z-20 transform -rotate-3 hover:rotate-0 transition duration-500">
             <SmartImage
               src={heroImages.secondary}
-              alt="Children at our shelter"
+              alt="Residents and volunteers spending time together"
               fill
               sizes="(max-width: 1024px) 60vw, 340px"
               className="object-cover"
