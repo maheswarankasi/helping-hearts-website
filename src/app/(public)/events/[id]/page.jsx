@@ -28,7 +28,7 @@ export default async function EventDetailsPage({ params }) {
 
   if (!event) notFound();
 
-  const galleryImages = event.images.slice(1);
+  const galleryImages = event.images.slice(0);
 
   // `isRichEmpty` flattens documents and plain strings alike, so these work
   // for records saved before these fields became rich text editors.

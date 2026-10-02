@@ -28,7 +28,7 @@ export default async function ShelterDetailsPage({ params }) {
 
   if (!shelter) notFound();
 
-  const galleryImages = shelter.images.slice(1);
+  const galleryImages = shelter.images.slice(0);
 
   return (
     <>
@@ -106,20 +106,6 @@ export default async function ShelterDetailsPage({ params }) {
                   </p>
                   <p className="font-heading text-2xl font-bold text-gray-900">
                     {shelter.capacity}
-                  </p>
-                </div>
-              )}
-
-              {shelter.images.length > 0 && (
-                <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-                  <div className="text-brand-red text-3xl mb-4">
-                    <i className="fa-solid fa-images"></i>
-                  </div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">
-                    Photos
-                  </p>
-                  <p className="font-heading text-2xl font-bold text-gray-900">
-                    {shelter.images.length}
                   </p>
                 </div>
               )}
