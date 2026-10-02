@@ -36,7 +36,7 @@ const contactCards = [
   {
     icon: 'fa-solid fa-envelope',
     label: 'Email Us',
-    lines: [siteInfo.email, 'We reply within 2 working days'],
+    lines: [siteInfo.email, 'We will reply as soon as possible'],
     href: `mailto:${siteInfo.email}`,
     external: false,
     tone: 'blue',

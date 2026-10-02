@@ -149,38 +149,31 @@ export default function DonatePage() {
             <ul className="space-y-4 text-gray-600 leading-relaxed">
               <li className="flex items-start gap-3">
                 <i className="fa-solid fa-circle-check text-brand-red mt-1 shrink-0"></i>
-                We will <strong>never</strong> ask for your card number, CVV,
-                UPI PIN, OTP, or net-banking password. Anyone who does is not
-                us.
+                <p>We will <strong>never</strong> ask for your card number, CVV, UPI PIN, OTP, or net-banking password. Anyone who does is not us.</p>
               </li>
               <li className="flex items-start gap-3">
                 <i className="fa-solid fa-circle-check text-brand-red mt-1 shrink-0"></i>
-                Donate only through the QR code shown on this website, or
-                through details confirmed directly by our office on{' '}
-                <span className="font-semibold">{siteInfo.phone}</span>.
+                <p>Donate only through the QR code shown on this website, or through details confirmed directly by our office on <span className="font-semibold">{siteInfo.phone}</span>.</p>
               </li>
               <li className="flex items-start gap-3">
                 <i className="fa-solid fa-circle-check text-brand-red mt-1 shrink-0"></i>
-                We cannot take responsibility for money given to any individual
-                or account we have not authorised.
+                <p>We cannot take responsibility for money given to any individual or account we have not authorised.</p>
               </li>
               <li className="flex items-start gap-3">
                 <i className="fa-solid fa-circle-check text-brand-red mt-1 shrink-0"></i>
-                Read our{' '}
-                <Link
+                <p>Read our <Link
                   href="/terms"
                   className="text-brand-blue font-semibold hover:underline"
-                >
-                  Terms &amp; Conditions
+                >Terms &amp; Conditions
                 </Link>{' '}
                 and{' '}
                 <Link
                   href="/privacy-policy"
                   className="text-brand-blue font-semibold hover:underline"
                 >
-                  Privacy Policy
-                </Link>{' '}
-                before donating.
+                  Privacy Policy{' '}
+                </Link> 
+                before donating.</p>
               </li>
             </ul>
           </div>
