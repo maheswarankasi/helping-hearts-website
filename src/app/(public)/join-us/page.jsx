@@ -158,20 +158,20 @@ export default function JoinUsPage() {
                   <ul className="space-y-4 text-blue-100 text-sm leading-relaxed">
                     <li className="flex items-start gap-3">
                       <i className="fa-solid fa-check text-brand-red mt-1"></i>
-                      Volunteering with us is unpaid and entirely voluntary.
+                      <p>Volunteering with us is unpaid and entirely voluntary.</p>
                     </li>
                     <li className="flex items-start gap-3">
                       <i className="fa-solid fa-check text-brand-red mt-1"></i>
-                      You must be 18 or older to volunteer on our premises.
+                      <p>You must be 18 or older to volunteer on our premises.</p>
                     </li>
                     <li className="flex items-start gap-3">
                       <i className="fa-solid fa-check text-brand-red mt-1"></i>
-                      Photographing or filming residents needs our written
-                      permission, every time.
+                      <p>Photographing or filming residents needs our written
+                      permission, every time.</p>
                     </li>
                     <li className="flex items-start gap-3">
                       <i className="fa-solid fa-check text-brand-red mt-1"></i>
-                      Your details are used only to coordinate volunteering.
+                      <p>Your details are used only to coordinate volunteering.
                       See our{' '}
                       <Link
                         href="/privacy-policy"
@@ -179,7 +179,7 @@ export default function JoinUsPage() {
                       >
                         Privacy Policy
                       </Link>
-                      .
+                      .</p>
                     </li>
                   </ul>
                 </div>
