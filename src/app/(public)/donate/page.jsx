@@ -128,7 +128,7 @@ export default function DonatePage() {
             {steps.map((step) => (
               <div key={step.number}>
                 <span className="font-heading font-black text-5xl text-white block mb-3 drop-shadow-sm">
-                  <span className="text-brand-softblue">{step.number}</span>
+                  <span style={{color: '#0a3085'}}>{step.number}</span>
                 </span>
                 <h3 className="font-heading text-xl font-bold text-gray-900 mb-2">
                   {step.title}

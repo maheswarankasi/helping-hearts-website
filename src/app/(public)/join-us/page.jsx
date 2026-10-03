@@ -114,7 +114,7 @@ export default function JoinUsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step) => (
               <div key={step.number} className="relative">
-                <span className="font-heading font-black text-5xl text-brand-softblue block mb-3">
+                <span className="font-heading font-black text-5xl block mb-3" style={{color:'#0a3085'}}>
                   {step.number}
                 </span>
                 <h3 className="font-heading text-xl font-bold text-gray-900 mb-2">
