@@ -62,7 +62,7 @@ export default function DonatePage() {
             <DonateCTA />
             <p className="text-sm text-gray-500 mt-6">
               <i className="fa-solid fa-shield-halved text-brand-blue mr-2"></i>
-              No payment gateway, no card details â€” you pay directly from your
+              No payment gateway, no card details and you pay directly from your
               own UPI app.
             </p>
           </div>
