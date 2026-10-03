@@ -56,7 +56,7 @@ export default function DonatePage() {
             </h2>
             <p className="text-gray-500 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
               Donating takes under a minute. Share a few details, scan our UPI
-              QR code, and your gift goes straight into the work â€” no
+              QR code, and your gift goes straight into the work, no
               middlemen, no processing fees taken out.
             </p>
             <DonateCTA />
