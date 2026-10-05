@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
+import { toInquiry } from '@/lib/inquiries';
 import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import ExportButton from '@/components/admin/ExportButton';
 
 export default function AdminInquiriesPage() {
   const [inquiries, setInquiries] = useState([]);
@@ -57,15 +59,23 @@ export default function AdminInquiriesPage() {
     return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
+  // Export wants a Date for `createdAt`, not the raw Firestore Timestamp
+  // these live rows carry — toInquiry() is the same normaliser the admin
+  // dashboard's own Messages count already relies on.
+  const exportRows = inquiries.map((inq) => toInquiry(inq.id, inq));
+
   return (
     <div className="p-6 md:p-10 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-bold text-brand-blue">Contact Inquiries</h1>
           <p className="text-gray-500 mt-1">Manage messages received from the website contact form.</p>
         </div>
-        <div className="bg-blue-50 text-brand-blue px-4 py-2 rounded-lg font-bold">
-          Total: {inquiries.length}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="bg-blue-50 text-brand-blue px-4 py-2 rounded-lg font-bold">
+            Total: {inquiries.length}
+          </div>
+          <ExportButton sheet="inquiries" rows={exportRows} disabled={loading} />
         </div>
       </div>
 

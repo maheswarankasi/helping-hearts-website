@@ -84,7 +84,7 @@ export default function AdminDashboard() {
           unreadInquiries: inquiries.filter((item) => !item.read).length,
         });
         setRecentMessages(inquiries.slice(0, 5));
-        setAllData({ events, shelters, volunteers, donors });
+        setAllData({ events, shelters, volunteers, donors, inquiries });
       })
       .catch((err) => {
         console.error('Dashboard load failed:', err);

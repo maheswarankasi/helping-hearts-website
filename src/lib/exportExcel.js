@@ -77,6 +77,18 @@ export const SHEETS = {
       { header: 'Signed Up', width: 20, get: (r) => dateCell(r.createdAt) },
     ],
   },
+  inquiries: {
+    title: 'Messages',
+    columns: [
+      { header: 'Status', width: 12, get: (r) => (r.read ? 'Read' : 'New') },
+      { header: 'Name', width: 26, get: (r) => r.name },
+      { header: 'Subject', width: 30, get: (r) => r.subject },
+      { header: 'Phone', width: 20, get: (r) => r.phone },
+      { header: 'Email', width: 32, get: (r) => r.email },
+      { header: 'Message', width: 60, get: (r) => r.message },
+      { header: 'Received', width: 20, get: (r) => dateCell(r.createdAt) },
+    ],
+  },
   donors: {
     title: 'Donors',
     columns: [

@@ -4,7 +4,8 @@ import { optionalText, toDate } from './firestoreUtils';
 
 const COLLECTION = 'inquiries';
 
-function toInquiry(id, data) {
+/** Exported so the admin Messages page can normalise its own live rows for export. */
+export function toInquiry(id, data) {
   return {
     id,
     name: optionalText(data.name) ?? '—',

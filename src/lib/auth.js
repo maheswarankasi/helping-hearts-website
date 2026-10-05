@@ -27,11 +27,49 @@ export function watchAdmin(callback) {
   return onAuthStateChanged(auth, callback);
 }
 
-export function signIn(email, password) {
-  return signInWithEmailAndPassword(auth, email.trim(), password);
+/**
+ * Firebase's own session has no expiry worth speaking of — indexedDB
+ * persistence plus auto-refreshing ID tokens mean a signed-in admin would
+ * otherwise stay signed in indefinitely, across browser restarts. /admin
+ * is meant to time out after 12 hours instead, so every sign-in is stamped
+ * with its own start time here, in localStorage, and AdminAuthGate checks
+ * it against SESSION_DURATION_MS.
+ */
+export const SESSION_DURATION_MS = 12 * 60 * 60 * 1000;
+
+const LOGIN_TIMESTAMP_KEY = 'hh_admin_login_at';
+
+/** Stamps "now" as the start of the 12-hour session and returns it. */
+export function seedLoginTimestamp() {
+  const now = Date.now();
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(LOGIN_TIMESTAMP_KEY, String(now));
+  }
+  return now;
+}
+
+/** The ms epoch the current session started, or null if never stamped. */
+export function getLoginTimestamp() {
+  if (typeof window === 'undefined') return null;
+  const raw = window.localStorage.getItem(LOGIN_TIMESTAMP_KEY);
+  const parsed = raw === null ? NaN : Number(raw);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function clearLoginTimestamp() {
+  if (typeof window !== 'undefined') {
+    window.localStorage.removeItem(LOGIN_TIMESTAMP_KEY);
+  }
+}
+
+export async function signIn(email, password) {
+  const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+  seedLoginTimestamp();
+  return credential;
 }
 
 export function signOutAdmin() {
+  clearLoginTimestamp();
   return firebaseSignOut(auth);
 }
 
