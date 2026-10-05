@@ -1,18 +1,25 @@
 import localFont from 'next/font/local';
 import './globals.css';
 
-// Headings font
+// Headings font.
+//
+// `display: 'block'` instead of the default 'swap': 'swap' paints the
+// fallback system font first and swaps in Outfit once it loads, so on a slow
+// connection the page visibly renders in each device's own default font
+// (San Francisco, Segoe UI, Roboto, ...) before switching. 'block' holds
+// text invisible for a short beat instead, so every device ends up showing
+// the same Outfit/DM Sans typeface rather than a flash of its own system font.
 const outfit = localFont({
   src: './fonts/Outfit.ttf',
   variable: '--font-outfit',
-  display: 'swap',
+  display: 'block',
 });
 
-// Body font
+// Body font — same reasoning as Outfit above.
 const dmSans = localFont({
   src: './fonts/DMSans.ttf',
   variable: '--font-dm-sans',
-  display: 'swap',
+  display: 'block',
 });
 
 export const metadata = {

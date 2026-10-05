@@ -76,12 +76,13 @@ export default function DonorsAdminPage() {
       )}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[840px]">
+        <table className="w-full text-left border-collapse min-w-[960px]">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100 text-sm text-gray-500 uppercase">
               <th className="px-6 py-4 font-medium">Donor</th>
               <th className="px-6 py-4 font-medium">Contact</th>
-              <th className="px-6 py-4 font-medium">PAN</th>
+              <th className="px-6 py-4 font-medium">Address</th>
+              <th className="px-6 py-4 font-medium">PAN / Aadhaar</th>
               <th className="px-6 py-4 font-medium">Amount</th>
               <th className="px-6 py-4 font-medium">Towards</th>
               <th className="px-6 py-4 font-medium">Submitted</th>
@@ -90,13 +91,13 @@ export default function DonorsAdminPage() {
           <tbody className="divide-y divide-gray-100 text-sm">
             {isLoading ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-gray-500">
+                <td colSpan="7" className="text-center py-8 text-gray-500">
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i> Loading...
                 </td>
               </tr>
             ) : donors.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-gray-500">
+                <td colSpan="7" className="text-center py-8 text-gray-500">
                   No donor records yet.
                 </td>
               </tr>
@@ -143,8 +144,16 @@ export default function DonorsAdminPage() {
                       {donor.phone}
                     </a>
                   </td>
-                  <td className="px-6 py-4 text-gray-600 font-mono text-xs tracking-wider whitespace-nowrap">
-                    {donor.pan}
+                  <td className="px-6 py-4 text-gray-600 max-w-xs whitespace-pre-line">
+                    {donor.address}
+                  </td>
+                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                      {donor.idType}
+                    </span>
+                    <span className="font-mono text-xs tracking-wider">
+                      {donor.idNumber}
+                    </span>
                   </td>
                   <td className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap">
                     {formatAmount(donor.amount)}

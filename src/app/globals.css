@@ -7,15 +7,48 @@
 @import "./fontawesome/all.min.css";
 
 /* Brand tokens (design 3) — Tailwind v4 reads these to generate utilities
-   like bg-brand-blue, text-brand-red, font-heading, font-body. */
+   like bg-brand-blue and text-brand-red. */
 @theme {
   --color-brand-blue: #0a3085;
   --color-brand-red: #cc111a;
   --color-brand-cream: #fcfbf9;
   --color-brand-softblue: #eff3ff;
+}
 
-  --font-heading: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+/*
+ * Outfit/DM Sans are set up via next/font/local in layout.js, which exposes
+ * them as `--font-outfit` / `--font-dm-sans` on <body> (via a CSS-module
+ * class in its `className`) — not on `:root`.
+ *
+ * `.font-heading` / `.font-body` reference those two variables DIRECTLY,
+ * rather than through an intermediate `--font-heading`/`--font-body` token
+ * declared in `@theme` (which compiles to `:root`). That indirection used to
+ * silently break both fonts everywhere: a custom property's `var()`
+ * references are resolved once, at its own declaration point, and that
+ * resolved value — valid or not — is what inherits down, with no second
+ * chance to re-resolve lower in the tree. `--font-outfit` doesn't exist on
+ * `:root` (only on `<body>`, below it), so a `:root`-declared
+ * `--font-heading: var(--font-outfit), sans-serif` computed to invalid right
+ * there, and every element — including `<body>` itself — inherited that same
+ * invalid value. An invalid `font-family` falls back to the *inherited*
+ * value, which bottomed out at Tailwind's own default `--font-sans` stack:
+ * `-apple-system, "Segoe UI", Roboto, ...` — each device's own UI font. That
+ * was the exact "font changes per device" bug. Referencing `--font-outfit` /
+ * `--font-dm-sans` here, at the point of use, avoids the indirection
+ * entirely: every element these classes apply to is a descendant of <body>,
+ * where both variables are always valid.
+ *
+ * No `system-ui` in the fallback chain either: that keyword literally means
+ * "this device's own default font" — keeping it would still let the font
+ * change by device whenever the fallback is ever shown. `sans-serif` is left
+ * as the final, generic fallback only for the rare case the font fails to
+ * load at all.
+ */
+.font-heading {
+  font-family: var(--font-outfit), sans-serif;
+}
+.font-body {
+  font-family: var(--font-dm-sans), sans-serif;
 }
 
 html {
@@ -26,9 +59,9 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Admin panel uses DM Sans */
+/* Admin panel uses DM Sans — same variable as .font-body above. */
 .font-dm {
-  font-family: var(--font-body);
+  font-family: var(--font-dm-sans), sans-serif;
 }
 
 .glass-nav {

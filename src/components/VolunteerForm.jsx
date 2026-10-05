@@ -9,6 +9,7 @@ const EMPTY_FORM = {
   name: '',
   email: '',
   phone: '',
+  address: '',
   city: '',
   interest: '',
   availability: '',
@@ -33,6 +34,7 @@ function validate(values) {
   const phoneProblem = phoneError(values.phone);
   if (phoneProblem) errors.phone = phoneProblem;
 
+  if (!values.address.trim()) errors.address = 'Please enter your address.';
   if (!values.city.trim()) errors.city = 'Please enter your city.';
   if (!values.interest) errors.interest = 'Please choose how you would like to help.';
   if (!values.availability) errors.availability = 'Please choose your availability.';
@@ -196,6 +198,25 @@ export default function VolunteerForm() {
             className={fieldClasses('phone')}
           />
           <FieldError id="phone-error" message={errors.phone} />
+        </div>
+
+        <div className="md:col-span-2">
+          <label htmlFor="address" className="block text-sm font-bold text-gray-700 mb-2">
+            <i className="fa-solid fa-map-location-dot text-brand-blue mr-2"></i>
+            Address <span className="text-brand-red">*</span>
+          </label>
+          <textarea
+            id="address"
+            rows={2}
+            required
+            placeholder="Your postal address"
+            value={values.address}
+            onChange={handleChange('address')}
+            aria-invalid={Boolean(errors.address)}
+            aria-describedby={errors.address ? 'address-error' : undefined}
+            className={`${fieldClasses('address')} resize-y`}
+          />
+          <FieldError id="address-error" message={errors.address} />
         </div>
 
         <div>

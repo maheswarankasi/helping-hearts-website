@@ -5,14 +5,23 @@ import { submitDonation } from '@/app/actions';
 import DonationQr from './DonationQr';
 import { formatAmount } from '@/lib/firestoreUtils';
 import { PHONE_INPUT_PROPS, normalisePhone, phoneError } from '@/lib/phone';
-import { PAN_INPUT_PROPS, normalisePan, panError } from '@/lib/pan';
+import {
+  ID_TYPES,
+  ID_TYPE_OPTIONS,
+  idInputProps,
+  idLabel,
+  idNumberError,
+  normaliseIdNumber,
+} from '@/lib/identity';
 import { donation, donationPurposes, siteInfo } from '@/lib/siteContent';
 
 const EMPTY_FORM = {
   name: '',
   email: '',
   phone: '',
-  pan: '',
+  address: '',
+  idType: ID_TYPES.PAN,
+  idNumber: '',
   amount: '',
   purpose: donationPurposes[0],
   message: '',
@@ -38,8 +47,12 @@ function validate(values) {
   const phoneProblem = phoneError(values.phone);
   if (phoneProblem) errors.phone = phoneProblem;
 
-  const panProblem = panError(values.pan);
-  if (panProblem) errors.pan = panProblem;
+  if (!values.address.trim()) {
+    errors.address = 'Please enter your address.';
+  }
+
+  const idProblem = idNumberError(values.idType, values.idNumber);
+  if (idProblem) errors.idNumber = idProblem;
 
   const amount = Number(values.amount);
   if (!String(values.amount).trim()) {
@@ -92,11 +105,12 @@ export default function DonationModal({ onClose }) {
   }, [onClose]);
 
   const handleChange = (name) => (e) => {
-    // Phone drops non-digits, PAN uppercases and drops punctuation, both as
-    // they are typed — so neither can be entered in an invalid shape.
+    // Phone drops non-digits; idNumber is normalised for whichever of
+    // PAN/Aadhaar is currently selected — both as they are typed, so neither
+    // can be entered in an invalid shape.
     let value = e.target.value;
     if (name === 'phone') value = normalisePhone(value);
-    if (name === 'pan') value = normalisePan(value);
+    if (name === 'idNumber') value = normaliseIdNumber(values.idType, value);
 
     setValues((prev) => ({ ...prev, [name]: value }));
     setSaveError(null);
@@ -105,6 +119,21 @@ export default function DonationModal({ onClose }) {
       setErrors((prev) => {
         const next = { ...prev };
         delete next[name];
+        return next;
+      });
+    }
+  };
+
+  // Switching between PAN and Aadhaar clears whatever was typed — a PAN and
+  // an Aadhaar number look nothing alike, so keeping the old value around
+  // would just carry over an invalid one.
+  const handleIdTypeChange = (idType) => {
+    setValues((prev) => ({ ...prev, idType, idNumber: '' }));
+    setSaveError(null);
+    if (hasSubmitted) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.idNumber;
         return next;
       });
     }
@@ -248,24 +277,74 @@ export default function DonationModal({ onClose }) {
                 </div>
 
                 <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1.5">
+                    Identity Proof <span className="text-brand-red">*</span>
+                  </label>
+                  <div className="flex gap-2 mb-3" role="radiogroup" aria-label="Identity proof type">
+                    {ID_TYPE_OPTIONS.map((option) => {
+                      const isSelected = values.idType === option.value;
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          onClick={() => handleIdTypeChange(option.value)}
+                          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-full text-sm font-bold border transition ${
+                            isSelected
+                              ? 'bg-brand-blue text-white border-brand-blue'
+                              : 'bg-brand-cream text-gray-600 border-gray-200 hover:border-brand-blue'
+                          }`}
+                        >
+                          <i
+                            className={`fa-regular ${
+                              isSelected ? 'fa-square-check' : 'fa-square'
+                            }`}
+                          ></i>
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+
                   <label
-                    htmlFor="donor-pan"
+                    htmlFor="donor-id-number"
                     className="block text-sm font-bold text-gray-700 mb-1.5"
                   >
-                    PAN Number <span className="text-brand-red">*</span>
+                    {idLabel(values.idType)}{' '}
+                    <span className="text-brand-red">*</span>
                   </label>
                   <input
-                    id="donor-pan"
+                    id="donor-id-number"
                     required
-                    {...PAN_INPUT_PROPS}
-                    value={values.pan}
-                    onChange={handleChange('pan')}
-                    className={`${fieldClasses('pan')} uppercase tracking-wider`}
+                    {...idInputProps(values.idType)}
+                    value={values.idNumber}
+                    onChange={handleChange('idNumber')}
+                    className={`${fieldClasses('idNumber')} uppercase tracking-wider`}
                   />
-                  <FieldError message={errors.pan} />
+                  <FieldError message={errors.idNumber} />
                   <p className="mt-1.5 text-xs text-gray-500">
                     Required so we can issue a valid donation receipt.
                   </p>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="donor-address"
+                    className="block text-sm font-bold text-gray-700 mb-1.5"
+                  >
+                    Address <span className="text-brand-red">*</span>
+                  </label>
+                  <textarea
+                    id="donor-address"
+                    rows={2}
+                    required
+                    placeholder="Your postal address, for the donation receipt"
+                    value={values.address}
+                    onChange={handleChange('address')}
+                    className={`${fieldClasses('address')} resize-y`}
+                  />
+                  <FieldError message={errors.address} />
                 </div>
 
                 <div>

@@ -11,9 +11,9 @@ export const siteInfo = {
   tagline: 'Love You Give Might Help Somebody Live',
   motto:
     'The organization is completely focused on providing aid and support to the community. We intend to extend our support to any social cause which will make a difference in many lives. To shower love and affection to the hopeless, helpless and the gifted people around us, to see a great smile in their faces.',
-  phone: '+91 99442 77721',
-  whatsapp: '6374713775',
-  whatsappDisplay: '+91 63747 13775',
+  phone: '+91 63747 13775',
+  whatsapp: '9944277721',
+  whatsappDisplay: '+91 99442 77721',
   email: 'helpingheartsservice@gmail.com',
   shortAddress: 'Coimbatore, Tamil Nadu',
   address: ['13D, Indra Nagar 2nd Street, Rathinapuri, Coimbatore,', 'Tamil Nadu 641 027'],
@@ -68,14 +68,14 @@ export const donation = {
    * from a payment app is static: it identifies the payee but cannot carry an
    * amount, so the donor has to type it themselves.
    */
-  upiId: 'maheskasi007@okicici',
+  upiId: 'helpingheartsservices@icici',
   qrImage: null, // e.g. '/donation-qr.png'  (fallback only)
   payeeName: 'Helping Hearts',
   bank: {
-    accountName: '',
-    accountNumber: '',
-    ifsc: '',
-    bankName: '',
+    accountName: 'Helping Hearts',
+    accountNumber: '605301208971',
+    ifsc: 'ICIC0007307',
+    bankName: 'ICICI',
   },
 };
 

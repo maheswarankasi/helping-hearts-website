@@ -61,11 +61,12 @@ export default function VolunteersAdminPage() {
       )}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[880px]">
+        <table className="w-full text-left border-collapse min-w-[980px]">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100 text-sm text-gray-500 uppercase">
               <th className="px-6 py-4 font-medium">Name</th>
               <th className="px-6 py-4 font-medium">Contact</th>
+              <th className="px-6 py-4 font-medium">Address</th>
               <th className="px-6 py-4 font-medium">City</th>
               <th className="px-6 py-4 font-medium">Interest</th>
               <th className="px-6 py-4 font-medium">Availability</th>
@@ -75,13 +76,13 @@ export default function VolunteersAdminPage() {
           <tbody className="divide-y divide-gray-100 text-sm">
             {isLoading ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-gray-500">
+                <td colSpan="7" className="text-center py-8 text-gray-500">
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i> Loading...
                 </td>
               </tr>
             ) : volunteers.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-gray-500">
+                <td colSpan="7" className="text-center py-8 text-gray-500">
                   No volunteer sign-ups yet.
                 </td>
               </tr>
@@ -127,6 +128,9 @@ export default function VolunteersAdminPage() {
                     >
                       {volunteer.phone}
                     </a>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600 max-w-xs whitespace-pre-line">
+                    {volunteer.address}
                   </td>
                   <td className="px-6 py-4 text-gray-600">{volunteer.city}</td>
                   <td className="px-6 py-4 text-gray-600">

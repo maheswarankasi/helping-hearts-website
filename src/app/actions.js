@@ -3,7 +3,7 @@
 import { addDonor } from '@/lib/donors';
 import { addVolunteer } from '@/lib/volunteers';
 import { normalisePhone, phoneError } from '@/lib/phone';
-import { normalisePan, panError } from '@/lib/pan';
+import { ID_TYPES, idNumberError, normaliseIdNumber } from '@/lib/identity';
 
 /**
  * Server actions for the two public forms.
@@ -32,6 +32,10 @@ function checkContactFields(values) {
   const phoneProblem = phoneError(values.phone);
   if (phoneProblem) errors.phone = phoneProblem;
 
+  if (!text(values.address)) {
+    errors.address = 'Please enter your address.';
+  }
+
   return errors;
 }
 
@@ -50,7 +54,11 @@ export async function submitVolunteer(values) {
 
   try {
     // Store the digits only, so every record is formatted the same way.
-    await addVolunteer({ ...values, phone: normalisePhone(values.phone) });
+    await addVolunteer({
+      ...values,
+      phone: normalisePhone(values.phone),
+      address: text(values.address),
+    });
     return { ok: true };
   } catch (error) {
     console.error('Volunteer sign-up failed:', error);
@@ -73,8 +81,11 @@ export async function submitDonation(values) {
     errors.purpose = 'Please choose what your gift is for.';
   }
 
-  const panProblem = panError(values.pan);
-  if (panProblem) errors.pan = panProblem;
+  // Defaults to PAN for anything unrecognised, matching the client's
+  // EMPTY_FORM default so an empty/odd idType never bypasses validation.
+  const idType = values.idType === ID_TYPES.AADHAAR ? ID_TYPES.AADHAAR : ID_TYPES.PAN;
+  const idProblem = idNumberError(idType, values.idNumber);
+  if (idProblem) errors.idNumber = idProblem;
 
   if (Object.keys(errors).length > 0) return { ok: false, errors };
 
@@ -82,7 +93,9 @@ export async function submitDonation(values) {
     await addDonor({
       ...values,
       phone: normalisePhone(values.phone),
-      pan: normalisePan(values.pan),
+      address: text(values.address),
+      idType,
+      idNumber: normaliseIdNumber(idType, values.idNumber),
     });
     return { ok: true, amount };
   } catch (error) {
