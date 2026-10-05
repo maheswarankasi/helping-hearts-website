@@ -6,7 +6,7 @@ import { FOUNDED_YEAR, siteInfo, yearsOfService } from '@/lib/siteContent';
  */
 export default function MottoSection() {
   return (
-    <section className="py-20 bg-brand-cream">
+    <section className="py-20 bg-brand-cream" style={{paddingTop: '0px'}}>
       <div className="container mx-auto px-4 max-w-4xl text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-softblue text-brand-blue font-bold text-xs uppercase tracking-widest mb-8">
           <span className="w-2 h-2 rounded-full bg-brand-red"></span> Our Motto
