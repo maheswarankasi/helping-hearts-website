@@ -21,7 +21,6 @@ import { getCategoryBadgeStyle, PROGRAMME_CATEGORIES } from '@/lib/shelterCatego
 const EMPTY_FORM = {
   name: '',
   category: 'long-term',
-  tag: '',
   address: '',
   mapUrl: '',
   capacity: '',
@@ -37,15 +36,12 @@ export default function AdminSheltersPage() {
   const [error, setError] = useState(null);
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('all');
 
-  // null while creating; the document id while editing.
   const [editingId, setEditingId] = useState(null);
   const [pendingDelete, setPendingDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState(EMPTY_FORM);
-  // Already-uploaded image URLs kept on the record being edited.
   const [existingImages, setExistingImages] = useState([]);
-  // Newly picked File objects, not yet uploaded.
   const [images, setImages] = useState([]);
 
   const loadShelters = async () => {
@@ -58,7 +54,6 @@ export default function AdminSheltersPage() {
     }
   };
 
-  // setState lands in an async continuation, so the effect body stays sync-free
   useEffect(() => {
     let isActive = true;
 
@@ -101,7 +96,6 @@ export default function AdminSheltersPage() {
     setFormData({
       name: shelter.name ?? '',
       category: shelter.category ?? 'long-term',
-      tag: shelter.tag ?? '',
       address: shelter.address ?? '',
       mapUrl: shelter.mapUrl ?? '',
       capacity: shelter.capacity ?? '',
@@ -126,8 +120,6 @@ export default function AdminSheltersPage() {
       return;
     }
 
-    // The rich text field is not an <input>, so the browser's own `required`
-    // validation never sees it.
     if (isRichEmpty(formData.description)) {
       setError('Please enter a description.');
       return;
@@ -158,14 +150,13 @@ export default function AdminSheltersPage() {
 
       setProgress(editingId ? 'Updating shelter...' : 'Saving shelter...');
 
+      // Clean payload: shelterType / tag is completely omitted
       const payload = {
         name: formData.name.trim(),
         category: formData.category,
-        tag: formData.tag.trim(),
         address: formData.address.trim(),
         mapUrl: formData.mapUrl.trim(),
-        capacity: formData.capacity.trim(),
-        // Stored as a ProseMirror JSON document, not HTML.
+        capacity: formData.capacity ? String(formData.capacity).trim() : '',
         description: toStoredValue(formData.description),
         images: [...existingImages, ...uploaded],
       };
@@ -198,7 +189,7 @@ export default function AdminSheltersPage() {
   };
 
   const handleDelete = async () => {
-    if (!pendingDelete) return;
+    if (!pendingDelete?.id) return;
 
     setIsDeleting(true);
     try {
@@ -222,7 +213,6 @@ export default function AdminSheltersPage() {
     return shelter.category === selectedCategoryFilter;
   });
 
-  // Prepare export rows with explicit category label
   const exportRows = shelters.map((s) => ({
     ...s,
     categoryName: s.category === 'mid-term' ? 'Mid-Term' : s.category === 'livelihood' ? 'Livelihood' : 'Long-Term',
@@ -241,14 +231,14 @@ export default function AdminSheltersPage() {
           <ExportButton sheet="shelters" rows={exportRows} />
           <button
             onClick={openCreate}
-            className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition shadow-sm flex items-center"
+            className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition shadow-sm flex items-center cursor-pointer"
           >
             <i className="fa-solid fa-plus mr-2"></i> Add Shelter
           </button>
         </div>
       </div>
 
-      {/* Filter and stats row */}
+      {/* Category filter toolbar */}
       <div className="flex items-center justify-between mb-4 gap-4 flex-wrap bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
@@ -258,7 +248,7 @@ export default function AdminSheltersPage() {
             <button
               type="button"
               onClick={() => setSelectedCategoryFilter('all')}
-              className={`px-3 py-1.5 rounded-md transition ${
+              className={`px-3 py-1.5 rounded-md transition cursor-pointer ${
                 selectedCategoryFilter === 'all'
                   ? 'bg-white text-gray-900 shadow-xs font-semibold'
                   : 'text-gray-600 hover:text-gray-900'
@@ -269,7 +259,7 @@ export default function AdminSheltersPage() {
             <button
               type="button"
               onClick={() => setSelectedCategoryFilter('long-term')}
-              className={`px-3 py-1.5 rounded-md transition ${
+              className={`px-3 py-1.5 rounded-md transition cursor-pointer ${
                 selectedCategoryFilter === 'long-term'
                   ? 'bg-blue-600 text-white shadow-xs font-semibold'
                   : 'text-gray-600 hover:text-gray-900'
@@ -280,7 +270,7 @@ export default function AdminSheltersPage() {
             <button
               type="button"
               onClick={() => setSelectedCategoryFilter('mid-term')}
-              className={`px-3 py-1.5 rounded-md transition ${
+              className={`px-3 py-1.5 rounded-md transition cursor-pointer ${
                 selectedCategoryFilter === 'mid-term'
                   ? 'bg-amber-600 text-white shadow-xs font-semibold'
                   : 'text-gray-600 hover:text-gray-900'
@@ -291,7 +281,7 @@ export default function AdminSheltersPage() {
             <button
               type="button"
               onClick={() => setSelectedCategoryFilter('livelihood')}
-              className={`px-3 py-1.5 rounded-md transition ${
+              className={`px-3 py-1.5 rounded-md transition cursor-pointer ${
                 selectedCategoryFilter === 'livelihood'
                   ? 'bg-emerald-600 text-white shadow-xs font-semibold'
                   : 'text-gray-600 hover:text-gray-900'
@@ -313,6 +303,7 @@ export default function AdminSheltersPage() {
         </div>
       )}
 
+      {/* Shelters table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[760px]">
           <thead>
@@ -347,11 +338,6 @@ export default function AdminSheltersPage() {
                   <tr key={shelter.id} className="hover:bg-gray-50 transition">
                     <td className="px-6 py-4">
                       <div className="font-semibold text-gray-900">{shelter.name}</div>
-                      {shelter.tag && (
-                        <span className="text-xs text-gray-400 font-medium">
-                          {shelter.tag}
-                        </span>
-                      )}
                     </td>
                     <td className="px-6 py-4">
                       <span
@@ -389,7 +375,7 @@ export default function AdminSheltersPage() {
                           type="button"
                           onClick={() => openEdit(shelter)}
                           title="Edit shelter"
-                          className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 flex items-center justify-center transition"
+                          className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 flex items-center justify-center transition cursor-pointer"
                         >
                           <i className="fa-solid fa-pen text-sm"></i>
                         </button>
@@ -397,7 +383,7 @@ export default function AdminSheltersPage() {
                           type="button"
                           onClick={() => setPendingDelete(shelter)}
                           title="Delete shelter"
-                          className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-300 flex items-center justify-center transition"
+                          className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-300 flex items-center justify-center transition cursor-pointer"
                         >
                           <i className="fa-solid fa-trash text-sm"></i>
                         </button>
@@ -411,6 +397,7 @@ export default function AdminSheltersPage() {
         </table>
       </div>
 
+      {/* Add / Edit modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
@@ -421,7 +408,7 @@ export default function AdminSheltersPage() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 p-1"
+                className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
               >
                 <i className="fa-solid fa-xmark text-lg"></i>
               </button>
@@ -449,56 +436,42 @@ export default function AdminSheltersPage() {
                 />
               </label>
 
-              {/* Mandatory Shelter Category field */}
-              <label className="block">
-                <span className="text-base font-bold text-gray-800 mb-2 block">
-                  Shelter Category <span className="text-red-500">*</span>
-                </span>
-                <select
-                  required
-                  className="w-full border p-3 rounded-lg bg-white font-medium text-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={formData.category}
-                  onChange={update('category')}
-                >
-                  <option value="long-term">
-                    Long-Term (Permanent & elderly intensive care)
-                  </option>
-                  <option value="mid-term">
-                    Mid-Term (Transitional & psychiatric rehabilitation)
-                  </option>
-                  <option value="livelihood">
-                    Livelihood (Vocational skills & independent living)
-                  </option>
-                </select>
-                <span className="text-xs text-gray-500 mt-1 block">
-                  Assigning a category groups this shelter under the matching programme on the public website.
-                </span>
-              </label>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Side-by-side: Capacity (Number) and Shelter Category (Dropdown) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label className="block">
                   <span className="text-base font-bold text-gray-800 mb-2 block">
-                    Shelter Type <span className="text-sm font-normal text-gray-400">(optional)</span>
+                    Capacity <span className="text-sm font-normal text-gray-400">(Number of residents)</span>
                   </span>
                   <input
-                    type="text"
-                    placeholder="e.g. Elderly Home"
-                    className="w-full border p-3 rounded-lg"
-                    value={formData.tag}
-                    onChange={update('tag')}
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-base font-bold text-gray-800 mb-2 block">
-                    Capacity <span className="text-sm font-normal text-gray-400">(optional)</span>
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="e.g. 45 Residents"
-                    className="w-full border p-3 rounded-lg"
+                    type="number"
+                    min="0"
+                    placeholder="e.g. 45"
+                    className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                     value={formData.capacity}
                     onChange={update('capacity')}
                   />
+                </label>
+
+                <label className="block">
+                  <span className="text-base font-bold text-gray-800 mb-2 block">
+                    Shelter Category <span className="text-red-500">*</span>
+                  </span>
+                  <select
+                    required
+                    className="w-full border p-3 rounded-lg bg-white font-medium text-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={formData.category}
+                    onChange={update('category')}
+                  >
+                    <option value="long-term">
+                      Long-Term
+                    </option>
+                    <option value="mid-term">
+                      Mid-Term
+                    </option>
+                    <option value="livelihood">
+                      Livelihood
+                    </option>
+                  </select>
                 </label>
               </div>
 
@@ -510,7 +483,7 @@ export default function AdminSheltersPage() {
                   required
                   type="text"
                   placeholder="e.g. 12, Gandhipuram, Coimbatore 641012"
-                  className="w-full border p-3 rounded-lg"
+                  className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                   value={formData.address}
                   onChange={update('address')}
                 />
@@ -524,7 +497,7 @@ export default function AdminSheltersPage() {
                   required
                   type="url"
                   placeholder="https://maps.app.goo.gl/…"
-                  className="w-full border p-3 rounded-lg"
+                  className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                   value={formData.mapUrl}
                   onChange={update('mapUrl')}
                 />
@@ -547,7 +520,7 @@ export default function AdminSheltersPage() {
                 />
               </label>
 
-              {/* Existing photos, each removable, when editing a record */}
+              {/* Photos */}
               {existingImages.length > 0 && (
                 <div>
                   <span className="text-base font-bold text-gray-800 mb-2 block">
@@ -618,14 +591,14 @@ export default function AdminSheltersPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium"
+                  className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium disabled:opacity-50 flex items-center shadow-sm"
+                  className="px-6 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium disabled:opacity-50 flex items-center shadow-sm cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -644,16 +617,18 @@ export default function AdminSheltersPage() {
       )}
 
       {/* Delete confirmation modal */}
-      <ConfirmDialog
-        isOpen={Boolean(pendingDelete)}
-        title="Delete Shelter?"
-        message={`Are you sure you want to delete “${pendingDelete?.name}”? This will remove it from the public site and cannot be undone.`}
-        confirmText="Delete Shelter"
-        confirmTone="danger"
-        isLoading={isDeleting}
-        onConfirm={handleDelete}
-        onCancel={() => setPendingDelete(null)}
-      />
+      {pendingDelete && (
+        <ConfirmDialog
+          isOpen={Boolean(pendingDelete)}
+          title="Delete Shelter?"
+          itemName={pendingDelete.name}
+          message="This will remove the shelter from the public site and cannot be undone."
+          confirmLabel="Delete Shelter"
+          isBusy={isDeleting}
+          onConfirm={handleDelete}
+          onCancel={() => setPendingDelete(null)}
+        />
+      )}
     </div>
   );
 }

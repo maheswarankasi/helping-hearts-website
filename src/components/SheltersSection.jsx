@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import EmptyState from './EmptyState';
 import SmartImage from './SmartImage';
@@ -39,23 +39,31 @@ export default function SheltersSection({
   initialCount = 4,
   batchSize = 2,
 }) {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  // Filter shelters if a specific category is chosen
+  const filteredShelters = useMemo(() => {
+    if (selectedCategory === 'all') return shelters;
+    return shelters.filter((s) => (s.category || 'long-term') === selectedCategory);
+  }, [shelters, selectedCategory]);
+
   const [visibleCount, setVisibleCount] = useState(
     showViewAll ? Math.min(shelters.length, initialCount) : Math.min(shelters.length, initialCount)
   );
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const hasMore = !showViewAll && visibleCount < shelters.length;
+  const hasMore = !showViewAll && visibleCount < filteredShelters.length;
 
   const handleLoadMore = () => {
     if (!hasMore || isLoadingMore) return;
     setIsLoadingMore(true);
     setTimeout(() => {
-      setVisibleCount((prev) => Math.min(shelters.length, prev + batchSize));
+      setVisibleCount((prev) => Math.min(filteredShelters.length, prev + batchSize));
       setIsLoadingMore(false);
     }, 350);
   };
 
-  const displayedShelters = shelters.slice(0, visibleCount);
+  const displayedShelters = filteredShelters.slice(0, visibleCount);
 
   return (
     <section id="shelters" className={className}>
@@ -68,11 +76,79 @@ export default function SheltersSection({
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">{subtitle}</p>
         </ScrollReveal>
 
-        {shelters.length === 0 ? (
+        {/* Category filter pills on full listing page */}
+        {!showViewAll && shelters.length > 0 && (
+          <ScrollReveal variant="fade-up" className="flex justify-center mb-12">
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 p-1.5 bg-white rounded-2xl border border-gray-200 shadow-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setVisibleCount(initialCount);
+                }}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
+                  selectedCategory === 'all'
+                    ? 'bg-brand-blue text-white shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}
+              >
+                All Shelters ({shelters.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategory('long-term');
+                  setVisibleCount(initialCount);
+                }}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
+                  selectedCategory === 'long-term'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}
+              >
+                Long-Term ({shelters.filter((s) => (s.category || 'long-term') === 'long-term').length})
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategory('mid-term');
+                  setVisibleCount(initialCount);
+                }}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
+                  selectedCategory === 'mid-term'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}
+              >
+                Mid-Term ({shelters.filter((s) => s.category === 'mid-term').length})
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategory('livelihood');
+                  setVisibleCount(initialCount);
+                }}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
+                  selectedCategory === 'livelihood'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}
+              >
+                Livelihood ({shelters.filter((s) => s.category === 'livelihood').length})
+              </button>
+            </div>
+          </ScrollReveal>
+        )}
+
+        {filteredShelters.length === 0 ? (
           <EmptyState
             icon="fa-solid fa-house-chimney-user"
-            title="No shelters published yet"
-            message="Shelters added from the admin panel will appear here with their photos."
+            title={selectedCategory === 'all' ? "No shelters published yet" : `No ${selectedCategory} shelters found`}
+            message={
+              selectedCategory === 'all'
+                ? "Shelters added from the admin panel will appear here with their photos."
+                : `There are currently no shelters listed under this category.`
+            }
           />
         ) : (
           <>
@@ -215,7 +291,7 @@ export default function SheltersSection({
               })}
             </div>
 
-            {/* Infinite on-scroll trigger for batch loading on /shelters page */}
+            {/* Infinite on-scroll trigger for batch loading */}
             {!showViewAll && (
               <InfiniteScrollTrigger
                 hasMore={hasMore}
@@ -224,8 +300,8 @@ export default function SheltersSection({
               />
             )}
 
-            {/* "Explore All Shelters" button on Home Page ("Our Care Shelters" Section) */}
-            {showViewAll && shelters.length > 0 && (
+            {/* "View all" CTA button for homepage teaser */}
+            {showViewAll && shelters.length > initialCount && (
               <ScrollReveal variant="fade-up" className="text-center mt-12">
                 <Link
                   href="/shelters"

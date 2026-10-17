@@ -15,28 +15,19 @@
  */
 
 /**
- * @typedef {Object} ProgrammeFacility
- * @property {string} name - Name of the shelter or centre model (e.g. 'Rehabilitation Home for People with Mental Illness')
- * @property {string} description - Description extracted from the programme report
- * @property {string[]} locations - List of locations where these centres are operated
- */
-
-/**
  * Programme Category details structure
  * @typedef {Object} ProgrammeCategory
  * @property {ShelterCategory} id - Unique category identifier ('long-term' | 'mid-term' | 'livelihood')
  * @property {string} slug - Route slug matching category id
- * @property {string} title - Full display title matching report (e.g. 'Long Term Residential & Dignified Care')
+ * @property {string} title - Full display title (e.g. 'Long-Term Shelters')
  * @property {string} shortTitle - Compact label (e.g. 'Long-Term')
- * @property {string} badge - Eyebrow label from report
- * @property {string} tagline - Exact mission statement / introduction from PDF
+ * @property {string} badge - Eyebrow label (e.g. 'Permanent & Palliative Care')
+ * @property {string} tagline - One-line mission summary
  * @property {string} icon - FontAwesome icon class
  * @property {'blue' | 'red' | 'emerald'} tone - Accent theme
  * @property {string} image - Representative photography asset
  * @property {string} imageAlt - Accessible image description
- * @property {string} overview - Comprehensive narrative copy from report
- * @property {ProgrammeFacility[]} [facilities] - Official operational centres and locations
- * @property {string} [reportingSummary] - Report statement for the reporting period
+ * @property {string} overview - Narrative description of this shelter tier
  * @property {string[]} objectives - Core strategic goals
  * @property {string} whoItSupports - Beneficiary eligibility & target demographics
  * @property {ImpactMetric[]} impactMetrics - Key operational figures

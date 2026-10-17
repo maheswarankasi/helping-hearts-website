@@ -4,11 +4,13 @@ import SmartImage from '@/components/SmartImage';
 import VolunteerCTA from '@/components/VolunteerCTA';
 import ScrollReveal from '@/components/animations/ScrollReveal';
 import { ScrollStagger, ScrollStaggerItem } from '@/components/animations/ScrollStagger';
+import ProgrammeCategoryTabs from '@/components/ProgrammeCategoryTabs';
 import {
   homelessWelfareProgram,
   needyWelfareProgram,
   programsOverview,
 } from '@/lib/siteContent';
+import { getShelters } from '@/lib/shelters';
 
 export const metadata = {
   title: 'Our Programs & Shelter Models | Helping Hearts NGO',
@@ -38,8 +40,15 @@ const FOCUS_AREA_CATEGORY_MAP = {
   },
 };
 
-export default function ProgramsPage() {
+export default async function ProgramsPage() {
   const { rescueBreakdown, focusAreas } = homelessWelfareProgram;
+  const allShelters = await getShelters();
+
+  const shelterCounts = {
+    'long-term': allShelters.filter((s) => s.category === 'long-term').length,
+    'mid-term': allShelters.filter((s) => s.category === 'mid-term').length,
+    livelihood: allShelters.filter((s) => s.category === 'livelihood').length,
+  };
 
   return (
     <>
@@ -64,6 +73,16 @@ export default function ProgramsPage() {
             <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
               {homelessWelfareProgram.description}
             </p>
+          </ScrollReveal>
+
+          {/* 3 Shelter Categories Quick Switcher Tabs */}
+          <ScrollReveal variant="fade-up" className="mb-14">
+            <div className="text-center mb-3">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                Our 3 Shelter Categories — Click to view facilities & impact
+              </p>
+            </div>
+            <ProgrammeCategoryTabs shelterCounts={shelterCounts} />
           </ScrollReveal>
 
           {/* Rescue breakdown */}
