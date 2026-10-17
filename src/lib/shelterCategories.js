@@ -1,9 +1,10 @@
 /**
  * @file Programme Category metadata and helpers for Helping Hearts Shelters.
- * Classifies shelters into:
- *  - Long-Term (`long-term`)
- *  - Mid-Term (`mid-term`)
- *  - Livelihood (`livelihood`)
+ * Exact text, headings, mission statements, statistics, and facilities
+ * extracted directly from the verified 2025–26 Helping Hearts Programme Report PDF:
+ *  - Long-Term Residential & Dignified Care (`long-term`)
+ *  - Medium Term Rehabilitation Pathway (`mid-term`)
+ *  - Livelihood Development and Social Reintegration (`livelihood`)
  */
 
 /** @type {import('./types').ProgrammeCategory[]} */
@@ -11,88 +12,207 @@ export const PROGRAMME_CATEGORIES = [
   {
     id: 'long-term',
     slug: 'long-term',
-    title: 'Long-Term Shelters',
-    shortTitle: 'Long-Term',
-    badge: 'Permanent & Dignified Care',
+    title: 'Long Term Residential & Dignified Care',
+    shortTitle: 'Long-Term Care',
+    badge: 'Long Term Residential & Dignified Care',
     tagline:
-      'Safe, compassionate, and continuous care for elderly and abandoned individuals requiring lifelong support.',
+      'The Long-Term Residential & Dignified Care programme provides safe, compassionate, and continuous care for individuals requiring long-term support. Under this programme, rehabilitation homes for persons with disabilities, geriatric care centres for senior citizens, and hospice care centres for individuals with life-limiting illnesses are being operated.',
     icon: 'fa-solid fa-house-chimney-medical',
     tone: 'blue',
     image: '/images/programs/independence-day.jpg',
-    imageAlt: 'Residents celebrating together at our long-term care shelter',
+    imageAlt: 'Residents celebrating Independence Day together at our long-term care shelter',
     overview:
-      'Our Long-Term Shelters provide permanent residential sanctuary and dignified end-of-life care for individuals who cannot be reunited with families or live independently. Residents receive round-the-clock medical attention, nursing support, nutritious meals, psychosocial care, and a warm family environment filled with love and respect.',
+      'These centres provide a nurturing living environment with comprehensive support services, including medical care, rehabilitation, nursing assistance, emotional support, daily living assistance, and palliative care. The programme focuses on ensuring dignity, comfort, and quality of life for vulnerable individuals by addressing their physical, emotional, and social needs while promoting independence, respect, and compassionate care.',
+    reportingSummary:
+      'During the reporting period, a total of 394 beneficiaries received care and support across the facilities. Of these, 37 beneficiaries were reintegrated, 37 were rehabilitated, and 63 received end-of-life care support. The remaining beneficiaries continued to receive care and support based on their individual needs.',
+    facilities: [
+      {
+        name: 'Shelter for Homeless (Geriatric Care Centres & Hospice)',
+        description:
+          'Under the Shelter for Urban Homeless (SUH) scheme, three Geriatric Care Centres/hospice care are being operated to provide safe shelter, care, and support for homeless elderly persons. These centres offer a secure and dignified living environment with essential services such as accommodation, nutritious food, healthcare support, personal care assistance, and emotional support. The centres focus on improving the quality of life of vulnerable senior citizens by addressing their physical, social, and emotional needs. Through compassionate care and continuous support, the programme ensures dignity, safety, and well-being for homeless elderly individuals.',
+        locations: [
+          'Centre 1: Pollachi, Coimbatore',
+          'Centre 2: Kempatty Colony, Coimbatore',
+          'Centre 3: Gopalapuram, Coimbatore',
+          'Centre 4: Poosaripalayam, Coimbatore',
+          'Centre 5: KNG Pudur, Coimbatore',
+          'Centre 6: Kallakurichi',
+        ],
+      },
+      {
+        name: 'Rehabilitation Home for Differently-Abled',
+        description:
+          'The Rehabilitation Home for Persons with Disabilities provides a safe, supportive, and dignified living environment for individuals requiring long-term care and assistance. The centre offers comprehensive rehabilitation services, healthcare support, therapy, skill development, and assistance with daily living activities to enhance independence, confidence, and social inclusion among persons with disabilities.',
+        locations: ['Centre 1: Kinathukadavu, Coimbatore'],
+      },
+    ],
     objectives: [
-      'Provide permanent safe housing, clean bedding, and nutritious daily meals.',
-      'Deliver 24/7 healthcare, specialized nursing care, and palliative support for terminally ill and bedridden residents.',
-      'Restore human dignity, combat loneliness, and foster an inclusive, loving community for abandoned elders.',
-      'Facilitate recreational therapy, daily exercises, and cultural celebrations to enrich quality of life.',
+      'Operate Geriatric Care Centres and hospice care for homeless elderly persons under the SUH scheme.',
+      'Run Rehabilitation Homes for Persons with Disabilities ensuring safe, supportive, and dignified long-term living.',
+      'Provide comprehensive medical care, nursing assistance, therapy, and continuous end-of-life palliative care.',
+      'Enhance independence, confidence, and social inclusion through daily living assistance and emotional support.',
     ],
     whoItSupports:
-      'Rescued destitute senior citizens, bedridden and terminally ill individuals, persons with severe permanent disabilities, and homeless individuals with no surviving family or social safety net.',
+      'Homeless elderly persons, individuals requiring long-term support, persons with disabilities, and individuals with life-limiting or terminal illnesses with no surviving family.',
     impactMetrics: [
-      { label: 'Long-Term Residents', value: '180+', subtext: 'Supported across our centres' },
-      { label: '24/7 Medical Care', value: '100%', subtext: 'Doctor visits and daily nursing' },
-      { label: 'Elderly Cared For', value: '26+', subtext: 'Rescued senior citizens' },
-      { label: 'Specialized Diet', value: '3 Meals', subtext: 'Plus daily nutrition and medicines' },
+      {
+        label: 'Beneficiaries Benefitted',
+        value: '394',
+        subtext: 'Care & support received across facilities',
+      },
+      {
+        label: 'Total Bed Capacity',
+        value: '234',
+        subtext: 'Across 7 operational care centres',
+      },
+      {
+        label: 'End-of-Life Care Support',
+        value: '63',
+        subtext: 'Palliative and hospice care support',
+      },
+      {
+        label: 'Reintegrated & Rehabilitated',
+        value: '74',
+        subtext: '37 reintegrated with family, 37 rehabilitated',
+      },
     ],
   },
   {
     id: 'mid-term',
     slug: 'mid-term',
-    title: 'Mid-Term Shelters',
-    shortTitle: 'Mid-Term',
-    badge: 'Transitional & Psychiatric Rehabilitation',
+    title: 'Medium Term Rehabilitation Pathway',
+    shortTitle: 'Mid-Term Rehabilitation',
+    badge: 'Medium Term Rehabilitation Pathway',
     tagline:
-      'Structured psychiatric recovery, physical healing, and family tracing to safely reintegrate individuals back into home life.',
+      'Under this program, we are operating two Rehabilitation Homes and three Emergency Care and Recovery Centres (ECRCs) across Tamil Nadu, providing comprehensive care and support for individuals with mental health conditions, particularly those experiencing homelessness and social vulnerability.',
     icon: 'fa-solid fa-hand-holding-hand',
     tone: 'red',
     image: '/images/programs/counselling-session.png',
     imageAlt: 'A counselling and psychosocial recovery session with residents',
     overview:
-      'Our Mid-Term Shelters serve as transitional care facilities for individuals rescued from streets or acute distress who require time-limited, intensive rehabilitation. With focused psychiatric treatment, counselling, and social worker interventions, we stabilize mental health conditions and actively trace lost families across Tamil Nadu and neighboring states.',
+      'A Rehabilitation Home provides a safe, supportive, and structured environment for individuals living with mental illness who require continued care and assistance to regain independence and improve their quality of life. The home offers comprehensive mental health rehabilitation services, including psychiatric follow-up, medication support, counselling, psychosocial interventions, life skills training, occupational activities, and social reintegration support.',
+    reportingSummary:
+      'During the reporting period, a total of 240 beneficiaries received care and support across the facilities. Of these, 49 beneficiaries were reintegrated, 6 were rehabilitated, and 8 received end-of-life care support. The remaining beneficiaries continued to receive care and support based on their individual needs.',
+    facilities: [
+      {
+        name: 'Rehabilitation Home for People with Mental Illness',
+        description:
+          'A Rehabilitation Home provides a safe, supportive, and structured environment for individuals living with mental illness who require continued care and assistance to regain independence and improve their quality of life. The home offers comprehensive mental health rehabilitation services, including psychiatric follow-up, medication support, counselling, psychosocial interventions, life skills training, occupational activities, and social reintegration support.',
+        locations: [
+          'Centre 1: Mettupalayam, Coimbatore',
+          'Centre 2: Emerald, The Nilgiris',
+        ],
+      },
+      {
+        name: 'Emergency Care & Recovery Centre (ECRC)',
+        description:
+          'Emergency Care & Recovery Centre is to provide immediate care, protection, and rehabilitation support for homeless individuals experiencing mental health challenges. These centres offer a safe environment with essential services including emergency assistance, mental health assessment, counselling, medical care, food, hygiene support, and rehabilitation services. Located within the Government Hospitals’ campuses, the centres ensure easy access to medical services, psychiatric support, and emergency healthcare.',
+        locations: [
+          'Centre 1: Government Medical College Hospital, Coimbatore',
+          'Centre 2: Government Hospital, Oddanchatram, Dindigul',
+          'Centre 3: Government Medical College Hospital, Karur',
+        ],
+      },
+    ],
     objectives: [
-      'Conduct comprehensive physical and psychiatric assessments upon rescue and admission.',
-      'Administer continuous psychiatric medication, psychotherapy, and individual counselling sessions.',
-      'Engage residents in occupational therapy, cognitive restoration, and daily living skills.',
-      'Coordinate with police, district social welfare departments, and interstate networks for successful family tracing and repatriation.',
+      'Operate Rehabilitation Homes offering structured psychiatric follow-up and psychosocial interventions.',
+      'Provide Emergency Care & Recovery Centres within Government Hospital campuses for rapid crisis care.',
+      'Deliver essential services including mental health assessment, medication support, counselling, and hygiene care.',
+      'Strengthen life skills training, occupational activities, and social reintegration back into families and communities.',
     ],
     whoItSupports:
-      'Individuals rescued with severe mental illness, individuals disoriented or lost due to trauma, individuals in temporary crisis, and rescued wanderers awaiting family tracing.',
+      'Individuals living with mental illness, homeless individuals experiencing acute mental health challenges, psychiatric crises, and social vulnerability requiring structured medical and psychosocial rehabilitation.',
     impactMetrics: [
-      { label: 'Psychiatric Rescues', value: '129', subtext: 'Individuals stabilized' },
-      { label: 'Family Reunions', value: '75+', subtext: 'Safely repatriated home' },
-      { label: 'Average Stay', value: '6–18 Mo', subtext: 'Tailored rehabilitation cycle' },
-      { label: 'Counselling Ratio', value: '1:1', subtext: 'Dedicated case management' },
+      {
+        label: 'Beneficiaries Benefitted',
+        value: '240',
+        subtext: 'Care & recovery support across facilities',
+      },
+      {
+        label: 'Total Bed Capacity',
+        value: '145',
+        subtext: 'Across 2 Rehab Homes and 3 ECRCs',
+      },
+      {
+        label: 'Reintegrated with Family',
+        value: '49',
+        subtext: 'Safely reunited with their families',
+      },
+      {
+        label: 'Rehabilitated / End-of-Life',
+        value: '14',
+        subtext: '6 rehabilitated, 8 end-of-life support',
+      },
     ],
   },
   {
     id: 'livelihood',
     slug: 'livelihood',
-    title: 'Livelihood Shelters',
-    shortTitle: 'Livelihood',
-    badge: 'Vocational Training & Independent Living',
+    title: 'Livelihood Development and Social Reintegration',
+    shortTitle: 'Livelihood & Skills',
+    badge: 'Livelihood Development and Social Reintegration',
     tagline:
-      'Skill empowerment, vocational workshops, and assisted independent living enabling recovered individuals to achieve self-sufficiency.',
+      'This initiative is designed for individuals who have successfully completed their recovery and rehabilitation but have no family support or safe place to return to. Recognizing that sustainable recovery requires both economic independence and social inclusion, the program provides opportunities for skill development, employment, and community reintegration, enabling beneficiaries to rebuild their lives with dignity and self-reliance.',
     icon: 'fa-solid fa-briefcase',
     tone: 'emerald',
     image: '/images/programs/outdoor-gathering.png',
     imageAlt: 'Residents and volunteers gathered during a skill development workshop',
     overview:
-      'For individuals who have completed mental and physical recovery but lack safe family homes to return to, our Livelihood Shelters offer bridge housing and practical career pathways. In partnership with Tamil Nadu Skill Development initiatives and local enterprises, residents acquire marketable skills and earn an independent livelihood.',
+      'The program supports individuals who have recovered from mental health challenges by providing vocational training and employment opportunities to help them lead independent and dignified lives. In association with the Tamil Nadu Skill Development initiative, beneficiaries receive training in Catering, Housekeeping, and Security Guard services, followed by employment within our shelters and community enterprises.',
+    reportingSummary:
+      'During the reporting period, a total of 43 beneficiaries received care and support across the facilities. Of these, 03 beneficiaries were reintegrated, 01 was rehabilitated and 04 were transferred to ECRC for treatment. The remaining beneficiaries continued to receive care and support based on their individual needs. During the reporting period, a total of 21 beneficiaries received skill development training across the livelihood courses. Of these, 15 beneficiaries were provided with employment opportunities, enabling them to build financial independence, strengthen their confidence, and progress towards sustainable social reintegration.',
+    facilities: [
+      {
+        name: 'Halfway Home',
+        description:
+          'The Halfway Home supports individuals who have recovered from mental health challenges by providing vocational training and employment opportunities to help them lead independent and dignified lives. In association with the Tamil Nadu Skill Development initiative, beneficiaries receive training in Catering, Housekeeping, and Security Guard services. Upon successful completion, they are offered employment opportunities within our shelters and upcoming social enterprises, including community canteens and catering services. This initiative promotes financial independence, social reintegration, and a smooth transition from recovery to community living.',
+        locations: ['Centre 1: Veerakeralam, Coimbatore'],
+      },
+      {
+        name: 'Home Again',
+        description:
+          'The Home Again Project provides employment opportunities for individuals who have recovered from mental health challenges, enabling them to lead independent and dignified lives. The initiative promotes social inclusion, self-reliance, and successful community reintegration.',
+        locations: [
+          'Centre 1: Chikkidasampalayam, Coimbatore',
+          'Centre 2: Oomapalayam, Coimbatore',
+        ],
+      },
+      {
+        name: 'Vetri Nitchayam',
+        description:
+          'Vetri Nitchayam is a skill development and employment initiative under which individuals are trained through TNSDC in various job-oriented activities such as laundry services, cooking, and security/watchman services.',
+        locations: ['TNSDC Skill Training Centers, Coimbatore'],
+      },
+    ],
     objectives: [
-      'Impart vocational training in catering, housekeeping, horticulture, handicraft, and security services.',
-      'Foster financial literacy, personal banking habits, and disciplined savings for future independence.',
-      'Provide supported group homes (Home Again model) promoting community integration and peer solidarity.',
-      'Connect trained graduates with verified inclusive employers ensuring living wages and dignity at work.',
+      'Provide transitional housing through Halfway Homes promoting smooth transition from recovery to community living.',
+      'Run Home Again supportive housing fostering social inclusion, self-reliance, and peer solidarity.',
+      'Conduct Vetri Nitchayam skill development in laundry services, cooking, security, and tiffin services.',
+      'Connect certified graduates with employment opportunities in community canteens and verified enterprises.',
     ],
     whoItSupports:
-      'Rehabilitated individuals ready for employment, youth aging out of shelters, rescued women seeking financial self-reliance, and persons with mild disabilities capable of sustained productive work.',
+      'Individuals who have successfully completed recovery and rehabilitation from mental health challenges but have no family support or safe place to return to, seeking vocational training and economic independence.',
     impactMetrics: [
-      { label: 'Vocational Graduates', value: '60+', subtext: 'Trained in certified trades' },
-      { label: 'Employment Rate', value: '85%', subtext: 'Placed in dignified jobs' },
-      { label: 'Supported Group Homes', value: '3', subtext: 'Independent living units' },
-      { label: 'Monthly Stipends', value: '100%', subtext: 'Earned directly by beneficiaries' },
+      {
+        label: 'Beneficiaries Benefitted',
+        value: '43',
+        subtext: 'Supported across Halfway Home & Home Again',
+      },
+      {
+        label: 'Skill Training Beneficiaries',
+        value: '21',
+        subtext: 'Trained across certified livelihood courses',
+      },
+      {
+        label: 'Provided With Employment',
+        value: '15',
+        subtext: '71% placement in independent jobs',
+      },
+      {
+        label: 'Total Bed Capacity',
+        value: '28',
+        subtext: 'Transitional & group living beds',
+      },
     ],
   },
 ];
