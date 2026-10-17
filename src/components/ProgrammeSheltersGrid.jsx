@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import EmptyState from './EmptyState';
 import SmartImage from './SmartImage';
-import ScrollReveal from './animations/ScrollReveal';
 import { ScrollStagger, ScrollStaggerItem } from './animations/ScrollStagger';
 import { getCategoryBadgeStyle } from '@/lib/shelterCategories';
 
 /**
- * Renders the filtered grid of shelters operating under a specific programme category.
+ * Renders the filtered grid of shelters operating under a specific programme category,
+ * located directly beneath the "Operating Facilities & Model Centres" heading.
  *
  * @param {object} props
  * @param {import('@/lib/types').Shelter[]} props.shelters
- * @param {string} props.categoryTitle
+ * @param {string} [props.categoryTitle]
  * @param {string} props.categoryId
  */
 export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, categoryId }) {
@@ -26,7 +26,7 @@ export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, ca
             Active Facilities
           </div>
           <h2 className="font-heading text-2xl md:text-3xl font-black text-gray-900">
-            Shelters in {categoryTitle}
+            Operating Facilities & Model Centres
           </h2>
         </div>
 
@@ -85,14 +85,6 @@ export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, ca
                     </div>
                   )}
 
-                  {/* Category Pill on image */}
-                  <div className="absolute top-4 left-4">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border backdrop-blur-md shadow-xs bg-white/95 ${badgeStyle.bg}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${badgeStyle.dot}`}></span>
-                      {badgeStyle.label}
-                    </span>
-                  </div>
-
                   {/* Photo count indicator */}
                   {shelter.images?.length > 1 && (
                     <div className="absolute bottom-4 right-4 bg-black/70 text-white text-xs px-2.5 py-1 rounded-full font-semibold backdrop-blur-xs flex items-center gap-1.5">
@@ -111,12 +103,6 @@ export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, ca
                       </h3>
                     </div>
 
-                    {shelter.tag && (
-                      <p className="text-xs font-bold text-brand-red uppercase tracking-wider mb-3">
-                        {shelter.tag}
-                      </p>
-                    )}
-
                     <div className="space-y-2 text-sm text-gray-600 mb-6">
                       {shelter.address && (
                         <p className="flex items-start gap-2.5">
@@ -134,28 +120,20 @@ export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, ca
                     </div>
                   </div>
 
-                  {/* Action Link */}
+                  {/* Action Link: "Learn more ->" button as single primary action */}
                   <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                     <Link
                       href={detailHref}
-                      className="inline-flex items-center gap-2 text-sm font-bold text-brand-blue hover:text-brand-red transition group-hover:translate-x-1 duration-200"
+                      className={`inline-flex items-center gap-1.5 text-sm font-bold font-heading transition-colors duration-200 group-hover:translate-x-1 ${
+                        categoryId === 'mid-term'
+                          ? 'text-brand-red hover:text-brand-blue'
+                          : categoryId === 'livelihood'
+                          ? 'text-emerald-700 hover:text-emerald-800'
+                          : 'text-brand-blue hover:text-brand-red'
+                      }`}
                     >
-                      View Shelter Details
-                      <i className="fa-solid fa-arrow-right text-xs"></i>
+                      Learn more -&gt;
                     </Link>
-
-                    {shelter.mapUrl && (
-                      <a
-                        href={shelter.mapUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Open in Google Maps"
-                        className="text-gray-400 hover:text-brand-blue transition text-sm p-1"
-                        aria-label="Google Maps directions"
-                      >
-                        <i className="fa-solid fa-map-location-dot"></i>
-                      </a>
-                    )}
                   </div>
                 </div>
               </ScrollStaggerItem>

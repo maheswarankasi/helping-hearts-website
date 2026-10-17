@@ -26,17 +26,14 @@ const FOCUS_AREA_CATEGORY_MAP = {
   'medium-term-rehabilitation': {
     slug: 'mid-term',
     btnLabel: 'Explore Mid-Term Shelters & Rehabilitation Details',
-    badge: 'Mid-Term Shelter Model',
   },
   'long-term-care': {
     slug: 'long-term',
     btnLabel: 'Explore Long-Term Shelters & Dignified Care Details',
-    badge: 'Long-Term Shelter Model',
   },
   'livelihood-development': {
     slug: 'livelihood',
     btnLabel: 'Explore Livelihood Shelters & Vocational Training Details',
-    badge: 'Livelihood Shelter Model',
   },
 };
 
@@ -177,13 +174,6 @@ export default async function ProgramsPage() {
                     delay={0.1}
                     className="w-full lg:w-7/12"
                   >
-                    {categoryMatch && (
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-softblue text-brand-blue text-xs font-bold uppercase tracking-wider mb-3">
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-red"></span>
-                        {categoryMatch.badge}
-                      </div>
-                    )}
-
                     <h3 className="font-heading text-2xl md:text-3xl font-bold text-gray-900 mb-4 hover:text-brand-blue transition">
                       {categoryUrl ? (
                         <Link href={categoryUrl}>{area.title}</Link>

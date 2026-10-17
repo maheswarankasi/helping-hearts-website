@@ -39,10 +39,9 @@
  * @property {string} id - Firestore document ID
  * @property {string} name - Shelter name (e.g. 'Anbalayam Shelter')
  * @property {ShelterCategory} category - Mandatory category: 'long-term' | 'mid-term' | 'livelihood'
- * @property {string|null} [tag] - Optional sub-type tag (e.g. 'Elderly Home')
  * @property {string} address - Physical location address
  * @property {any} description - Rich text ProseMirror document or plain text
- * @property {string|null} [capacity] - Resident capacity string (e.g. '45 Residents')
+ * @property {string|number|null} [capacity] - Resident capacity figure (e.g. 45 or '45')
  * @property {string} capacityIcon - FontAwesome icon class for capacity
  * @property {string|null} [mapUrl] - Google Maps navigation link
  * @property {string[]} images - Cloudinary/hosted photo gallery URLs

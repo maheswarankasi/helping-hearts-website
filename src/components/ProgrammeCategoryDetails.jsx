@@ -62,64 +62,7 @@ export default function ProgrammeCategoryDetails({ category }) {
         </div>
       </ScrollReveal>
 
-      {/* Facilities & Operating Models from PDF */}
-      {category.facilities && category.facilities.length > 0 && (
-        <div className="space-y-6">
-          <ScrollReveal variant="fade-up">
-            <div className="flex items-center gap-3 mb-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${toneBg}`}>
-                <i className="fa-solid fa-house-chimney"></i>
-              </div>
-              <h2 className="font-heading text-2xl md:text-3xl font-black text-gray-900">
-                Operating Facilities & Model Centres
-              </h2>
-            </div>
-            <p className="text-sm text-gray-500">
-              Verified operational care units and centres functioning across Coimbatore and Tamil Nadu.
-            </p>
-          </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {category.facilities.map((facility, idx) => (
-              <ScrollReveal
-                key={idx}
-                variant="fade-up"
-                delay={idx * 0.1}
-                className="bg-white rounded-[2rem] border border-gray-100 p-8 shadow-sm flex flex-col justify-between"
-              >
-                <div>
-                  <h3 className="font-heading text-xl font-bold text-gray-900 mb-3 flex items-start gap-2.5">
-                    <span className={`w-2 h-2 rounded-full mt-2 shrink-0 ${accentColor === 'text-brand-red' ? 'bg-brand-red' : accentColor === 'text-emerald-600' ? 'bg-emerald-600' : 'bg-brand-blue'}`}></span>
-                    {facility.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                    {facility.description}
-                  </p>
-                </div>
-
-                {facility.locations && facility.locations.length > 0 && (
-                  <div className="pt-4 border-t border-gray-100">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2.5">
-                      Centres Located In:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {facility.locations.map((loc, lIdx) => (
-                        <span
-                          key={lIdx}
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gray-50 text-gray-700 text-xs font-semibold border border-gray-200"
-                        >
-                          <i className="fa-solid fa-location-dot text-brand-red text-[10px]"></i>
-                          {loc}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Objectives and Who It Supports */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

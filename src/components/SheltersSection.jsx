@@ -7,26 +7,23 @@ import SmartImage from './SmartImage';
 import ScrollReveal from './animations/ScrollReveal';
 import InfiniteScrollTrigger from './animations/InfiniteScrollTrigger';
 import { toPlainText } from '@/lib/richText';
-import { getCategoryBadgeStyle } from '@/lib/shelterCategories';
 
 const toneStyles = {
   blue: {
     overlay: 'from-brand-blue/90 via-brand-blue/40',
     galleryText: 'text-brand-blue',
-    tagText: 'text-brand-blue',
     locationText: 'text-brand-red',
     locationBg: 'bg-red-100',
     capacityIcon: 'text-brand-blue',
-    arrow: 'bg-brand-blue hover:bg-brand-red',
+    ctaBtn: 'bg-blue-50 text-brand-blue border-blue-200 hover:bg-brand-blue hover:text-white hover:border-brand-blue',
   },
   red: {
     overlay: 'from-brand-red/90 via-brand-red/40',
     galleryText: 'text-brand-red',
-    tagText: 'text-brand-red',
     locationText: 'text-brand-blue',
     locationBg: 'bg-blue-100',
     capacityIcon: 'text-brand-red',
-    arrow: 'bg-brand-red hover:bg-brand-blue',
+    ctaBtn: 'bg-red-50 text-brand-red border-red-200 hover:bg-brand-red hover:text-white hover:border-brand-red',
   },
 };
 
@@ -82,7 +79,6 @@ export default function SheltersSection({
                   toneStyles[shelter.tone] ??
                   (index % 2 === 0 ? toneStyles.blue : toneStyles.red);
                 const detailHref = `/shelters/${shelter.id}`;
-                const badge = getCategoryBadgeStyle(shelter.category);
 
                 return (
                   <ScrollReveal
@@ -118,20 +114,6 @@ export default function SheltersSection({
                         >
                           View Gallery <i className="fa-solid fa-images"></i>
                         </span>
-                      </div>
-
-                      {/* Category and Tag Badges */}
-                      <div className="absolute top-4 left-4 flex items-center gap-2 flex-wrap">
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-xs border ${badge.bg}`}>
-                          {badge.label}
-                        </span>
-                        {shelter.tag && (
-                          <div
-                            className={`bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${tone.tagText}`}
-                          >
-                            {shelter.tag}
-                          </div>
-                        )}
                       </div>
 
                       {shelter.images && shelter.images.length > 1 && (
@@ -184,28 +166,16 @@ export default function SheltersSection({
                             </div>
                           </div>
                         ) : (
-                          <Link
-                            href={detailHref}
-                            className="text-brand-blue hover:text-brand-red font-bold text-sm flex items-center gap-2"
-                          >
-                            Learn More <i className="fa-solid fa-arrow-right"></i>
-                          </Link>
+                          <div />
                         )}
 
-                        <div className="flex items-center gap-3">
-                          <Link
-                            href={`/programs/${shelter.category || 'long-term'}`}
-                            className="hidden sm:inline-flex text-xs font-bold text-gray-500 hover:text-brand-blue transition underline"
-                          >
-                            {badge.label} Programme
-                          </Link>
-
+                        {/* Primary CTA button displaying "Learn more ->" without standalone extra arrows */}
+                        <div className="flex items-center">
                           <Link
                             href={detailHref}
-                            aria-label={`View details for ${shelter.name}`}
-                            className={`w-12 h-12 rounded-full ${tone.arrow} text-white flex items-center justify-center transition-all duration-300 shadow-md group-hover:scale-110 shrink-0`}
+                            className={`inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full font-heading font-bold text-sm border shadow-xs transition-all duration-300 ${tone.ctaBtn}`}
                           >
-                            <i className="fa-solid fa-arrow-right"></i>
+                            Learn more -&gt;
                           </Link>
                         </div>
                       </div>

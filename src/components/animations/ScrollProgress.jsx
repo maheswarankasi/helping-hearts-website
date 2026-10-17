@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 /**
- * Top scroll progress bar tracking user scroll position across all public pages.
+ * Top scroll progress bar tracking user scroll position across public pages.
+ * Hidden on /programs and /programmes pages as per requirements.
  */
 export default function ScrollProgress() {
+  const pathname = usePathname();
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -27,6 +30,11 @@ export default function ScrollProgress() {
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Completely remove top scroll progress bar from the Programmes pages
+  if (pathname?.startsWith('/programs') || pathname?.startsWith('/programmes')) {
+    return null;
+  }
 
   return (
     <div

@@ -34,8 +34,8 @@ export default function AdminSidebar({ closeSidebar }) {
           src="/helping-hearts.jpeg"
           alt="Helping Hearts"
           width={100}
-          height={100}
-          className="rounded-md"
+          height={40}
+          className="rounded-md w-auto h-10 object-contain"
         />
         {/* Mobile close button */}
         <button className="md:hidden text-gray-400 hover:text-white text-2xl" onClick={closeSidebar}>
