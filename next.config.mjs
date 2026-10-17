@@ -3,6 +3,19 @@ const nextConfig = {
   output: 'standalone',
   reactCompiler: true,
 
+  async rewrites() {
+    return [
+      {
+        source: '/programmes',
+        destination: '/programs',
+      },
+      {
+        source: '/programmes/:path*',
+        destination: '/programs/:path*',
+      },
+    ];
+  },
+
   images: {
     // Next 16 changed the default from "any quality" to [75] only, and a
     // request for a quality outside this list is rejected with HTTP 400.

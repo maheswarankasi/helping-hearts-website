@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import VolunteerForm from '@/components/VolunteerForm';
+import ScrollReveal from '@/components/animations/ScrollReveal';
+import { ScrollStagger, ScrollStaggerItem } from '@/components/animations/ScrollStagger';
 import { FOUNDED_YEAR, siteInfo } from '@/lib/siteContent';
 
 export const metadata = {
@@ -68,39 +70,40 @@ export default function JoinUsPage() {
       />
 
       {/* Why volunteer */}
-      <section className="py-16 lg:py-20 bg-brand-cream">
+      <section className="py-16 lg:py-20 bg-brand-cream overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <ScrollStagger className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {reasons.map((reason, index) => (
-              <div
-                key={reason.title}
-                className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-3 transition-transform duration-300 group"
-              >
+              <ScrollStaggerItem key={reason.title} className="h-full">
                 <div
-                  className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-all duration-300 group-hover:scale-110 group-hover:text-white ${
-                    index % 2 === 0
-                      ? 'bg-brand-softblue text-brand-blue group-hover:bg-brand-blue'
-                      : 'bg-red-50 text-brand-red group-hover:bg-brand-red'
-                  }`}
+                  className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-3 transition-transform duration-300 group h-full flex flex-col"
                 >
-                  <i className={reason.icon}></i>
+                  <div
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-all duration-300 group-hover:scale-110 group-hover:text-white ${
+                      index % 2 === 0
+                        ? 'bg-brand-softblue text-brand-blue group-hover:bg-brand-blue'
+                        : 'bg-red-50 text-brand-red group-hover:bg-brand-red'
+                    }`}
+                  >
+                    <i className={reason.icon}></i>
+                  </div>
+                  <h3 className="font-heading text-2xl font-bold text-gray-900 mb-3">
+                    {reason.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed grow">
+                    {reason.description}
+                  </p>
                 </div>
-                <h3 className="font-heading text-2xl font-bold text-gray-900 mb-3">
-                  {reason.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {reason.description}
-                </p>
-              </div>
+              </ScrollStaggerItem>
             ))}
-          </div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="py-16 lg:py-20 bg-white border-y border-gray-100">
+      <section className="py-16 lg:py-20 bg-white border-y border-gray-100 overflow-hidden">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-14">
+          <ScrollReveal variant="fade-up" className="text-center mb-14">
             <h2 className="font-heading text-4xl md:text-5xl font-black text-gray-900 mb-4">
               How It Works
             </h2>
@@ -109,12 +112,12 @@ export default function JoinUsPage() {
               We keep the process simple, but we do take safeguarding
               seriously — our residents depend on it.
             </p>
-          </div>
+          </ScrollReveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <ScrollStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step) => (
-              <div key={step.number} className="relative">
-                <span className="font-heading font-black text-5xl block mb-3" style={{color:'#0a3085'}}>
+              <ScrollStaggerItem key={step.number} className="relative">
+                <span className="font-heading font-black text-5xl block mb-3 text-brand-blue">
                   {step.number}
                 </span>
                 <h3 className="font-heading text-xl font-bold text-gray-900 mb-2">
@@ -123,17 +126,21 @@ export default function JoinUsPage() {
                 <p className="text-gray-600 text-sm leading-relaxed">
                   {step.description}
                 </p>
-              </div>
+              </ScrollStaggerItem>
             ))}
-          </div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* Sign-up form */}
-      <section id="volunteer-form" className="py-16 lg:py-24 bg-brand-cream">
+      <section id="volunteer-form" className="py-16 lg:py-24 bg-brand-cream overflow-hidden">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+            <ScrollReveal
+              variant="fade-right"
+              duration={0.65}
+              className="lg:col-span-3 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12"
+            >
               <h2 className="font-heading text-3xl md:text-4xl font-black text-gray-900 mb-2">
                 Volunteer Sign-Up
               </h2>
@@ -144,9 +151,14 @@ export default function JoinUsPage() {
               </p>
 
               <VolunteerForm />
-            </div>
+            </ScrollReveal>
 
-            <aside className="lg:col-span-2 space-y-8">
+            <ScrollReveal
+              variant="fade-left"
+              duration={0.65}
+              delay={0.1}
+              className="lg:col-span-2 space-y-8"
+            >
               <div className="bg-gradient-to-br from-brand-blue to-[#07205c] rounded-[2.5rem] p-8 md:p-10 text-white relative overflow-hidden shadow-2xl">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-white opacity-5 rounded-full translate-x-1/3 -translate-y-1/3"></div>
                 <div className="absolute bottom-0 left-6 w-28 h-28 bg-brand-red opacity-20 rounded-full blur-2xl"></div>
@@ -227,7 +239,7 @@ export default function JoinUsPage() {
                   <i className="fa-solid fa-hand-holding-heart"></i>
                 </Link>
               </div>
-            </aside>
+            </ScrollReveal>
           </div>
         </div>
       </section>

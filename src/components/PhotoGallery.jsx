@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import SmartImage from './SmartImage';
+import ScrollReveal from './animations/ScrollReveal';
+import { ScrollStagger, ScrollStaggerItem } from './animations/ScrollStagger';
 
 /**
- * Grid of uploaded photos with a simple lightbox. Used on the event and
- * shelter details pages.
+ * Grid of uploaded photos with on-scroll staggered reveal and lightbox.
+ * Used on the event and shelter details pages.
  */
-export default function PhotoGallery({ images, title = 'Photo Gallery', alt }) {
+export default function PhotoGallery({ images = [], title = 'Photo Gallery', alt = 'Gallery' }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const isOpen = activeIndex !== null;
 
@@ -39,37 +41,40 @@ export default function PhotoGallery({ images, title = 'Photo Gallery', alt }) {
     };
   }, [isOpen, close, step]);
 
-  if (images.length === 0) return null;
+  if (!images || images.length === 0) return null;
 
   return (
     <div>
-      <h2 className="font-heading text-3xl font-black text-gray-900 mb-2">
-        {title}
-      </h2>
-      <div className="w-16 h-2 bg-brand-red rounded-full mb-8"></div>
+      <ScrollReveal variant="fade-up">
+        <h2 className="font-heading text-3xl font-black text-gray-900 mb-2">
+          {title}
+        </h2>
+        <div className="w-16 h-2 bg-brand-red rounded-full mb-8"></div>
+      </ScrollReveal>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <ScrollStagger className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {images.map((src, index) => (
-          <button
-            key={src}
-            type="button"
-            onClick={() => setActiveIndex(index)}
-            aria-label={`Open photo ${index + 1} of ${images.length}`}
-            className="group relative h-40 md:h-52 overflow-hidden rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-shadow cursor-zoom-in"
-          >
-            <SmartImage
-              src={src}
-              alt={`${alt} photo ${index + 1}`}
-              fill
-              sizes="(max-width: 768px) 50vw, 300px"
-              className="object-cover group-hover:scale-105 transition duration-500"
-            />
-            <span className="absolute inset-0 bg-brand-blue/0 group-hover:bg-brand-blue/30 transition-colors flex items-center justify-center text-white opacity-0 group-hover:opacity-100">
-              <i className="fa-solid fa-magnifying-glass-plus text-2xl"></i>
-            </span>
-          </button>
+          <ScrollStaggerItem key={src + index}>
+            <button
+              type="button"
+              onClick={() => setActiveIndex(index)}
+              aria-label={`Open photo ${index + 1} of ${images.length}`}
+              className="w-full group relative h-40 md:h-52 overflow-hidden rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-shadow cursor-zoom-in block"
+            >
+              <SmartImage
+                src={src}
+                alt={`${alt} photo ${index + 1}`}
+                fill
+                sizes="(max-width: 768px) 50vw, 300px"
+                className="object-cover group-hover:scale-105 transition duration-500"
+              />
+              <span className="absolute inset-0 bg-brand-blue/0 group-hover:bg-brand-blue/30 transition-colors flex items-center justify-center text-white opacity-0 group-hover:opacity-100">
+                <i className="fa-solid fa-magnifying-glass-plus text-2xl"></i>
+              </span>
+            </button>
+          </ScrollStaggerItem>
         ))}
-      </div>
+      </ScrollStagger>
 
       {isOpen && (
         <div

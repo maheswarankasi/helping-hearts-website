@@ -1,4 +1,5 @@
 import { impactCards } from '@/lib/siteContent';
+import { ScrollStagger, ScrollStaggerItem } from './animations/ScrollStagger';
 
 const toneStyles = {
   blue: 'bg-brand-softblue text-brand-blue group-hover:bg-brand-blue group-hover:text-white',
@@ -9,9 +10,9 @@ export default function ImpactCards() {
   return (
     <section className="pb-20 relative z-20">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative -mt-10 lg:-mt-20">
+        <ScrollStagger className="grid grid-cols-1 md:grid-cols-3 gap-8 relative -mt-10 lg:-mt-20">
           {impactCards.map((card) => (
-            <div
+            <ScrollStaggerItem
               key={card.title}
               className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 hover:-translate-y-3 transition-transform duration-300 border border-gray-100 group"
             >
@@ -26,9 +27,9 @@ export default function ImpactCards() {
                 {card.title}
               </h3>
               <p className="text-gray-600 mb-4">{card.description}</p>
-            </div>
+            </ScrollStaggerItem>
           ))}
-        </div>
+        </ScrollStagger>
       </div>
     </section>
   );

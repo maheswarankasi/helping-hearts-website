@@ -16,9 +16,11 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import ConfirmDialog from '@/components/admin/ConfirmDialog';
 import ExportButton from '@/components/admin/ExportButton';
 import { EMPTY_DOC, isRichEmpty, toStoredValue } from '@/lib/richText';
+import { getCategoryBadgeStyle, PROGRAMME_CATEGORIES } from '@/lib/shelterCategories';
 
 const EMPTY_FORM = {
   name: '',
+  category: 'long-term',
   tag: '',
   address: '',
   mapUrl: '',
@@ -33,6 +35,7 @@ export default function AdminSheltersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(null);
   const [error, setError] = useState(null);
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('all');
 
   // null while creating; the document id while editing.
   const [editingId, setEditingId] = useState(null);
@@ -97,6 +100,7 @@ export default function AdminSheltersPage() {
     setEditingId(shelter.id);
     setFormData({
       name: shelter.name ?? '',
+      category: shelter.category ?? 'long-term',
       tag: shelter.tag ?? '',
       address: shelter.address ?? '',
       mapUrl: shelter.mapUrl ?? '',
@@ -112,12 +116,23 @@ export default function AdminSheltersPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.name.trim()) {
+      setError('Please enter a shelter name.');
+      return;
+    }
+
+    if (!formData.category) {
+      setError('Please select a shelter category.');
+      return;
+    }
+
     // The rich text field is not an <input>, so the browser's own `required`
     // validation never sees it.
     if (isRichEmpty(formData.description)) {
       setError('Please enter a description.');
       return;
     }
+
     if (existingImages.length === 0 && images.length === 0) {
       setError('Please add at least one photo.');
       return;
@@ -145,6 +160,7 @@ export default function AdminSheltersPage() {
 
       const payload = {
         name: formData.name.trim(),
+        category: formData.category,
         tag: formData.tag.trim(),
         address: formData.address.trim(),
         mapUrl: formData.mapUrl.trim(),
@@ -201,19 +217,93 @@ export default function AdminSheltersPage() {
   const update = (field) => (e) =>
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
 
+  const filteredShelters = shelters.filter((shelter) => {
+    if (selectedCategoryFilter === 'all') return true;
+    return shelter.category === selectedCategoryFilter;
+  });
+
+  // Prepare export rows with explicit category label
+  const exportRows = shelters.map((s) => ({
+    ...s,
+    categoryName: s.category === 'mid-term' ? 'Mid-Term' : s.category === 'livelihood' ? 'Livelihood' : 'Long-Term',
+  }));
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
-        <h2 className="text-2xl font-bold text-gray-800">Manage Shelters</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Manage Shelters</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Create, categorize, and update care homes across Long-Term, Mid-Term, and Livelihood programmes.
+          </p>
+        </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <ExportButton sheet="shelters" rows={shelters} />
+          <ExportButton sheet="shelters" rows={exportRows} />
           <button
             onClick={openCreate}
-            className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition shadow-sm flex items-center"
           >
             <i className="fa-solid fa-plus mr-2"></i> Add Shelter
           </button>
         </div>
+      </div>
+
+      {/* Filter and stats row */}
+      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Filter by Category:
+          </span>
+          <div className="inline-flex rounded-lg border border-gray-200 p-1 bg-gray-50 text-xs font-medium">
+            <button
+              type="button"
+              onClick={() => setSelectedCategoryFilter('all')}
+              className={`px-3 py-1.5 rounded-md transition ${
+                selectedCategoryFilter === 'all'
+                  ? 'bg-white text-gray-900 shadow-xs font-semibold'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              All ({shelters.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedCategoryFilter('long-term')}
+              className={`px-3 py-1.5 rounded-md transition ${
+                selectedCategoryFilter === 'long-term'
+                  ? 'bg-blue-600 text-white shadow-xs font-semibold'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Long-Term ({shelters.filter((s) => s.category === 'long-term').length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedCategoryFilter('mid-term')}
+              className={`px-3 py-1.5 rounded-md transition ${
+                selectedCategoryFilter === 'mid-term'
+                  ? 'bg-amber-600 text-white shadow-xs font-semibold'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Mid-Term ({shelters.filter((s) => s.category === 'mid-term').length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedCategoryFilter('livelihood')}
+              className={`px-3 py-1.5 rounded-md transition ${
+                selectedCategoryFilter === 'livelihood'
+                  ? 'bg-emerald-600 text-white shadow-xs font-semibold'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Livelihood ({shelters.filter((s) => s.category === 'livelihood').length})
+            </button>
+          </div>
+        </div>
+        <span className="text-xs text-gray-400">
+          Showing {filteredShelters.length} of {shelters.length} shelter records
+        </span>
       </div>
 
       {error && !isModalOpen && (
@@ -224,10 +314,11 @@ export default function AdminSheltersPage() {
       )}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[720px]">
+        <table className="w-full text-left border-collapse min-w-[760px]">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100 text-sm text-gray-500 uppercase">
               <th className="px-6 py-4 font-medium">Shelter Name</th>
+              <th className="px-6 py-4 font-medium">Category</th>
               <th className="px-6 py-4 font-medium">Address</th>
               <th className="px-6 py-4 font-medium">Capacity</th>
               <th className="px-6 py-4 font-medium">Photos</th>
@@ -237,66 +328,84 @@ export default function AdminSheltersPage() {
           <tbody className="divide-y divide-gray-100">
             {isLoading ? (
               <tr>
-                <td colSpan="5" className="text-center py-8 text-gray-500">
-                  <i className="fa-solid fa-spinner fa-spin mr-2"></i> Loading...
+                <td colSpan="6" className="text-center py-8 text-gray-500">
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i> Loading shelters...
                 </td>
               </tr>
-            ) : shelters.length === 0 ? (
+            ) : filteredShelters.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-8 text-gray-500">
-                  No shelters yet. Click “Add Shelter” to create the first one.
+                <td colSpan="6" className="text-center py-8 text-gray-500">
+                  {selectedCategoryFilter !== 'all'
+                    ? `No shelters listed under ${selectedCategoryFilter} category yet.`
+                    : 'No shelters yet. Click “Add Shelter” to create the first one.'}
                 </td>
               </tr>
             ) : (
-              shelters.map((shelter) => (
-                <tr key={shelter.id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4 font-semibold">
-                    {shelter.name}
-                  </td>
-                  <td className="px-6 py-4 text-gray-600 truncate max-w-xs">
-                    {shelter.address}
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {shelter.capacity?.trim() ? (
-                      shelter.capacity
-                    ) : (
-                      <span className="text-gray-400 italic">Not set</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {shelter.images?.length || 0} Photos
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link
-                        href={`/shelters/${shelter.id}`}
-                        target="_blank"
-                        title="Open on the public site"
-                        className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 flex items-center justify-center transition"
+              filteredShelters.map((shelter) => {
+                const badge = getCategoryBadgeStyle(shelter.category);
+                return (
+                  <tr key={shelter.id} className="hover:bg-gray-50 transition">
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-gray-900">{shelter.name}</div>
+                      {shelter.tag && (
+                        <span className="text-xs text-gray-400 font-medium">
+                          {shelter.tag}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${badge.bg}`}
                       >
-                        <i className="fa-solid fa-arrow-up-right-from-square text-sm"></i>
-                      </Link>
+                        <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`}></span>
+                        {badge.label}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-gray-600 truncate max-w-xs">
+                      {shelter.address}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">
+                      {shelter.capacity?.trim() ? (
+                        shelter.capacity
+                      ) : (
+                        <span className="text-gray-400 italic">Not set</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">
+                      {shelter.images?.length || 0} Photos
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/shelters/${shelter.id}`}
+                          target="_blank"
+                          title="Open on the public site"
+                          className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 flex items-center justify-center transition"
+                        >
+                          <i className="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+                        </Link>
 
-                      <button
-                        type="button"
-                        onClick={() => openEdit(shelter)}
-                        title="Edit shelter"
-                        className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 flex items-center justify-center transition"
-                      >
-                        <i className="fa-solid fa-pen text-sm"></i>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPendingDelete(shelter)}
-                        title="Delete shelter"
-                        className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-300 flex items-center justify-center transition"
-                      >
-                        <i className="fa-solid fa-trash text-sm"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+                        <button
+                          type="button"
+                          onClick={() => openEdit(shelter)}
+                          title="Edit shelter"
+                          className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 flex items-center justify-center transition"
+                        >
+                          <i className="fa-solid fa-pen text-sm"></i>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPendingDelete(shelter)}
+                          title="Delete shelter"
+                          className="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-300 flex items-center justify-center transition"
+                        >
+                          <i className="fa-solid fa-trash text-sm"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -304,10 +413,19 @@ export default function AdminSheltersPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold mb-4">
-              {editingId ? 'Edit Shelter' : 'Add New Shelter'}
-            </h3>
+          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between mb-4 border-b pb-3">
+              <h3 className="text-2xl font-bold text-gray-900">
+                {editingId ? 'Edit Shelter' : 'Add New Shelter'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 p-1"
+              >
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
+            </div>
 
             {error && (
               <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 text-sm">
@@ -319,16 +437,42 @@ export default function AdminSheltersPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <label className="block">
                 <span className="text-base font-bold text-gray-800 mb-2 block">
-                  Shelter Name
+                  Shelter Name <span className="text-red-500">*</span>
                 </span>
                 <input
                   required
                   type="text"
                   placeholder="e.g. Anbalayam Shelter"
-                  className="w-full border p-3 rounded-lg"
+                  className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                   value={formData.name}
                   onChange={update('name')}
                 />
+              </label>
+
+              {/* Mandatory Shelter Category field */}
+              <label className="block">
+                <span className="text-base font-bold text-gray-800 mb-2 block">
+                  Shelter Category <span className="text-red-500">*</span>
+                </span>
+                <select
+                  required
+                  className="w-full border p-3 rounded-lg bg-white font-medium text-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  value={formData.category}
+                  onChange={update('category')}
+                >
+                  <option value="long-term">
+                    Long-Term (Permanent & elderly intensive care)
+                  </option>
+                  <option value="mid-term">
+                    Mid-Term (Transitional & psychiatric rehabilitation)
+                  </option>
+                  <option value="livelihood">
+                    Livelihood (Vocational skills & independent living)
+                  </option>
+                </select>
+                <span className="text-xs text-gray-500 mt-1 block">
+                  Assigning a category groups this shelter under the matching programme on the public website.
+                </span>
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -360,7 +504,7 @@ export default function AdminSheltersPage() {
 
               <label className="block">
                 <span className="text-base font-bold text-gray-800 mb-2 block">
-                  Address
+                  Address <span className="text-red-500">*</span>
                 </span>
                 <input
                   required
@@ -374,7 +518,7 @@ export default function AdminSheltersPage() {
 
               <label className="block">
                 <span className="text-base font-bold text-gray-800 mb-2 block">
-                  Google Maps URL
+                  Google Maps URL <span className="text-red-500">*</span>
                 </span>
                 <input
                   required
@@ -388,8 +532,8 @@ export default function AdminSheltersPage() {
 
               <label className="block">
                 <span className="text-base font-bold text-gray-800 mb-2 block">
-                  Description{' '}
-                  <span className="text-sm font-normal text-gray-400">
+                  Description <span className="text-red-500">*</span>
+                  <span className="text-sm font-normal text-gray-400 ml-2">
                     — shown on the shelter details page
                   </span>
                 </span>
@@ -449,48 +593,49 @@ export default function AdminSheltersPage() {
 
               <label className="block">
                 <span className="text-base font-bold text-gray-800 mb-2 block">
-                  {existingImages.length > 0 ? 'Add more photos' : 'Photos'}{' '}
+                  {editingId ? 'Add More Photos' : 'Shelter Photos'}{' '}
                   <span className="text-sm font-normal text-gray-400">
-                    {existingImages.length > 0
-                      ? '(optional)'
-                      : '— the first one becomes the card image'}
+                    (JPG, PNG or WebP)
                   </span>
                 </span>
                 <input
                   type="file"
                   multiple
                   accept="image/*"
+                  onChange={(e) => setImages(Array.from(e.target.files || []))}
                   className="w-full border p-2 rounded-lg"
-                  onChange={(e) => setImages(Array.from(e.target.files))}
                 />
               </label>
 
               {progress && (
-                <p className="text-sm text-blue-600 font-medium">
+                <div className="text-sm text-blue-600 font-medium">
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                   {progress}
-                </p>
+                </div>
               )}
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  disabled={isSubmitting}
-                  className="px-5 py-2 border rounded-lg disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-70"
+                  className="px-6 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium disabled:opacity-50 flex items-center shadow-sm"
                 >
-                  {isSubmitting
-                    ? 'Saving...'
-                    : editingId
-                      ? 'Update Shelter'
-                      : 'Save Shelter'}
+                  {isSubmitting ? (
+                    <>
+                      <i className="fa-solid fa-spinner fa-spin mr-2"></i> Saving...
+                    </>
+                  ) : editingId ? (
+                    'Save Changes'
+                  ) : (
+                    'Create Shelter'
+                  )}
                 </button>
               </div>
             </form>
@@ -498,16 +643,17 @@ export default function AdminSheltersPage() {
         </div>
       )}
 
-      {pendingDelete && (
-        <ConfirmDialog
-          title="Delete this shelter?"
-          itemName={pendingDelete.name}
-          message="It will disappear from the public site immediately. Uploaded photos stay in Cloudinary and are not removed."
-          isBusy={isDeleting}
-          onConfirm={handleDelete}
-          onCancel={() => setPendingDelete(null)}
-        />
-      )}
+      {/* Delete confirmation modal */}
+      <ConfirmDialog
+        isOpen={Boolean(pendingDelete)}
+        title="Delete Shelter?"
+        message={`Are you sure you want to delete “${pendingDelete?.name}”? This will remove it from the public site and cannot be undone.`}
+        confirmText="Delete Shelter"
+        confirmTone="danger"
+        isLoading={isDeleting}
+        onConfirm={handleDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 }

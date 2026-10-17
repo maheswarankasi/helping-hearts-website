@@ -1,4 +1,5 @@
 import { siteInfo } from '@/lib/siteContent';
+import ScrollReveal from './animations/ScrollReveal';
 
 /**
  * Shared renderer for the Privacy Policy and Terms & Conditions pages.
@@ -8,9 +9,9 @@ import { siteInfo } from '@/lib/siteContent';
  */
 export default function LegalDocument({ lastUpdated, intro, sections }) {
   return (
-    <section className="py-16 lg:py-20 bg-brand-cream">
+    <section className="py-16 lg:py-20 bg-brand-cream overflow-hidden">
       <div className="container mx-auto px-4 max-w-5xl">
-        <div className="flex flex-col lg:flex-row gap-10">
+        <div className="flex flex-col lg:flex-row gap-10 items-start">
           {/* Jump links */}
           <nav
             aria-label="On this page"
@@ -36,105 +37,111 @@ export default function LegalDocument({ lastUpdated, intro, sections }) {
             </ol>
           </nav>
 
-          <article className="flex-1 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12">
-            <p className="text-sm text-gray-500 font-medium mb-8 pb-8 border-b border-gray-100">
-              <i className="fa-solid fa-calendar-check text-brand-red mr-2"></i>
-              Last updated: {lastUpdated}
-            </p>
-
-            {intro.map((paragraph) => (
-              <p
-                key={paragraph}
-                className="text-gray-600 text-lg leading-relaxed mb-5"
-              >
-                {paragraph}
+          <article className="flex-1 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12 overflow-hidden">
+            <ScrollReveal variant="fade-up">
+              <p className="text-sm text-gray-500 font-medium mb-8 pb-8 border-b border-gray-100">
+                <i className="fa-solid fa-calendar-check text-brand-red mr-2"></i>
+                Last updated: {lastUpdated}
               </p>
-            ))}
+
+              {intro.map((paragraph) => (
+                <p
+                  key={paragraph}
+                  className="text-gray-600 text-lg leading-relaxed mb-5"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </ScrollReveal>
 
             {sections.map((section, index) => (
-              <div
+              <ScrollReveal
                 key={section.heading}
-                id={`section-${index + 1}`}
+                variant="fade-up"
                 className="mt-12 scroll-mt-40"
               >
-                <h2 className="font-heading text-2xl md:text-3xl font-black text-gray-900 mb-2">
-                  <span className="text-brand-red">{index + 1}.</span>{' '}
-                  {section.heading}
-                </h2>
-                <div className="w-12 h-1.5 bg-brand-red rounded-full mb-6"></div>
+                <div id={`section-${index + 1}`}>
+                  <h2 className="font-heading text-2xl md:text-3xl font-black text-gray-900 mb-2">
+                    <span className="text-brand-red">{index + 1}.</span>{' '}
+                    {section.heading}
+                  </h2>
+                  <div className="w-12 h-1.5 bg-brand-red rounded-full mb-6"></div>
 
-                {section.body.map((block, blockIndex) =>
-                  typeof block === 'string' ? (
-                    <p
-                      key={blockIndex}
-                      className="text-gray-600 leading-relaxed mb-4"
-                    >
-                      {block}
-                    </p>
-                  ) : (
-                    <ul key={blockIndex} className="space-y-3 mb-5 mt-1">
-                      {block.list.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-3 text-gray-600 leading-relaxed"
-                        >
-                          <i className="fa-solid fa-circle text-[6px] text-brand-red mt-2.5 shrink-0"></i>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )
-                )}
-              </div>
+                  {section.body.map((block, blockIndex) =>
+                    typeof block === 'string' ? (
+                      <p
+                        key={blockIndex}
+                        className="text-gray-600 leading-relaxed mb-4"
+                      >
+                        {block}
+                      </p>
+                    ) : (
+                      <ul key={blockIndex} className="space-y-3 mb-5 mt-1">
+                        {block.list.map((item) => (
+                          <li
+                            key={item}
+                            className="flex items-start gap-3 text-gray-600 leading-relaxed"
+                          >
+                            <i className="fa-solid fa-circle text-[6px] text-brand-red mt-2.5 shrink-0"></i>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )
+                  )}
+                </div>
+              </ScrollReveal>
             ))}
 
             {/* Contact block closes both documents */}
-            <div className="mt-14 bg-brand-softblue rounded-[2rem] p-8">
-              <h3 className="font-heading text-xl font-bold text-brand-blue mb-4">
-                Questions about this document?
-              </h3>
-              <ul className="space-y-3 text-gray-700">
-                <li className="flex items-start gap-3">
-                  <i className="fa-solid fa-location-dot mt-1 text-brand-red"></i>
-                  <span>
-                    {siteInfo.address[0]} {siteInfo.address[1]}
-                  </span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <i className="fa-solid fa-phone text-brand-red"></i>
-                  <a
-                    href={`tel:${siteInfo.phone.replace(/\s/g, '')}`}
-                    className="hover:text-brand-blue transition"
-                  >
-                    {siteInfo.phone}
-                  </a>
-                </li>
-                <li className="flex items-center gap-3">
-                  <i className="fa-brands fa-whatsapp text-green-600"></i>
-                  <a
-                    href={`https://wa.me/91${siteInfo.whatsapp}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-brand-blue transition"
-                  >
-                    {siteInfo.whatsappDisplay}
-                  </a>
-                </li>
-                <li className="flex items-center gap-3">
-                  <i className="fa-solid fa-envelope text-brand-red"></i>
-                  <a
-                    href={`mailto:${siteInfo.email}`}
-                    className="hover:text-brand-blue transition break-all"
-                  >
-                    {siteInfo.email}
-                  </a>
-                </li>
-                <li className="flex items-center gap-3">
-                  <i className="fa-solid fa-clock text-brand-red"></i>
-                  <span>{siteInfo.officeHours}</span>
-                </li>
-              </ul>
-            </div>
+            <ScrollReveal variant="fade-up" className="mt-14">
+              <div className="bg-brand-softblue rounded-[2rem] p-8">
+                <h3 className="font-heading text-xl font-bold text-brand-blue mb-4">
+                  Questions about this document?
+                </h3>
+                <ul className="space-y-3 text-gray-700">
+                  <li className="flex items-start gap-3">
+                    <i className="fa-solid fa-location-dot mt-1 text-brand-red"></i>
+                    <span>
+                      {siteInfo.address[0]} {siteInfo.address[1]}
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <i className="fa-solid fa-phone text-brand-red"></i>
+                    <a
+                      href={`tel:${siteInfo.phone.replace(/\s/g, '')}`}
+                      className="hover:text-brand-blue transition"
+                    >
+                      {siteInfo.phone}
+                    </a>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <i className="fa-brands fa-whatsapp text-green-600"></i>
+                    <a
+                      href={`https://wa.me/91${siteInfo.whatsapp}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-brand-blue transition"
+                    >
+                      {siteInfo.whatsappDisplay}
+                    </a>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <i className="fa-solid fa-envelope text-brand-red"></i>
+                    <a
+                      href={`mailto:${siteInfo.email}`}
+                      className="hover:text-brand-blue transition break-all"
+                    >
+                      {siteInfo.email}
+                    </a>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <i className="fa-solid fa-clock text-brand-red"></i>
+                    <span>{siteInfo.officeHours}</span>
+                  </li>
+                </ul>
+              </div>
+            </ScrollReveal>
           </article>
         </div>
       </div>

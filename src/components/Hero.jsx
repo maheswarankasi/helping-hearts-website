@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import SmartImage from './SmartImage';
+import ScrollReveal from './animations/ScrollReveal';
 import { FOUNDED_YEAR, heroImages, siteInfo } from '@/lib/siteContent';
 
 export default function Hero() {
   return (
-    <section className="pt-32 pb-20 lg:pt-40 lg:pb-32 relative flex items-center">
+    <section className="pt-32 pb-20 lg:pt-40 lg:pb-32 relative flex items-center overflow-hidden">
       {/* Background image — an optimised <Image> rather than a CSS
           background, so it can be resized, served as WebP, and preloaded. */}
       <SmartImage
@@ -20,7 +21,12 @@ export default function Hero() {
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10 flex flex-col lg:flex-row items-center gap-16">
         {/* Left text content */}
-        <div className="w-full lg:w-1/2 text-center lg:text-left">
+        <ScrollReveal
+          variant="fade-right"
+          duration={0.7}
+          priority={true}
+          className="w-full lg:w-1/2 text-center lg:text-left"
+        >
           <div className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-6">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest">
               <span className="w-2 h-2 rounded-full bg-brand-red"></span>{' '}
@@ -64,10 +70,16 @@ export default function Hero() {
               Join Us <i className="fa-solid fa-heart text-brand-red"></i>
             </Link>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Right image collage */}
-        <div className="w-full lg:w-1/2 relative h-[500px]">
+        <ScrollReveal
+          variant="fade-left"
+          duration={0.7}
+          delay={0.15}
+          priority={true}
+          className="w-full lg:w-1/2 relative h-[500px]"
+        >
           <div className="absolute right-0 top-0 w-4/5 h-[450px] rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/50 z-10 transform hover:rotate-1 transition duration-500">
             <SmartImage
               src={heroImages.primary}
@@ -104,7 +116,7 @@ export default function Hero() {
               </p>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

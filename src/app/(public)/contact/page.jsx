@@ -1,5 +1,7 @@
 import PageHeader from '@/components/PageHeader';
 import ContactForm from '@/components/ContactForm';
+import ScrollReveal from '@/components/animations/ScrollReveal';
+import { ScrollStagger, ScrollStaggerItem } from '@/components/animations/ScrollStagger';
 import { siteInfo } from '@/lib/siteContent';
 
 export const metadata = {
@@ -59,43 +61,50 @@ export default function ContactPage() {
       />
 
       {/* Contact detail cards */}
-      <section className="py-16 lg:py-20 bg-brand-cream">
+      <section className="py-16 lg:py-20 bg-brand-cream overflow-hidden">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <ScrollStagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {contactCards.map((card) => (
-              <a
-                key={card.label}
-                href={card.href}
-                target={card.external ? '_blank' : undefined}
-                rel={card.external ? 'noopener noreferrer' : undefined}
-                className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-2 transition-transform duration-300 group block"
-              >
-                <div
-                  className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-all duration-300 group-hover:scale-110 ${
-                    toneStyles[card.tone]
-                  }`}
+              <ScrollStaggerItem key={card.label} className="h-full">
+                <a
+                  href={card.href}
+                  target={card.external ? '_blank' : undefined}
+                  rel={card.external ? 'noopener noreferrer' : undefined}
+                  className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-2 transition-transform duration-300 group block h-full flex flex-col"
                 >
-                  <i className={card.icon}></i>
-                </div>
-                <h3 className="font-heading text-xl font-bold text-gray-900 mb-3 group-hover:text-brand-blue transition-colors">
-                  {card.label}
-                </h3>
-                {card.lines.map((line) => (
-                  <p key={line} className="text-gray-600 leading-relaxed text-sm">
-                    {line}
-                  </p>
-                ))}
-              </a>
+                  <div
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-all duration-300 group-hover:scale-110 ${
+                      toneStyles[card.tone]
+                    }`}
+                  >
+                    <i className={card.icon}></i>
+                  </div>
+                  <h3 className="font-heading text-xl font-bold text-gray-900 mb-3 group-hover:text-brand-blue transition-colors">
+                    {card.label}
+                  </h3>
+                  <div className="grow">
+                    {card.lines.map((line) => (
+                      <p key={line} className="text-gray-600 leading-relaxed text-sm">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                </a>
+              </ScrollStaggerItem>
             ))}
-          </div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* Form + socials */}
-      <section className="pb-20 lg:pb-24 bg-brand-cream">
+      <section className="pb-20 lg:pb-24 bg-brand-cream overflow-hidden">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+            <ScrollReveal
+              variant="fade-right"
+              duration={0.65}
+              className="lg:col-span-3 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12"
+            >
               <h2 className="font-heading text-3xl md:text-4xl font-black text-gray-900 mb-2">
                 Send Us a Message
               </h2>
@@ -106,9 +115,14 @@ export default function ContactPage() {
               </p>
 
               <ContactForm />
-            </div>
+            </ScrollReveal>
 
-            <aside className="lg:col-span-2 space-y-8">
+            <ScrollReveal
+              variant="fade-left"
+              duration={0.65}
+              delay={0.1}
+              className="lg:col-span-2 space-y-8"
+            >
               <div className="bg-gradient-to-br from-brand-blue to-[#07205c] rounded-[2.5rem] p-8 md:p-10 text-white relative overflow-hidden shadow-2xl">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-white opacity-5 rounded-full translate-x-1/3 -translate-y-1/3"></div>
                 <div className="absolute bottom-0 left-6 w-28 h-28 bg-brand-red opacity-20 rounded-full blur-2xl"></div>
@@ -187,7 +201,7 @@ export default function ContactPage() {
                   ))}
                 </div>
               </div>
-            </aside>
+            </ScrollReveal>
           </div>
         </div>
       </section>

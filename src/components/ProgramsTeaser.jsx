@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import ScrollReveal from './animations/ScrollReveal';
+import { ScrollStagger, ScrollStaggerItem } from './animations/ScrollStagger';
 import { homelessWelfareProgram, needyWelfareProgram } from '@/lib/siteContent';
 
 const teaserCards = [
@@ -19,7 +21,7 @@ export default function ProgramsTeaser() {
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-14">
+        <ScrollReveal variant="fade-up" className="text-center mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-softblue text-brand-blue font-bold text-xs uppercase tracking-widest mb-6">
             <span className="w-2 h-2 rounded-full bg-brand-red"></span> Our
             Programs
@@ -28,11 +30,11 @@ export default function ProgramsTeaser() {
             How We Help
           </h2>
           <div className="w-16 h-2 bg-brand-red mx-auto rounded-full"></div>
-        </div>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <ScrollStagger className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {teaserCards.map((card) => (
-            <div
+            <ScrollStaggerItem
               key={card.title}
               className="bg-brand-cream rounded-[2rem] border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300 group"
             >
@@ -57,9 +59,9 @@ export default function ProgramsTeaser() {
               >
                 Learn More <i className="fa-solid fa-arrow-right"></i>
               </Link>
-            </div>
+            </ScrollStaggerItem>
           ))}
-        </div>
+        </ScrollStagger>
       </div>
     </section>
   );

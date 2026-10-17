@@ -3,6 +3,8 @@ import PageHeader from '@/components/PageHeader';
 import VolunteerCTA from '@/components/VolunteerCTA';
 import ImpactStats from '@/components/ImpactStats';
 import SmartImage from '@/components/SmartImage';
+import ScrollReveal from '@/components/animations/ScrollReveal';
+import { ScrollStagger, ScrollStaggerItem } from '@/components/animations/ScrollStagger';
 import {
   FOUNDED_YEAR,
   heroImages,
@@ -50,10 +52,10 @@ export default function OurStoryPage() {
       />
 
       {/* How it began */}
-      <section className="py-16 lg:py-24 bg-brand-cream">
+      <section className="py-16 lg:py-24 bg-brand-cream overflow-hidden">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-            <div className="w-full lg:w-1/2 relative">
+            <ScrollReveal variant="fade-right" duration={0.7} className="w-full lg:w-1/2 relative">
               <div className="relative h-[380px] md:h-[460px] rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
                 <SmartImage
                   src={heroImages.primary}
@@ -71,9 +73,9 @@ export default function OurStoryPage() {
                   Years of Service
                 </p>
               </div>
-            </div>
+            </ScrollReveal>
 
-            <div className="w-full lg:w-1/2">
+            <ScrollReveal variant="fade-left" duration={0.7} delay={0.1} className="w-full lg:w-1/2">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-softblue text-brand-blue font-bold text-xs uppercase tracking-widest mb-6">
                 <span className="w-2 h-2 rounded-full bg-brand-red"></span> How
                 It Began
@@ -106,7 +108,7 @@ export default function OurStoryPage() {
                   youth.
                 </p>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -117,18 +119,20 @@ export default function OurStoryPage() {
         <div className="absolute bottom-0 left-10 w-48 h-48 bg-brand-red opacity-20 rounded-full blur-3xl"></div>
 
         <div className="container mx-auto px-4 max-w-4xl relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest mb-8">
-            <span className="w-2 h-2 rounded-full bg-brand-red"></span> Our
-            Motto
-          </div>
+          <ScrollReveal variant="fade-up">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest mb-8">
+              <span className="w-2 h-2 rounded-full bg-brand-red"></span> Our
+              Motto
+            </div>
 
-          <p className="text-blue-50 text-lg md:text-xl leading-relaxed mb-10 font-light">
-            {siteInfo.motto}
-          </p>
+            <p className="text-blue-50 text-lg md:text-xl leading-relaxed mb-10 font-light">
+              {siteInfo.motto}
+            </p>
 
-          <p className="font-heading text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-300 to-brand-red">
-            {siteInfo.tagline}
-          </p>
+            <p className="font-heading text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-300 to-brand-red">
+              {siteInfo.tagline}
+            </p>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -139,18 +143,18 @@ export default function OurStoryPage() {
       />
 
       {/* Detailed impact breakdown */}
-      <section className="py-20 bg-white border-y border-gray-100">
+      <section className="py-20 bg-white border-y border-gray-100 overflow-hidden">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className="text-center mb-14">
+          <ScrollReveal variant="fade-up" className="text-center mb-14">
             <h2 className="font-heading text-4xl md:text-5xl font-black text-gray-900 mb-4">
               The Work Itself
             </h2>
             <div className="w-16 h-2 bg-brand-red mx-auto rounded-full mb-6"></div>
-          </div>
+          </ScrollReveal>
 
-          <div className="space-y-6">
+          <ScrollStagger className="space-y-6">
             {impactCards.map((card, index) => (
-              <div
+              <ScrollStaggerItem
                 key={card.title}
                 className="flex flex-col sm:flex-row gap-6 bg-brand-cream rounded-[2rem] border border-gray-100 p-8 group hover:shadow-xl transition-shadow duration-300"
               >
@@ -171,16 +175,16 @@ export default function OurStoryPage() {
                     {card.description}
                   </p>
                 </div>
-              </div>
+              </ScrollStaggerItem>
             ))}
-          </div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* Who runs it */}
-      <section className="py-20 bg-brand-cream">
+      <section className="py-20 bg-brand-cream overflow-hidden">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className="text-center mb-14">
+          <ScrollReveal variant="fade-up" className="text-center mb-14">
             <h2 className="font-heading text-4xl md:text-5xl font-black text-gray-900 mb-4">
               Who Runs Helping Hearts
             </h2>
@@ -188,11 +192,11 @@ export default function OurStoryPage() {
             <p className="text-lg text-gray-500 max-w-2xl mx-auto">
               Registered as trust number {siteInfo.registrationNumber}.
             </p>
-          </div>
+          </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <ScrollStagger className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[leadership.founder, ...leadership.trustees].map((person, index) => (
-              <div
+              <ScrollStaggerItem
                 key={person.name}
                 className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 text-center hover:-translate-y-2 transition-transform duration-300"
               >
@@ -211,25 +215,25 @@ export default function OurStoryPage() {
                 <p className="text-xs text-brand-red font-bold uppercase tracking-widest">
                   {person.role}
                 </p>
-              </div>
+              </ScrollStaggerItem>
             ))}
-          </div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* Values */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="text-center mb-16">
+          <ScrollReveal variant="fade-up" className="text-center mb-16">
             <h2 className="font-heading text-4xl md:text-5xl font-black text-gray-900 mb-4">
               What We Stand For
             </h2>
             <div className="w-16 h-2 bg-brand-red mx-auto rounded-full mb-6"></div>
-          </div>
+          </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <ScrollStagger className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {values.map((value, index) => (
-              <div
+              <ScrollStaggerItem
                 key={value.title}
                 className="bg-brand-cream p-8 rounded-[2rem] border border-gray-100 hover:-translate-y-3 transition-transform duration-300 group"
               >
@@ -248,18 +252,18 @@ export default function OurStoryPage() {
                 <p className="text-gray-600 leading-relaxed">
                   {value.description}
                 </p>
-              </div>
+              </ScrollStaggerItem>
             ))}
-          </div>
+          </ScrollStagger>
 
-          <div className="mt-14 text-center">
+          <ScrollReveal variant="fade-up" delay={0.2} className="mt-14 text-center">
             <Link
               href="/join-us"
               className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full border-2 border-brand-red text-brand-red font-bold font-heading hover:bg-brand-red hover:text-white transition-all shadow-sm hover:-translate-y-1"
             >
               Become a Volunteer <i className="fa-solid fa-heart"></i>
             </Link>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 

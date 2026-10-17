@@ -1,4 +1,6 @@
 import { impactStats } from '@/lib/siteContent';
+import ScrollReveal from './animations/ScrollReveal';
+import { ScrollStagger, ScrollStaggerItem } from './animations/ScrollStagger';
 
 /**
  * Headline figures band. Numbers come from siteContent.impactStats so that
@@ -12,17 +14,17 @@ export default function ImpactStats({
   return (
     <section className={className}>
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="text-center mb-14">
+        <ScrollReveal variant="fade-up" className="text-center mb-14">
           <h2 className="font-heading text-4xl md:text-5xl font-black text-gray-900 mb-4">
             {title}
           </h2>
           <div className="w-16 h-2 bg-brand-red mx-auto rounded-full mb-6"></div>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">{subtitle}</p>
-        </div>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <ScrollStagger className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {impactStats.map((stat, index) => (
-            <div key={stat.label} className="text-center">
+            <ScrollStaggerItem key={stat.label} className="text-center">
               <div
                 className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-5 ${
                   index % 2 === 0
@@ -38,9 +40,9 @@ export default function ImpactStats({
               <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
                 {stat.label}
               </p>
-            </div>
+            </ScrollStaggerItem>
           ))}
-        </div>
+        </ScrollStagger>
       </div>
     </section>
   );

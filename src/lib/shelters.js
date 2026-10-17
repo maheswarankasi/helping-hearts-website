@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from './firebase';
 import {
   cleanImageList,
@@ -9,17 +9,27 @@ import {
 
 const COLLECTION = 'shelters';
 
+// Valid categories
+export const VALID_CATEGORIES = ['long-term', 'mid-term', 'livelihood'];
 
 // Cards alternate between the blue and red accent treatments.
 const tones = ['blue', 'red'];
 
+/**
+ * Normalizes Firestore document into a typed Shelter object.
+ * Existing records missing the category field default gracefully to 'long-term'.
+ */
 function toShelter(id, data, index = 0) {
   const images = cleanImageList(data.images);
   const createdAt = toDate(data.createdAt);
 
+  const rawCategory = optionalText(data.category)?.toLowerCase()?.trim();
+  const category = VALID_CATEGORIES.includes(rawCategory) ? rawCategory : 'long-term';
+
   return {
     id,
     name: optionalText(data.name) ?? 'Our Shelter',
+    category,
     tag: optionalText(data.tag),
     address: optionalText(data.address),
     // Rich text document, or a plain string on older records.
@@ -36,9 +46,11 @@ function toShelter(id, data, index = 0) {
 }
 
 /**
- * Reads shelters from Firestore, newest first.
- *
+ * Reads all shelters from Firestore, sorted newest first.
  * Sorted in memory so documents without a `createdAt` are still returned.
+ * @param {object} [options]
+ * @param {number} [options.limit]
+ * @returns {Promise<import('./types').Shelter[]>}
  */
 export async function getShelters({ limit } = {}) {
   if (!isFirebaseConfigured) return [];
@@ -65,6 +77,22 @@ export async function getShelters({ limit } = {}) {
   return limit ? list.slice(0, limit) : list;
 }
 
+/**
+ * Fetches shelters filtered by category ('long-term' | 'mid-term' | 'livelihood').
+ * Backwards-compatible: existing records without category match 'long-term'.
+ *
+ * @param {'long-term' | 'mid-term' | 'livelihood'} category
+ * @param {object} [options]
+ * @param {number} [options.limit]
+ * @returns {Promise<import('./types').Shelter[]>}
+ */
+export async function getSheltersByCategory(category, { limit } = {}) {
+  const all = await getShelters();
+  const normalizedCategory = String(category || 'long-term').toLowerCase().trim();
+  const filtered = all.filter((s) => s.category === normalizedCategory);
+  return limit ? filtered.slice(0, limit) : filtered;
+}
+
 /** Returns a single shelter, or null when the id does not exist. */
 export async function getShelterById(id) {
   if (!isFirebaseConfigured) return null;
@@ -78,5 +106,21 @@ export async function getShelterById(id) {
       error?.message || error
     );
     return null;
+  }
+}
+
+/**
+ * Firestore direct query helper example for reference / testing.
+ * Query: collection('shelters').where('category', '==', category)
+ */
+export async function querySheltersFromFirestoreDirect(category) {
+  if (!isFirebaseConfigured) return [];
+  try {
+    const q = query(collection(db, COLLECTION), where('category', '==', category));
+    const snap = await getDocs(q);
+    return snap.docs.map((d, idx) => toShelter(d.id, d.data(), idx));
+  } catch (err) {
+    console.warn('Direct category query fallback to memory filter:', err);
+    return getSheltersByCategory(category);
   }
 }

@@ -5,7 +5,9 @@ import SmartImage from '@/components/SmartImage';
 import RichText from '@/components/RichText';
 import { toPlainText } from '@/lib/richText';
 import VolunteerCTA from '@/components/VolunteerCTA';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 import { getShelterById } from '@/lib/shelters';
+import { getCategoryBadgeStyle } from '@/lib/shelterCategories';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -29,6 +31,7 @@ export default async function ShelterDetailsPage({ params }) {
   if (!shelter) notFound();
 
   const galleryImages = shelter.images.slice(0);
+  const categoryBadge = getCategoryBadgeStyle(shelter.category);
 
   return (
     <>
@@ -48,40 +51,66 @@ export default async function ShelterDetailsPage({ params }) {
         <div className="absolute inset-0 hero-overlay"></div>
 
         <div className="container mx-auto px-4 max-w-5xl relative z-10">
-          <nav className="text-sm text-blue-100 font-medium mb-6">
-            <Link href="/" className="hover:text-white transition">
-              Home
-            </Link>
-            <span className="mx-2 text-white/40">/</span>
-            <Link href="/shelters" className="hover:text-white transition">
-              Our Shelters
-            </Link>
-          </nav>
+          <ScrollReveal variant="fade-up">
+            <nav className="text-sm text-blue-100 font-medium mb-6 flex items-center flex-wrap gap-2">
+              <Link href="/" className="hover:text-white transition">
+                Home
+              </Link>
+              <span className="text-white/40">/</span>
+              <Link href="/programs" className="hover:text-white transition">
+                Our Programs
+              </Link>
+              <span className="text-white/40">/</span>
+              <Link
+                href={`/programs/${shelter.category || 'long-term'}`}
+                className="hover:text-white transition font-semibold"
+              >
+                {categoryBadge.label} Shelters
+              </Link>
+              <span className="text-white/40">/</span>
+              <span className="text-white/70 truncate">{shelter.name}</span>
+            </nav>
 
-          {shelter.tag && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest mb-6">
-              <span className="w-2 h-2 rounded-full bg-brand-red"></span>{' '}
-              {shelter.tag}
+            <div className="flex items-center gap-3 flex-wrap mb-4">
+              <Link
+                href={`/programs/${shelter.category || 'long-term'}`}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/30 bg-white/15 backdrop-blur-md text-white font-bold text-xs uppercase tracking-wider hover:bg-white/25 transition"
+              >
+                <span className={`w-2 h-2 rounded-full ${categoryBadge.dot}`}></span>
+                {categoryBadge.fullLabel}
+                <i className="fa-solid fa-arrow-right text-[10px]"></i>
+              </Link>
+
+              {shelter.tag && (
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-bold text-xs uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-red"></span>
+                  {shelter.tag}
+                </div>
+              )}
             </div>
-          )}
 
-          <h1 className="font-heading text-4xl md:text-6xl font-black text-white leading-[1.1] mb-6">
-            {shelter.name}
-          </h1>
+            <h1 className="font-heading text-4xl md:text-6xl font-black text-white leading-[1.1] mb-6">
+              {shelter.name}
+            </h1>
 
-          {shelter.address && (
-            <p className="text-blue-50 text-lg font-light flex items-start gap-3 max-w-2xl">
-              <i className="fa-solid fa-location-dot mt-1.5 text-brand-red"></i>
-              {shelter.address}
-            </p>
-          )}
+            {shelter.address && (
+              <p className="text-blue-50 text-lg font-light flex items-start gap-3 max-w-2xl">
+                <i className="fa-solid fa-location-dot mt-1.5 text-brand-red"></i>
+                {shelter.address}
+              </p>
+            )}
+          </ScrollReveal>
         </div>
       </section>
 
-      <section className="py-16 lg:py-20 bg-brand-cream">
+      <section className="py-16 lg:py-20 bg-brand-cream overflow-hidden">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <ScrollReveal
+              variant="fade-right"
+              duration={0.65}
+              className="lg:col-span-2 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12"
+            >
               <h2 className="font-heading text-3xl font-black text-gray-900 mb-2">
                 About This Shelter
               </h2>
@@ -92,10 +121,14 @@ export default async function ShelterDetailsPage({ params }) {
                 className="text-gray-600 leading-relaxed text-lg"
                 fallback={<p className="text-gray-500">Details coming soon.</p>}
               />
-            </div>
+            </ScrollReveal>
 
-            <aside className="space-y-6">
-              {/* Capacity card is skipped entirely when the field is blank */}
+            <ScrollReveal
+              variant="fade-left"
+              duration={0.65}
+              delay={0.1}
+              className="space-y-6"
+            >
               {shelter.capacity && (
                 <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
                   <div className="text-brand-blue text-3xl mb-4">
@@ -110,6 +143,25 @@ export default async function ShelterDetailsPage({ params }) {
                 </div>
               )}
 
+              {/* Programme Category card */}
+              <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
+                <div className="text-brand-red text-3xl mb-4">
+                  <i className="fa-solid fa-diagram-project"></i>
+                </div>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">
+                  Programme Tier
+                </p>
+                <p className="font-heading text-xl font-bold text-gray-900 mb-3">
+                  {categoryBadge.fullLabel}
+                </p>
+                <Link
+                  href={`/programs/${shelter.category || 'long-term'}`}
+                  className="text-xs font-bold text-brand-blue hover:text-brand-red transition inline-flex items-center gap-1.5"
+                >
+                  View Programme Objectives <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                </Link>
+              </div>
+
               {shelter.mapUrl && (
                 <a
                   href={shelter.mapUrl}
@@ -120,27 +172,29 @@ export default async function ShelterDetailsPage({ params }) {
                   <i className="fa-solid fa-map mr-2"></i> View on Map
                 </a>
               )}
-            </aside>
+            </ScrollReveal>
           </div>
 
           {galleryImages.length > 0 && (
-            <div className="mt-14 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12">
-              <PhotoGallery
-                images={galleryImages}
-                title="Shelter Gallery"
-                alt={shelter.name}
-              />
-            </div>
+            <ScrollReveal variant="fade-up" className="mt-14">
+              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 md:p-12">
+                <PhotoGallery
+                  images={galleryImages}
+                  title="Shelter Gallery"
+                  alt={shelter.name}
+                />
+              </div>
+            </ScrollReveal>
           )}
 
-          <div className="mt-14 text-center">
+          <ScrollReveal variant="fade-up" className="mt-14 text-center">
             <Link
               href="/shelters"
               className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full border-2 border-brand-red text-brand-red font-bold font-heading hover:bg-brand-red hover:text-white transition-all shadow-sm hover:-translate-y-1"
             >
               <i className="fa-solid fa-arrow-left"></i> Back to All Shelters
             </Link>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
