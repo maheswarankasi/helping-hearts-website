@@ -55,9 +55,10 @@ export default function ProgramsTeaser() {
               </p>
               <Link
                 href="/programs"
-                className="inline-flex items-center gap-2 text-brand-blue font-bold hover:text-brand-red transition"
+                className="group inline-flex items-center gap-2 text-brand-blue font-bold hover:text-brand-red transition"
               >
-                Learn More <i className="fa-solid fa-arrow-right"></i>
+                <span>Learn More</span>
+                <i className="fa-solid fa-arrow-right pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
               </Link>
             </ScrollStaggerItem>
           ))}

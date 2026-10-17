@@ -107,7 +107,8 @@ export default function EventsSection({
                         {event.summaryText || toPlainText(event.summary)}
                       </p>
                       <span className="mt-auto inline-flex items-center gap-2 text-brand-blue font-bold group-hover:text-brand-red transition w-max">
-                        View Details <i className="fa-solid fa-arrow-right-long"></i>
+                        <span>View Details</span>
+                        <i className="fa-solid fa-arrow-right pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
                       </span>
                     </div>
                   </Link>
@@ -131,9 +132,10 @@ export default function EventsSection({
           <ScrollReveal variant="fade-up" delay={0.2} className="mt-12 text-center">
             <Link
               href="/events"
-              className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full border-2 border-brand-blue text-brand-blue font-bold font-heading hover:bg-brand-blue hover:text-white transition-all shadow-sm hover:-translate-y-1"
+              className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full border-2 border-brand-blue text-brand-blue font-bold font-heading hover:bg-brand-blue hover:text-white transition-all shadow-sm hover:-translate-y-1"
             >
-              View All Events <i className="fa-solid fa-arrow-right"></i>
+              <span>View All Events</span>
+              <i className="fa-solid fa-arrow-right pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
             </Link>
           </ScrollReveal>
         )}

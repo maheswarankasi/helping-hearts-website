@@ -31,9 +31,10 @@ export default function MottoSection() {
 
           <Link
             href="/our-story"
-            className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full border-2 border-brand-blue text-brand-blue font-bold font-heading hover:bg-brand-blue hover:text-white transition-all shadow-sm hover:-translate-y-1"
+            className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full border-2 border-brand-blue text-brand-blue font-bold font-heading hover:bg-brand-blue hover:text-white transition-all shadow-sm hover:-translate-y-1"
           >
-            Read Our Story <i className="fa-solid fa-arrow-right"></i>
+            <span>Read Our Story</span>
+            <i className="fa-solid fa-arrow-right pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
           </Link>
         </ScrollReveal>
       </div>

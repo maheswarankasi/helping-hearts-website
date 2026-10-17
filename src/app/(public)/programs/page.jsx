@@ -206,10 +206,10 @@ export default async function ProgramsPage() {
                       <div className="pt-2">
                         <Link
                           href={categoryUrl}
-                          className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-brand-blue text-white text-sm font-bold hover:bg-brand-red transition-all shadow-sm hover:shadow-md hover:translate-x-1"
+                          className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-blue text-white text-sm font-bold hover:bg-brand-red transition-all shadow-sm hover:shadow-md"
                         >
                           <span>{categoryMatch.btnLabel}</span>
-                          <i className="fa-solid fa-arrow-right text-xs"></i>
+                          <i className="fa-solid fa-arrow-right text-xs pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
                         </Link>
                       </div>
                     )}

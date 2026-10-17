@@ -169,13 +169,14 @@ export default function SheltersSection({
                           <div />
                         )}
 
-                        {/* Primary CTA button displaying "Learn more ->" without standalone extra arrows */}
+                        {/* Primary CTA button displaying "Learn more" with FontAwesome solid right arrow icon */}
                         <div className="flex items-center">
                           <Link
                             href={detailHref}
-                            className={`inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full font-heading font-bold text-sm border shadow-xs transition-all duration-300 ${tone.ctaBtn}`}
+                            className={`group inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-heading font-bold text-sm border shadow-xs transition-all duration-300 ${tone.ctaBtn}`}
                           >
-                            Learn more -&gt;
+                            <span>Learn more</span>
+                            <i className="fa-solid fa-arrow-right pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
                           </Link>
                         </div>
                       </div>
@@ -199,10 +200,10 @@ export default function SheltersSection({
               <ScrollReveal variant="fade-up" className="text-center mt-12">
                 <Link
                   href="/shelters"
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-brand-blue text-white font-bold font-heading hover:bg-brand-red transition-all shadow-md hover:-translate-y-1"
+                  className="group inline-flex items-center gap-2 px-8 py-4 rounded-full bg-brand-blue text-white font-bold font-heading hover:bg-brand-red transition-all shadow-md hover:-translate-y-1"
                 >
                   <span>Explore All Shelters</span>
-                  <i className="fa-solid fa-arrow-right"></i>
+                  <i className="fa-solid fa-arrow-right pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
                 </Link>
               </ScrollReveal>
             )}

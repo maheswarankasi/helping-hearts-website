@@ -36,9 +36,10 @@ export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, ca
           </span>
           <Link
             href="/shelters"
-            className="text-sm font-bold text-brand-blue hover:text-brand-red transition flex items-center gap-1.5"
+            className="group inline-flex items-center gap-2 text-sm font-bold text-brand-blue hover:text-brand-red transition"
           >
-            All Shelters <i className="fa-solid fa-arrow-right text-xs"></i>
+            <span>All Shelters</span>
+            <i className="fa-solid fa-arrow-right text-xs pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
           </Link>
         </div>
       </div>
@@ -120,11 +121,11 @@ export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, ca
                     </div>
                   </div>
 
-                  {/* Action Link: "Learn more ->" button as single primary action */}
+                  {/* Action Link: "Learn more" button with FontAwesome right arrow */}
                   <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                     <Link
                       href={detailHref}
-                      className={`inline-flex items-center gap-1.5 text-sm font-bold font-heading transition-colors duration-200 group-hover:translate-x-1 ${
+                      className={`group inline-flex items-center gap-2 text-sm font-bold font-heading transition-colors duration-200 ${
                         categoryId === 'mid-term'
                           ? 'text-brand-red hover:text-brand-blue'
                           : categoryId === 'livelihood'
@@ -132,7 +133,8 @@ export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, ca
                           : 'text-brand-blue hover:text-brand-red'
                       }`}
                     >
-                      Learn more -&gt;
+                      <span>Learn more</span>
+                      <i className="fa-solid fa-arrow-right pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
                     </Link>
                   </div>
                 </div>

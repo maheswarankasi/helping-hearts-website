@@ -450,7 +450,7 @@ export default function DonationModal({ onClose }) {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="w-full bg-brand-red text-white font-heading font-bold text-lg px-8 py-4 rounded-full hover:bg-red-800 transition-all shadow-lg shadow-brand-red/30 flex items-center justify-center gap-3 disabled:opacity-70"
+                  className="group w-full bg-brand-red text-white font-heading font-bold text-lg px-8 py-4 rounded-full hover:bg-red-800 transition-all shadow-lg shadow-brand-red/30 flex items-center justify-center gap-2 disabled:opacity-70"
                 >
                   {isSaving ? (
                     <>
@@ -458,8 +458,8 @@ export default function DonationModal({ onClose }) {
                     </>
                   ) : (
                     <>
-                      Continue to Payment{' '}
-                      <i className="fa-solid fa-arrow-right"></i>
+                      <span>Continue to Payment</span>
+                      <i className="fa-solid fa-arrow-right pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
                     </>
                   )}
                 </button>

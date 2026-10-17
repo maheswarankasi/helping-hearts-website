@@ -74,11 +74,11 @@ export default async function ShelterDetailsPage({ params }) {
             <div className="flex items-center gap-3 flex-wrap mb-4">
               <Link
                 href={`/programs/${shelter.category || 'long-term'}`}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/30 bg-white/15 backdrop-blur-md text-white font-bold text-xs uppercase tracking-wider hover:bg-white/25 transition"
+                className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/30 bg-white/15 backdrop-blur-md text-white font-bold text-xs uppercase tracking-wider hover:bg-white/25 transition"
               >
                 <span className={`w-2 h-2 rounded-full ${categoryBadge.dot}`}></span>
-                {categoryBadge.fullLabel}
-                <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                <span>{categoryBadge.fullLabel}</span>
+                <i className="fa-solid fa-arrow-right text-[10px] pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
               </Link>
 
               {shelter.tag && (
@@ -156,9 +156,10 @@ export default async function ShelterDetailsPage({ params }) {
                 </p>
                 <Link
                   href={`/programs/${shelter.category || 'long-term'}`}
-                  className="text-xs font-bold text-brand-blue hover:text-brand-red transition inline-flex items-center gap-1.5"
+                  className="group inline-flex items-center gap-2 text-xs font-bold text-brand-blue hover:text-brand-red transition"
                 >
-                  View Programme Objectives <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                  <span>View Programme Objectives</span>
+                  <i className="fa-solid fa-arrow-right text-[10px] pt-[2px] transition-transform group-hover:translate-x-1 shrink-0"></i>
                 </Link>
               </div>
 
