@@ -247,19 +247,22 @@ export function isValidCategory(category) {
  * @param {string} [category]
  */
 export function getCategoryBadgeStyle(category) {
-  switch (category) {
+  const normalized = category ? String(category).toLowerCase().trim() : '';
+
+  switch (normalized) {
     case 'long-term':
       return {
         label: 'Long-Term',
-        fullLabel: 'Long-Term Shelter',
+        fullLabel: 'Long Term Residential & Dignified Care',
         bg: 'bg-blue-50 text-blue-700 border-blue-200',
         dot: 'bg-blue-500',
         tone: 'blue',
       };
     case 'mid-term':
+    case 'medium-term':
       return {
         label: 'Mid-Term',
-        fullLabel: 'Mid-Term Shelter',
+        fullLabel: 'Medium Term Rehabilitation Pathway',
         bg: 'bg-amber-50 text-amber-800 border-amber-200',
         dot: 'bg-amber-500',
         tone: 'red',
@@ -267,7 +270,7 @@ export function getCategoryBadgeStyle(category) {
     case 'livelihood':
       return {
         label: 'Livelihood',
-        fullLabel: 'Livelihood Shelter',
+        fullLabel: 'Livelihood Development and Social Reintegration',
         bg: 'bg-emerald-50 text-emerald-800 border-emerald-200',
         dot: 'bg-emerald-500',
         tone: 'emerald',
@@ -275,7 +278,7 @@ export function getCategoryBadgeStyle(category) {
     default:
       return {
         label: 'Long-Term',
-        fullLabel: 'Long-Term Shelter',
+        fullLabel: 'Long Term Residential & Dignified Care',
         bg: 'bg-blue-50 text-blue-700 border-blue-200',
         dot: 'bg-blue-500',
         tone: 'blue',

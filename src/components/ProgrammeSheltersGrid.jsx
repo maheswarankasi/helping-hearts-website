@@ -2,6 +2,7 @@ import Link from 'next/link';
 import EmptyState from './EmptyState';
 import SmartImage from './SmartImage';
 import { ScrollStagger, ScrollStaggerItem } from './animations/ScrollStagger';
+import ShelterCategoryBadge from './ShelterCategoryBadge';
 import { getCategoryBadgeStyle } from '@/lib/shelterCategories';
 
 /**
@@ -71,6 +72,9 @@ export default function ProgrammeSheltersGrid({ shelters = [], categoryTitle, ca
                   className="relative h-56 w-full block overflow-hidden bg-gray-100"
                   aria-label={`View ${shelter.name}`}
                 >
+                  {/* Floating Category Badge directly on top of the shelter image */}
+                  <ShelterCategoryBadge category={shelter.category || categoryId} />
+
                   {shelter.image ? (
                     <SmartImage
                       src={shelter.image}

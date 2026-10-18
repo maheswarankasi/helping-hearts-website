@@ -6,6 +6,7 @@ import EmptyState from './EmptyState';
 import SmartImage from './SmartImage';
 import ScrollReveal from './animations/ScrollReveal';
 import InfiniteScrollTrigger from './animations/InfiniteScrollTrigger';
+import ShelterCategoryBadge from './ShelterCategoryBadge';
 import { toPlainText } from '@/lib/richText';
 
 const toneStyles = {
@@ -92,6 +93,9 @@ export default function SheltersSection({
                       aria-label={`View ${shelter.name}`}
                       className="w-full md:w-1/2 h-72 md:h-[350px] overflow-hidden rounded-[2rem] relative block"
                     >
+                      {/* Floating Category Badge directly on top of the shelter image */}
+                      <ShelterCategoryBadge category={shelter.category} />
+
                       {shelter.image ? (
                         <SmartImage
                           src={shelter.image}
