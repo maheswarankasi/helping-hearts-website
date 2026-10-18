@@ -5,10 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAdminAuth } from './admin/AdminAuthGate';
+import { useUnreadInquiries } from '@/hooks/useUnreadInquiries';
 
 export default function AdminSidebar({ closeSidebar }) {
   const pathname = usePathname();
   const { user, logout } = useAdminAuth();
+  const { unreadCount } = useUnreadInquiries();
   const [loggingOut, setLoggingOut] = useState(false);
 
   // No reset on success: logging out unmounts this sidebar.
@@ -54,14 +56,24 @@ export default function AdminSidebar({ closeSidebar }) {
               key={item.name} 
               href={item.href}
               onClick={closeSidebar} // Mobile-la click pannathum menu close aagum
-              className={`px-4 py-3 rounded-lg transition-all duration-200 flex items-center ${
+              className={`px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between ${
                 isActive 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'text-gray-400 hover:bg-gray-800 hover:text-white'
               }`}
             >
-              <i className={`fa-solid ${item.icon} w-6 text-lg`}></i> 
-              <span className="ml-2 font-medium">{item.name}</span>
+              <div className="flex items-center min-w-0">
+                <i className={`fa-solid ${item.icon} w-6 text-lg`}></i> 
+                <span className="ml-2 font-medium">{item.name}</span>
+              </div>
+              {item.href === '/admin/inquiries' && unreadCount > 0 && (
+                <span
+                  className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full shadow-sm animate-pulse"
+                  title={`${unreadCount} unread message${unreadCount === 1 ? '' : 's'}`}
+                >
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
             </Link>
           );
         })}

@@ -1,8 +1,21 @@
-import { addDoc, collection, getDocs, serverTimestamp } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore';
 import { db, isFirebaseConfigured } from './firebase';
 import { optionalText, toDate } from './firestoreUtils';
 
 const COLLECTION = 'donors';
+
+export const DONOR_STATUSES = [
+  'awaiting confirmation',
+  'confirmed',
+  'receipted',
+];
 
 // In-memory fallback when Firestore credentials are not configured
 const memoryDonors = [];
@@ -12,7 +25,7 @@ const memoryDonors = [];
  *
  * Because we take payment by direct UPI transfer rather than through a
  * gateway, nothing here confirms that money actually arrived. Every record
- * starts as `awaiting_confirmation` and has to be reconciled against the bank
+ * starts as `awaiting confirmation` and has to be reconciled against the bank
  * or UPI statement by hand.
  *
  * No card, UPI PIN, or bank credential is ever collected or stored.
@@ -31,7 +44,9 @@ export async function addDonor(values) {
       amount: Number(values.amount) || 0,
       purpose: values.purpose || 'General fund',
       message: values.message?.trim() || '',
+      status: 'awaiting confirmation',
       createdAt: new Date(),
+      updatedAt: new Date(),
     });
     return id;
   }
@@ -46,10 +61,19 @@ export async function addDonor(values) {
     amount: Number(values.amount),
     purpose: values.purpose,
     message: values.message.trim(),
+    status: 'awaiting confirmation',
     createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
 
   return docRef.id;
+}
+
+export function normalizeDonorStatus(rawStatus) {
+  const s = String(rawStatus || '').toLowerCase().trim();
+  if (s === 'confirmed') return 'confirmed';
+  if (s === 'receipted') return 'receipted';
+  return 'awaiting confirmation';
 }
 
 function toDonor(id, data) {
@@ -68,6 +92,8 @@ function toDonor(id, data) {
     amount: Number.isFinite(amount) ? amount : null,
     purpose: optionalText(data.purpose) ?? '—',
     message: optionalText(data.message),
+    status: normalizeDonorStatus(data.status),
+    updatedAt: toDate(data.updatedAt),
     createdAt: toDate(data.createdAt),
   };
 }
@@ -86,3 +112,31 @@ export async function getDonors() {
     return memoryDonors;
   }
 }
+
+/**
+ * Updates a donor's status in Firestore and in-memory cache.
+ * Valid statuses: 'awaiting confirmation' | 'confirmed' | 'receipted'
+ */
+export async function updateDonorStatus(id, newStatus) {
+  const normalized = normalizeDonorStatus(newStatus);
+
+  // In-memory update if present
+  const mem = memoryDonors.find((d) => d.id === id);
+  if (mem) {
+    mem.status = normalized;
+    mem.updatedAt = new Date();
+  }
+
+  if (!isFirebaseConfigured) {
+    return { id, status: normalized };
+  }
+
+  const donorDocRef = doc(db, COLLECTION, id);
+  await updateDoc(donorDocRef, {
+    status: normalized,
+    updatedAt: serverTimestamp(),
+  });
+
+  return { id, status: normalized };
+}
+
