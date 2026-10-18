@@ -23,17 +23,25 @@ export const revalidate = 0;
 
 // Mapping focus area keys to their corresponding category routes
 const FOCUS_AREA_CATEGORY_MAP = {
+  'emergency-care': {
+    href: '/programs/emergency-care',
+    btnLabel: 'Learn more',
+    hoverLabel: 'View Emergency Care & Facilities',
+  },
   'medium-term-rehabilitation': {
-    slug: 'mid-term',
-    btnLabel: 'Explore Mid-Term Shelters & Rehabilitation Details',
+    href: '/programs/mid-term',
+    btnLabel: 'Learn more',
+    hoverLabel: 'View Mid-Term Shelters & Facilities',
   },
   'long-term-care': {
-    slug: 'long-term',
-    btnLabel: 'Explore Long-Term Shelters & Dignified Care Details',
+    href: '/programs/long-term',
+    btnLabel: 'Learn more',
+    hoverLabel: 'View Long-Term Shelters & Facilities',
   },
   'livelihood-development': {
-    slug: 'livelihood',
-    btnLabel: 'Explore Livelihood Shelters & Vocational Training Details',
+    href: '/programs/livelihood',
+    btnLabel: 'Learn more',
+    hoverLabel: 'View Livelihood Shelters & Facilities',
   },
 };
 
@@ -118,7 +126,8 @@ export default async function ProgramsPage() {
             {focusAreas.map((area, index) => {
               const isEven = index % 2 === 0;
               const categoryMatch = FOCUS_AREA_CATEGORY_MAP[area.key];
-              const categoryUrl = categoryMatch ? `/programs/${categoryMatch.slug}` : null;
+              const categoryUrl = categoryMatch?.href || (categoryMatch?.slug ? `/programs/${categoryMatch.slug}` : null);
+              const hoverLabel = categoryMatch?.hoverLabel || 'Click to View Details';
 
               return (
                 <div
@@ -147,7 +156,7 @@ export default async function ProgramsPage() {
                         />
                         <div className="absolute inset-0 bg-brand-blue/0 group-hover:bg-brand-blue/20 transition-colors flex items-center justify-center">
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/95 text-brand-blue font-bold text-xs uppercase px-4 py-2 rounded-full shadow-lg">
-                            Click to View Shelters
+                            {hoverLabel}
                           </span>
                         </div>
                       </Link>

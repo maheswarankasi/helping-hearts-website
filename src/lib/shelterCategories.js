@@ -275,6 +275,15 @@ export function getCategoryBadgeStyle(category) {
         dot: 'bg-emerald-500',
         tone: 'emerald',
       };
+    case 'emergency-care':
+    case 'emergency':
+      return {
+        label: 'Emergency Care',
+        fullLabel: 'Emergency Care & Short-Term Care',
+        bg: 'bg-red-50 text-brand-red border-red-200',
+        dot: 'bg-red-500',
+        tone: 'red',
+      };
     default:
       return {
         label: 'Long-Term',

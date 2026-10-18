@@ -13,6 +13,14 @@ const nextConfig = {
         source: '/programmes/:path*',
         destination: '/programs/:path*',
       },
+      {
+        source: '/our-programmes',
+        destination: '/programs',
+      },
+      {
+        source: '/our-programmes/:path*',
+        destination: '/programs/:path*',
+      },
     ];
   },
 

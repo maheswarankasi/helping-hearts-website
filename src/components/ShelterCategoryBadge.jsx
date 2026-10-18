@@ -12,6 +12,8 @@ export const CATEGORY_LABELS = {
   'medium-term': 'Medium Term Rehabilitation Pathway',
   'long-term': 'Long Term Residential & Dignified Care',
   'livelihood': 'Livelihood Development and Social Reintegration',
+  'emergency-care': 'Emergency Care & Short-Term Care',
+  'emergency': 'Emergency Care & Short-Term Care',
 };
 
 export const CATEGORY_ACCENTS = {
@@ -26,6 +28,12 @@ export const CATEGORY_ACCENTS = {
   },
   'livelihood': {
     dot: 'bg-emerald-400',
+  },
+  'emergency-care': {
+    dot: 'bg-red-400',
+  },
+  'emergency': {
+    dot: 'bg-red-400',
   },
 };
 

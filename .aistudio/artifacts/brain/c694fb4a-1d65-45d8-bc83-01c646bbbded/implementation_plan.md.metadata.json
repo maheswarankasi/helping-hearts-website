@@ -1,6 +1,6 @@
 {
-  "summary": "Implementation plan for introducing 3-tier shelter categorization ('long-term', 'mid-term', 'livelihood') across the Admin Shelter management panel and the public Programmes/Programs page with interactive category tabs, dedicated programme detail narratives, filtered shelter grids, loading skeletons, and empty states.",
-  "updatedAt": "2026-10-17T08:45:27.011635840Z",
+  "summary": "Architectural implementation plan for the dedicated 'Emergency Care & Short-Term Care' detail page, interactive intervention timeline stepper, government hospital-based ECRC model centres display, and seamless integration with the main Programmes overview page.",
+  "updatedAt": "2026-10-18T06:18:52.925495625Z",
   "requestFeedback": true,
   "userFacing": true
 }
