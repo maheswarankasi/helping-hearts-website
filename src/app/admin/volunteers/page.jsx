@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { getVolunteers } from '@/lib/volunteers';
 import { formatDateParts } from '@/lib/firestoreUtils';
 import ExportButton from '@/components/admin/ExportButton';
 
 export default function VolunteersAdminPage() {
   const [volunteers, setVolunteers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
@@ -36,6 +37,24 @@ export default function VolunteersAdminPage() {
     };
   }, []);
 
+  // Filter volunteers by Name OR Mobile Number
+  const filteredVolunteers = useMemo(() => {
+    if (!searchQuery.trim()) return volunteers;
+    const q = searchQuery.toLowerCase().trim();
+    const qDigits = q.replace(/\D/g, '');
+
+    return volunteers.filter((volunteer) => {
+      const matchName = volunteer.name?.toLowerCase().includes(q);
+      const phoneRaw = volunteer.phone || '';
+      const phoneDigits = phoneRaw.replace(/\D/g, '');
+      const matchPhone =
+        phoneRaw.toLowerCase().includes(q) ||
+        (qDigits.length > 0 && phoneDigits.includes(qDigits));
+
+      return matchName || matchPhone;
+    });
+  }, [volunteers, searchQuery]);
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
@@ -49,7 +68,7 @@ export default function VolunteersAdminPage() {
           <span className="bg-blue-50 text-blue-700 border border-blue-200 px-4 py-2 rounded-lg font-bold text-sm">
             {isLoading ? '—' : volunteers.length} Total
           </span>
-          <ExportButton sheet="volunteers" rows={volunteers} disabled={isLoading} />
+          <ExportButton sheet="volunteers" rows={filteredVolunteers} disabled={isLoading} />
         </div>
       </div>
 
@@ -59,6 +78,33 @@ export default function VolunteersAdminPage() {
           {error}
         </div>
       )}
+
+      {/* Search Input Bar */}
+      <div className="mb-4 bg-white p-3 rounded-xl border border-gray-100 shadow-xs flex items-center justify-between gap-3 flex-wrap">
+        <div className="relative min-w-[260px] max-w-md flex-1">
+          <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search volunteers by name or mobile number..."
+            className="w-full pl-8 pr-8 py-2 rounded-lg border border-gray-200 text-xs focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              aria-label="Clear search"
+            >
+              <i className="fa-solid fa-xmark text-xs"></i>
+            </button>
+          )}
+        </div>
+        <div className="text-xs text-gray-500 font-medium">
+          Showing {filteredVolunteers.length} of {volunteers.length} volunteers
+        </div>
+      </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[980px]">
@@ -80,14 +126,24 @@ export default function VolunteersAdminPage() {
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i> Loading...
                 </td>
               </tr>
-            ) : volunteers.length === 0 ? (
+            ) : filteredVolunteers.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-8 text-gray-500">
-                  No volunteer sign-ups yet.
+                <td colSpan="7" className="text-center py-10 text-gray-500">
+                  <div className="max-w-xs mx-auto text-center space-y-1.5">
+                    <i className="fa-solid fa-user-slash text-2xl text-gray-300"></i>
+                    <p className="font-medium text-gray-700">
+                      {searchQuery ? 'No matching volunteers found' : 'No volunteer sign-ups yet'}
+                    </p>
+                    {searchQuery && (
+                      <p className="text-xs text-gray-400">
+                        Try searching with a different name or mobile number.
+                      </p>
+                    )}
+                  </div>
                 </td>
               </tr>
             ) : (
-              volunteers.map((volunteer) => (
+              filteredVolunteers.map((volunteer) => (
                 <tr
                   key={volunteer.id}
                   onClick={() =>

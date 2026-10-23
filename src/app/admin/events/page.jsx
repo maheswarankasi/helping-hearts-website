@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   addDoc,
@@ -31,6 +31,7 @@ const EMPTY_FORM = {
 
 export default function EventsAdminPage() {
   const [events, setEvents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -232,12 +233,23 @@ export default function EventsAdminPage() {
   const setField = (field, value) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
 
+  // Filter events by Name / Title
+  const filteredEvents = useMemo(() => {
+    if (!searchQuery.trim()) return events;
+    const q = searchQuery.toLowerCase().trim();
+    return events.filter((event) => {
+      const matchTitle = event.title?.toLowerCase().includes(q);
+      const matchName = event.name?.toLowerCase().includes(q);
+      return matchTitle || matchName;
+    });
+  }, [events, searchQuery]);
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
         <h2 className="text-2xl font-bold text-gray-800">Manage Events</h2>
         <div className="flex items-center gap-3 flex-wrap">
-          <ExportButton sheet="events" rows={events} />
+          <ExportButton sheet="events" rows={filteredEvents} />
           <button
             onClick={openCreate}
             className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
@@ -253,6 +265,33 @@ export default function EventsAdminPage() {
           {error}
         </div>
       )}
+
+      {/* Search Input Bar */}
+      <div className="mb-4 bg-white p-3 rounded-xl border border-gray-100 shadow-xs flex items-center justify-between gap-3 flex-wrap">
+        <div className="relative min-w-[260px] max-w-md flex-1">
+          <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search events by name..."
+            className="w-full pl-8 pr-8 py-2 rounded-lg border border-gray-200 text-xs focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              aria-label="Clear search"
+            >
+              <i className="fa-solid fa-xmark text-xs"></i>
+            </button>
+          )}
+        </div>
+        <span className="text-xs text-gray-500 font-medium">
+          Showing {filteredEvents.length} of {events.length} events
+        </span>
+      </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[760px]">
@@ -271,14 +310,24 @@ export default function EventsAdminPage() {
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i> Loading...
                 </td>
               </tr>
-            ) : events.length === 0 ? (
+            ) : filteredEvents.length === 0 ? (
               <tr>
-                <td colSpan="4" className="text-center py-8 text-gray-500">
-                  No events yet. Click “Add Event” to create the first one.
+                <td colSpan="4" className="text-center py-10 text-gray-500">
+                  <div className="max-w-xs mx-auto text-center space-y-1.5">
+                    <i className="fa-regular fa-calendar-xmark text-2xl text-gray-300"></i>
+                    <p className="font-medium text-gray-700">
+                      {searchQuery ? `No events match "${searchQuery}"` : 'No events yet. Click “Add Event” to create the first one.'}
+                    </p>
+                    {searchQuery && (
+                      <p className="text-xs text-gray-400">
+                        Try searching with a different name or title.
+                      </p>
+                    )}
+                  </div>
                 </td>
               </tr>
             ) : (
-              events.map((event) => (
+              filteredEvents.map((event) => (
                 <tr key={event.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 font-semibold">{event.title}</td>
                   <td className="px-6 py-4 text-gray-600">

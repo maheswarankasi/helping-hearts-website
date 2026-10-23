@@ -39,15 +39,36 @@ export default function DonorStatusDropdown({
   status = 'awaiting confirmation',
   onChange,
   disabled = false,
+  dropUp = false,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDropUp, setIsDropUp] = useState(dropUp);
   const containerRef = useRef(null);
+  const triggerRef = useRef(null);
 
   // Normalize status string
   const currentKey = String(status || '').toLowerCase().trim();
   const activeOption =
     STATUS_OPTIONS.find((opt) => opt.value === currentKey) || STATUS_OPTIONS[0];
+
+  const handleToggle = (e) => {
+    e.stopPropagation();
+    if (disabled || isUpdating) return;
+
+    if (!isOpen) {
+      let shouldDropUp = dropUp;
+      if (!shouldDropUp && triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        shouldDropUp = spaceBelow < 190;
+      }
+      setIsDropUp(shouldDropUp);
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  };
 
   // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
@@ -101,12 +122,10 @@ export default function DonorStatusDropdown({
     >
       {/* Badge Button Trigger */}
       <button
+        ref={triggerRef}
         type="button"
         disabled={disabled || isUpdating}
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsOpen((prev) => !prev);
-        }}
+        onClick={handleToggle}
         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide border shadow-xs transition-all duration-150 focus:outline-hidden focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${activeOption.badgeClass}`}
         title={`Status: ${activeOption.label}. Click to change.`}
       >
@@ -138,16 +157,22 @@ export default function DonorStatusDropdown({
 
             <i
               className={`fa-solid fa-chevron-down text-[10px] ml-0.5 opacity-70 transition-transform duration-200 ${
-                isOpen ? 'rotate-180' : ''
+                isOpen ? (isDropUp ? '-rotate-180' : 'rotate-180') : ''
               }`}
             ></i>
           </>
         )}
       </button>
 
-      {/* Floating Dropdown Menu */}
+      {/* Floating Dropdown Menu (supports dynamic drop-up to eliminate scroll jumping) */}
       {isOpen && (
-        <div className="absolute right-0 sm:left-0 z-50 mt-1.5 w-64 rounded-xl bg-white shadow-xl ring-1 ring-black/10 py-1.5 text-xs focus:outline-hidden animate-in fade-in zoom-in-95 duration-100">
+        <div
+          className={`absolute right-0 sm:left-0 z-50 w-64 rounded-xl bg-white shadow-xl ring-1 ring-black/10 py-1.5 text-xs focus:outline-hidden animate-in fade-in zoom-in-95 duration-100 ${
+            isDropUp
+              ? 'bottom-full mb-1.5 origin-bottom-left'
+              : 'top-full mt-1.5 origin-top-left'
+          }`}
+        >
           <div className="py-1">
             {STATUS_OPTIONS.map((opt) => {
               const isSelected = opt.value === activeOption.value;

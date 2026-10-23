@@ -99,7 +99,6 @@ export const SHEETS = {
       { header: 'ID Type', width: 14, get: (r) => r.idType },
       { header: 'ID Number', width: 18, get: (r) => r.idNumber },
       { header: 'Amount (INR)', width: 16, get: (r) => r.amount ?? '' },
-      { header: 'Towards', width: 30, get: (r) => r.purpose },
       { header: 'Status', width: 22, get: (r) => r.status ?? 'awaiting confirmation' },
       { header: 'Message', width: 50, get: (r) => r.message },
       { header: 'Submitted', width: 20, get: (r) => dateCell(r.createdAt) },

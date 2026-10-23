@@ -121,8 +121,7 @@ export default function DonorsAdminPage() {
         const matchesEmail = donor.email?.toLowerCase().includes(q);
         const matchesPhone = donor.phone?.toLowerCase().includes(q);
         const matchesId = donor.idNumber?.toLowerCase().includes(q);
-        const matchesPurpose = donor.purpose?.toLowerCase().includes(q);
-        return matchesName || matchesEmail || matchesPhone || matchesId || matchesPurpose;
+        return matchesName || matchesEmail || matchesPhone || matchesId;
       }
 
       return true;
@@ -130,7 +129,7 @@ export default function DonorsAdminPage() {
   }, [donors, statusFilter, searchQuery]);
 
   return (
-    <div className="relative pb-12">
+    <div className="flex flex-col min-h-full pb-8">
       {/* Page Header */}
       <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
         <div>
@@ -282,9 +281,9 @@ export default function DonorsAdminPage() {
         </div>
       </div>
 
-      {/* Main Table */}
-      <div className="bg-white rounded-xl shadow-xs border border-gray-200 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[1060px]">
+      {/* Main Table Container: Dynamic remaining height using flex-1 with clean overflow-x */}
+      <div className="bg-white rounded-xl shadow-xs border border-gray-200 overflow-x-auto flex-1">
+        <table className="w-full text-left border-collapse min-w-[920px]">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider font-semibold">
               <th className="px-6 py-4">Donor</th>
@@ -292,7 +291,6 @@ export default function DonorsAdminPage() {
               <th className="px-6 py-4">Address</th>
               <th className="px-6 py-4">PAN / Aadhaar</th>
               <th className="px-6 py-4">Amount</th>
-              <th className="px-6 py-4">Towards</th>
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4">Submitted</th>
             </tr>
@@ -300,13 +298,13 @@ export default function DonorsAdminPage() {
           <tbody className="divide-y divide-gray-100 text-sm">
             {isLoading ? (
               <tr>
-                <td colSpan="8" className="text-center py-12 text-gray-500">
+                <td colSpan="7" className="text-center py-12 text-gray-500">
                   <i className="fa-solid fa-spinner fa-spin mr-2 text-blue-600"></i> Loading donors...
                 </td>
               </tr>
             ) : filteredDonors.length === 0 ? (
               <tr>
-                <td colSpan="8" className="text-center py-12 text-gray-500">
+                <td colSpan="7" className="text-center py-12 text-gray-500">
                   <div className="max-w-xs mx-auto text-center space-y-2">
                     <i className="fa-solid fa-user-slash text-2xl text-gray-300"></i>
                     <p className="font-medium text-gray-700">No donor records found</p>
@@ -323,7 +321,7 @@ export default function DonorsAdminPage() {
                 </td>
               </tr>
             ) : (
-              filteredDonors.map((donor) => (
+              filteredDonors.map((donor, index) => (
                 <tr
                   key={donor.id}
                   onClick={() =>
@@ -393,18 +391,14 @@ export default function DonorsAdminPage() {
                     {formatAmount(donor.amount)}
                   </td>
 
-                  {/* Towards / Purpose */}
-                  <td className="px-6 py-4 text-gray-600 text-xs max-w-[160px] truncate" title={donor.purpose || 'General fund'}>
-                    {donor.purpose || 'General fund'}
-                  </td>
-
-                  {/* Status Dropdown with Live Firestore Sync */}
+                  {/* Status Dropdown with Live Firestore Sync & Dynamic Drop-up for bottom rows */}
                   <td
                     className="px-6 py-4 whitespace-nowrap"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <DonorStatusDropdown
                       status={donor.status}
+                      dropUp={index >= Math.max(0, filteredDonors.length - 2)}
                       onChange={(newStatus) =>
                         handleStatusChange(donor.id, newStatus, donor.name)
                       }

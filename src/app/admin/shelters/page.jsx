@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   addDoc,
@@ -29,6 +29,7 @@ const EMPTY_FORM = {
 
 export default function AdminSheltersPage() {
   const [shelters, setShelters] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -208,15 +209,31 @@ export default function AdminSheltersPage() {
   const update = (field) => (e) =>
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
 
-  const filteredShelters = shelters.filter((shelter) => {
-    if (selectedCategoryFilter === 'all') return true;
-    return shelter.category === selectedCategoryFilter;
-  });
+  // Filter shelters by Category and Name
+  const filteredShelters = useMemo(() => {
+    return shelters.filter((shelter) => {
+      if (selectedCategoryFilter !== 'all' && shelter.category !== selectedCategoryFilter) {
+        return false;
+      }
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        return shelter.name?.toLowerCase().includes(q);
+      }
+      return true;
+    });
+  }, [shelters, selectedCategoryFilter, searchQuery]);
 
-  const exportRows = shelters.map((s) => ({
-    ...s,
-    categoryName: s.category === 'mid-term' ? 'Mid-Term' : s.category === 'livelihood' ? 'Livelihood' : 'Long-Term',
-  }));
+  const exportRows = useMemo(() => {
+    return filteredShelters.map((s) => ({
+      ...s,
+      categoryName:
+        s.category === 'mid-term'
+          ? 'Mid-Term'
+          : s.category === 'livelihood'
+          ? 'Livelihood'
+          : 'Long-Term',
+    }));
+  }, [filteredShelters]);
 
   return (
     <div>
@@ -238,9 +255,9 @@ export default function AdminSheltersPage() {
         </div>
       </div>
 
-      {/* Category filter toolbar */}
+      {/* Category filter & Search toolbar */}
       <div className="flex items-center justify-between mb-4 gap-4 flex-wrap bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
             Filter by Category:
           </span>
@@ -291,9 +308,33 @@ export default function AdminSheltersPage() {
             </button>
           </div>
         </div>
-        <span className="text-xs text-gray-400">
-          Showing {filteredShelters.length} of {shelters.length} shelter records
-        </span>
+
+        {/* Search Shelters by Name */}
+        <div className="flex items-center gap-3 flex-1 sm:flex-initial min-w-[240px]">
+          <div className="relative w-full">
+            <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search shelters by name..."
+              className="w-full pl-8 pr-8 py-1.5 rounded-lg border border-gray-200 text-xs focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label="Clear search"
+              >
+                <i className="fa-solid fa-xmark text-xs"></i>
+              </button>
+            )}
+          </div>
+          <span className="text-xs text-gray-400 whitespace-nowrap hidden lg:inline">
+            Showing {filteredShelters.length} of {shelters.length}
+          </span>
+        </div>
       </div>
 
       {error && !isModalOpen && (
@@ -325,10 +366,22 @@ export default function AdminSheltersPage() {
               </tr>
             ) : filteredShelters.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-gray-500">
-                  {selectedCategoryFilter !== 'all'
-                    ? `No shelters listed under ${selectedCategoryFilter} category yet.`
-                    : 'No shelters yet. Click “Add Shelter” to create the first one.'}
+                <td colSpan="6" className="text-center py-10 text-gray-500">
+                  <div className="max-w-xs mx-auto text-center space-y-1.5">
+                    <i className="fa-solid fa-house-chimney-crack text-2xl text-gray-300"></i>
+                    <p className="font-medium text-gray-700">
+                      {searchQuery
+                        ? `No shelters match "${searchQuery}"`
+                        : selectedCategoryFilter !== 'all'
+                        ? `No shelters listed under ${selectedCategoryFilter} category yet`
+                        : 'No shelters yet. Click “Add Shelter” to create the first one.'}
+                    </p>
+                    {searchQuery && (
+                      <p className="text-xs text-gray-400">
+                        Try searching with a different name or changing the category filter.
+                      </p>
+                    )}
+                  </div>
                 </td>
               </tr>
             ) : (
