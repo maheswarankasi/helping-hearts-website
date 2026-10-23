@@ -394,8 +394,8 @@ export default function DonorsAdminPage() {
                   </td>
 
                   {/* Towards / Purpose */}
-                  <td className="px-6 py-4 text-gray-600 text-xs max-w-[160px] truncate" title={donor.purpose}>
-                    {donor.purpose}
+                  <td className="px-6 py-4 text-gray-600 text-xs max-w-[160px] truncate" title={donor.purpose || 'General fund'}>
+                    {donor.purpose || 'General fund'}
                   </td>
 
                   {/* Status Dropdown with Live Firestore Sync */}

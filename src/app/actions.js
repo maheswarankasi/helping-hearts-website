@@ -77,9 +77,6 @@ export async function submitDonation(values) {
   if (!Number.isFinite(amount) || amount < 1) {
     errors.amount = 'Please enter a valid amount.';
   }
-  if (!text(values.purpose)) {
-    errors.purpose = 'Please choose what your gift is for.';
-  }
 
   // Defaults to PAN for anything unrecognised, matching the client's
   // EMPTY_FORM default so an empty/odd idType never bypasses validation.

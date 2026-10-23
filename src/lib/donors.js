@@ -31,6 +31,8 @@ const memoryDonors = [];
  * No card, UPI PIN, or bank credential is ever collected or stored.
  */
 export async function addDonor(values) {
+  const purpose = values.purpose?.trim() || 'General fund';
+
   if (!isFirebaseConfigured) {
     const id = 'mem_' + Date.now();
     memoryDonors.unshift({
@@ -42,7 +44,7 @@ export async function addDonor(values) {
       idType: values.idType || 'PAN',
       idNumber: values.idNumber?.trim().toUpperCase() || '—',
       amount: Number(values.amount) || 0,
-      purpose: values.purpose || 'General fund',
+      purpose,
       message: values.message?.trim() || '',
       status: 'awaiting confirmation',
       createdAt: new Date(),
@@ -59,8 +61,8 @@ export async function addDonor(values) {
     idType: values.idType,
     idNumber: values.idNumber.trim().toUpperCase(),
     amount: Number(values.amount),
-    purpose: values.purpose,
-    message: values.message.trim(),
+    purpose,
+    message: values.message ? values.message.trim() : '',
     status: 'awaiting confirmation',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -90,7 +92,7 @@ function toDonor(id, data) {
     idType: optionalText(data.idType) ?? 'PAN',
     idNumber: optionalText(data.idNumber) ?? optionalText(data.pan) ?? '—',
     amount: Number.isFinite(amount) ? amount : null,
-    purpose: optionalText(data.purpose) ?? '—',
+    purpose: optionalText(data.purpose) ?? 'General fund',
     message: optionalText(data.message),
     status: normalizeDonorStatus(data.status),
     updatedAt: toDate(data.updatedAt),

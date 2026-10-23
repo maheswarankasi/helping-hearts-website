@@ -1,6 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
+
+const emptySubscribe = () => () => {};
 import { submitDonation } from '@/app/actions';
 import DonationQr from './DonationQr';
 import { formatAmount } from '@/lib/firestoreUtils';
@@ -13,7 +16,7 @@ import {
   idNumberError,
   normaliseIdNumber,
 } from '@/lib/identity';
-import { donation, donationPurposes, siteInfo } from '@/lib/siteContent';
+import { donation, siteInfo } from '@/lib/siteContent';
 
 const EMPTY_FORM = {
   name: '',
@@ -23,7 +26,6 @@ const EMPTY_FORM = {
   idType: ID_TYPES.PAN,
   idNumber: '',
   amount: '',
-  purpose: donationPurposes[0],
   message: '',
 };
 
@@ -61,8 +63,6 @@ function validate(values) {
     errors.amount = 'Please enter a valid amount.';
   }
 
-  if (!values.purpose) errors.purpose = 'Please choose what your gift is for.';
-
   return errors;
 }
 
@@ -90,16 +90,27 @@ export default function DonationModal({ onClose }) {
   const [saveError, setSaveError] = useState(null);
   const [savedAmount, setSavedAmount] = useState(null);
   const [copied, setCopied] = useState(false);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   useEffect(() => {
-    document.body.classList.add('modal-open');
+    // Measure scrollbar width before locking body scroll to eliminate page layout shift
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+
+    document.body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
     const onKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKeyDown);
 
     return () => {
-      document.body.classList.remove('modal-open');
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
       window.removeEventListener('keydown', onKeyDown);
     };
   }, [onClose]);
@@ -180,29 +191,39 @@ export default function DonationModal({ onClose }) {
         : 'border-gray-200 focus:border-brand-blue focus:ring-blue-100'
     }`;
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] overflow-y-auto overflow-x-hidden"
       role="dialog"
       aria-modal="true"
       aria-labelledby="donation-modal-title"
     >
+      {/* Full-viewport fixed backdrop covering entire screen */}
       <div
-        className="absolute inset-0 bg-gray-900/70 backdrop-blur-sm"
+        className="fixed inset-0 bg-gray-900/70 backdrop-blur-sm transition-opacity pointer-events-auto"
         onClick={onClose}
-      ></div>
+        aria-hidden="true"
+      />
 
-      <div className="relative bg-white rounded-[2rem] w-full max-w-xl shadow-2xl max-h-[92vh] overflow-y-auto">
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute top-4 right-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 hover:bg-brand-red hover:text-white transition z-10"
+      {/* Centering container */}
+      <div className="flex min-h-full items-center justify-center p-4 sm:p-6 text-center pointer-events-none">
+        {/* Modal card */}
+        <div
+          className="relative bg-white rounded-[2rem] w-full max-w-xl shadow-2xl max-h-[92vh] overflow-y-auto text-left pointer-events-auto transform transition-all"
+          onClick={(e) => e.stopPropagation()}
         >
-          <i className="fa-solid fa-xmark"></i>
-        </button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute top-4 right-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 hover:bg-brand-red hover:text-white transition z-10"
+          >
+            <i className="fa-solid fa-xmark"></i>
+          </button>
 
-        <div className="p-8 md:p-10">
+          <div className="p-8 md:p-10">
           {step === 'details' ? (
             <>
               <h3
@@ -388,29 +409,6 @@ export default function DonationModal({ onClose }) {
                   <FieldError message={errors.amount} />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="donor-purpose"
-                    className="block text-sm font-bold text-gray-700 mb-1.5"
-                  >
-                    I would like this to go towards{' '}
-                    <span className="text-brand-red">*</span>
-                  </label>
-                  <select
-                    id="donor-purpose"
-                    required
-                    value={values.purpose}
-                    onChange={handleChange('purpose')}
-                    className={fieldClasses('purpose')}
-                  >
-                    {donationPurposes.map((purpose) => (
-                      <option key={purpose} value={purpose}>
-                        {purpose}
-                      </option>
-                    ))}
-                  </select>
-                  <FieldError message={errors.purpose} />
-                </div>
 
                 <div>
                   <label
@@ -577,5 +575,7 @@ export default function DonationModal({ onClose }) {
         </div>
       </div>
     </div>
-  );
+  </div>,
+  document.body
+);
 }
